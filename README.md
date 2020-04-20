@@ -113,7 +113,7 @@ Please follow the `Bootstrap a project from scratch` instructions without the in
 
 #### Enable symlinks in GIT for Windows
 This project uses symlinks, Windows does not enable symlinks by default, to enable it, run this cmd from an admin console:
-```
+```bash
 export MSYS=winsymlinks:nativestrict
 ```
 
