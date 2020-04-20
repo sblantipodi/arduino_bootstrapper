@@ -30,8 +30,8 @@ Add extra dirs to your `platformio.ini`
 ```
 lib_extra_dirs = arduino_bootstrapper
 ```
-- Copy `~/arduino_bootstrapper/include/Secrets.h` to your `include` directory
-- Copy `~/arduino_bootstrapper/src/Configuration.h` to your `src` directory
+Copy `~/arduino_bootstrapper/include/Secrets.h` to your `include` directory  
+Copy `~/arduino_bootstrapper/src/Configuration.h` to your `src` directory  
   
 Please follow the `Bootstrap a project from scratch` instructions without the initial git clone part.
 
