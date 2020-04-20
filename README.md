@@ -79,7 +79,7 @@ class BootstrapManager {
     
 ## Import those utilities to your existing project
 To link this project to your existing one use git submodules.  
-```git
+```bash
 git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
 ```
 Add extra dirs to your `platformio.ini`
