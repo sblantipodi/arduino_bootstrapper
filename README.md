@@ -47,10 +47,10 @@ Rename main files with the name of your projects.
     │   ├── Configuration.h      # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
     │   └── ...       
     ├── core                     # Folder for core files, edit those files and contribute!
-    │   ├── BootstrapManager.h   # Core header file with utility classes
-    │   ├── QueueManager.h   # Core header file with utility classes
-    │   ├── WifiManager.h   # Core header file with utility classes
-    │   ├── Helpers.h   # Core header file with utility classes    
+    │   ├── BootstrapManager.h   # Core header file with utility classes for bootstrapping
+    │   ├── QueueManager.h       # Core header file with utility classes for Queue and MQTT management
+    │   ├── WifiManager.h        # Core header file with utility classes for Wifi and OTA upload management
+    │   ├── Helpers.h            # Core header file with helper classes 
     │   └── ...       
     └── ...
     
