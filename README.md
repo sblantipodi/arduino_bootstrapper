@@ -22,13 +22,13 @@ There is two way to bootstrap your software using this utilities.
 - Import this utilities to your existing project
 
 
-#### Import this utilities to your existing project
+### Import this utilities to your existing project
 To link this project to your existing one, you can use a git submodules.  
 ```
 git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
 ```
 
-#### Start a project from scratch
+### Start a project from scratch
 ```
 ss
 ```
