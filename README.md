@@ -16,7 +16,7 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 ## Credits
 - Davide Perini
 
-# How To
+## How To
 There is two way to bootstrap your software using this utilities.
 1) Start a project from scratch
 2) Import this utilities to your existing project
