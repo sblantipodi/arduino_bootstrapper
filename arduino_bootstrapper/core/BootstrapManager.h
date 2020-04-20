@@ -20,6 +20,7 @@ class BootstrapManager {
   public:
     void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int));
     void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)());
+    void nonBlokingBlink();
 
 };
 

@@ -35,3 +35,20 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   mqttClient.loop();
 
 }
+
+// Blink LED_BUILTIN without bloking delay
+void BootstrapManager::nonBlokingBlink() {
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval && ledTriggered) {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
+    // blink led
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+    blinkCounter++;
+    if (blinkCounter >= blinkTimes) {
+      blinkCounter = 0;
+      ledTriggered = false;
+      digitalWrite(LED_BUILTIN, HIGH);
+    }
+  }  
+}

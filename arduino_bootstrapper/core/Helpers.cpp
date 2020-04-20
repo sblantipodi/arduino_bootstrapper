@@ -3,6 +3,11 @@
 
 String lastMQTTConnection = "OFF";
 String lastWIFiConnection = "OFF";
+unsigned long previousMillis = 0;     
+const long interval = 200;           
+bool ledTriggered = false;
+int blinkCounter = 0;
+const int blinkTimes = 6; 
 
 void Helpers::smartPrint(String msg) {
 
