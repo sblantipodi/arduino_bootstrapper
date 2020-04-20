@@ -63,7 +63,7 @@ void WifiManager::setupWiFi(void (*manageDisconnectionFunction)(), void (*manage
         display.setCursor(0,0);
         display.clearDisplay();
       }
-      helper.smartPrint(F("Reconnect attemp= "));
+      helper.smartPrint(F("Wifi attemps= "));
       helper.smartPrint(reconnectAttemp);
       if (reconnectAttemp >= MAX_RECONNECT) {
         helper.smartPrintln(F("Max retry reached, powering off peripherals."));

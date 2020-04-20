@@ -52,11 +52,11 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       brokermqttcounter = 0;
 
       // reset the lastMQTTConnection to off, will be initialized by next time update
-      // lastMQTTConnection = OFF_CMD;
+      lastMQTTConnection = OFF_CMD;
 
     } else {
 
-      helper.smartPrintln(F("Number of attempts="));
+      helper.smartPrintln(F("MQTT attempts="));
       helper.smartPrintln(brokermqttcounter);
       helper.smartDisplay();
 
