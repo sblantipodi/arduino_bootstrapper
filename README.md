@@ -49,10 +49,10 @@ Simply edit those file as per description, _few minutes required_
     └── ...
     
 ***NOTE:*** You should implement those functions that are passed by _*pointer_ to the `bootstrapSetup` and `bootstrapLoop` functions:
-- manageDisconnections           # OPTIONAL: put the logic you need in case your microcontroller is disconnected from the network
-- manageHardwareButton           # OPTIONAL: put special instruction for hardware button management during network disconnections
-- manageQueueSubscription        # subscribe to the desired mqtt topics
-- callback                       # callback function called when a message arrives from the queue
+- `manageDisconnections()`           # OPTIONAL: put the logic you need in case your microcontroller is disconnected from the network
+- `manageHardwareButton()`           # OPTIONAL: put special instruction for hardware button management during network disconnections
+- `manageQueueSubscription()`        # subscribe to the desired mqtt topics
+- `callback()`                       # callback function called when a message arrives from the queue
     
 ### Import those utilities to your existing project
 To link this project to your existing one use git submodules.  
