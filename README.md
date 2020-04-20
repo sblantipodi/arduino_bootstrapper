@@ -27,7 +27,7 @@ There are other projects that uses this utility, you can explore their sources h
 
 ## Bootstrap a project from scratch
 Clone the bootstrapper
-```
+```git
 git clone git@github.com:sblantipodi/arduino_bootstrapper.git
 ```
 Simply edit those file as per description, _few minutes required_
@@ -79,11 +79,11 @@ class BootstrapManager {
     
 ## Import those utilities to your existing project
 To link this project to your existing one use git submodules.  
-```
+```git
 git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
 ```
 Add extra dirs to your `platformio.ini`
-```
+```ini
 lib_extra_dirs = arduino_bootstrapper
 ```
 Copy and configure `~/arduino_bootstrapper/include/Secrets.h` into your `include` folder  
@@ -91,21 +91,21 @@ Copy and configure `~/arduino_bootstrapper/include/Configuration.h` into your `i
 Copy and configure `~/arduino_bootstrapper/include/Configuration.cpp` into your `src` folder  
   
 Please include BootrapManager.h into your main header file:
-```
+```c++
 #include "../arduino_bootstrapper/core/BootstrapManager.h"
 ```
 and initialize the BootstrapManager class:
-```
+```c++
 BootstrapManager bootstrapManager;
 ```
 
 In your `setup()` function add the Wifi, MQTT and OTA bootstrapper
-```
+```c++
 bootstrapManager.bootstrapSetup(manageDisconnections, manageHardwareButton, callback);
 ```
 
 In your `loop()` function add the bootstrap manager function
-```
+```c++
 bootstrapManager.bootstrapLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
 ```
 
@@ -113,7 +113,7 @@ Please follow the `Bootstrap a project from scratch` instructions without the in
 
 #### Enable symlinks in GIT for Windows
 This project uses symlinks, Windows does not enable symlinks by default, to enable it, run this cmd from an admin console:
-```
+```bash
 export MSYS=winsymlinks:nativestrict
 ```
 
