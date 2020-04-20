@@ -50,7 +50,7 @@ Simply edit those file as per description, _few minutes required_
     
 ***NOTE:***  
 You should implement those functions that are passed by _*pointer_ to the main bootstrap functions:   
-```
+```c++
     void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int));
     void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)());  
 ```  
