@@ -34,13 +34,16 @@ Clone the bootstrapper
 git clone git@github.com:sblantipodi/arduino_bootstrapper.git
 ```
 Rename main files with the name of your projects.
-    .
-    ├── src                     # Compiled files (alternatively `dist`)
-      ├── ChangeName.cpp        # Documentation files (alternatively `doc`)
-    ├── include                 # Source files (alternatively `lib` or `app`)
-      ├── ChangeName.h          # Automated tests (alternatively `spec` or `tests`)    
-    └── README.md
 
+    .
+    ├── build                   # Compiled files (alternatively `dist`)
+    ├── docs                    # Documentation files (alternatively `doc`)
+    ├── src                     # Source files (alternatively `lib` or `app`)
+    ├── test                    # Automated tests (alternatively `spec` or `tests`)
+    ├── tools                   # Tools and utilities
+    ├── LICENSE
+    └── README.md
+    
 ## License
 This program is licensed under MIT License
 
