@@ -37,9 +37,9 @@ Rename main files with the name of your projects.
 
     .
     ├── ...
-    ├── src                    # Test files (alternatively `spec` or `tests`)
+    ├── src                    # Project src folder
     │   ├── ChangeName.cpp     # Main file with loop() and setup() function
-    │   └── unit               # Unit tests
+    │   └── ...                
     └── ...
     
 ## License
