@@ -65,6 +65,21 @@ Please include BootrapManager.h into your main header file:
 ```
 #include "../arduino_bootstrapper/core/BootstrapManager.h"
 ```
+and initialize the BootstrapManager class:
+```
+BootstrapManager bootstrapManager;
+```
+
+In your `setup()` function add the Wifi, MQTT and OTA bootstrapper
+```
+bootstrapManager.bootstrapSetup(manageDisconnections, manageHardwareButton, callback);
+```
+
+In your `loop()` function add the bootstrap manager function
+```
+bootstrapManager.bootstrapLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
+```
+
 
 Please follow the `Bootstrap a project from scratch` instructions without the initial git clone part.
 
