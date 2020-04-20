@@ -64,7 +64,10 @@ Copy and configure `~/arduino_bootstrapper/include/Configuration.cpp` to your `s
 Please follow the `Bootstrap a project from scratch` instructions without the initial git clone part.
 
 #### Enable symlinks in GIT for Windows
+This project uses symlinks, Windows does not enable symlinks by default, to enable it, run this cmd from an admin console:
+```
 export MSYS=winsymlinks:nativestrict
+```
 
 ## License
 This program is licensed under MIT License
