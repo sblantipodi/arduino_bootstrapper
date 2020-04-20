@@ -37,22 +37,21 @@ Rename main files with the name of your projects.
 
     .
     ├── ...
-    ├── src                    # Project src folder
-    │   ├── ChangeName.cpp     # Main file with loop() and setup() function
+    ├── src                      # Project src folder
+    │   ├── ChangeName.cpp       # Main file with loop() and setup() function, rename it with the name of your project
+    │   ├── Configuration.cpp    # Config impl, initialize global vars here like the one used for displays
     │   └── ...   
-    ├── include                # Project header folder
-    │   ├── ChangeName.h       # Main header file
+    ├── include                  # Project header folder
+    │   ├── ChangeName.h         # Main header file, rename it with the name of your project
     │   └── ...       
     └── ...
     
-## License
-This program is licensed under MIT License
 
-
-
-git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
 
 lib_extra_dirs = arduino_bootstrapper
 
-abilitarte i sumblink
+#### Enable symlinks in GIT for Windows
 export MSYS=winsymlinks:nativestrict
+
+## License
+This program is licensed under MIT License
