@@ -48,7 +48,13 @@ Simply edit those file as per description, _few minutes required_
     ├── platformio.ini           # Edit platform with the one you are using (default: ESP8266, board: d1_mini)  
     └── ...
     
-***NOTE:*** You should implement those functions that are passed by _*pointer_ to the `bootstrapSetup` and `bootstrapLoop` functions:
+***NOTE:***  
+You should implement those functions that are passed by _*pointer_ to the main bootstrap functions:   
+```
+    void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int));
+    void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)());  
+```  
+
 - `manageDisconnections()`           # OPTIONAL: put the logic you need in case your microcontroller is disconnected from the network
 - `manageHardwareButton()`           # OPTIONAL: put special instruction for hardware button management during network disconnections
 - `manageQueueSubscription()`        # subscribe to the desired mqtt topics
