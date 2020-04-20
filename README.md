@@ -16,12 +16,12 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 ## Credits
 - Davide Perini
 
-## How To
+# How To
 There is two way to bootstrap your software using this utilities.
 1) Start a project from scratch
 2) Import this utilities to your existing project
 
-### Bootstrap a project from scratch
+## Bootstrap a project from scratch
 Clone the bootstrapper
 ```
 git clone git@github.com:sblantipodi/arduino_bootstrapper.git
@@ -73,7 +73,7 @@ class BootstrapManager {
 - `manageQueueSubscription()`        # subscribe to the desired mqtt topics
 - `callback()`                       # callback function called when a message arrives from the queue
     
-### Import those utilities to your existing project
+## Import those utilities to your existing project
 To link this project to your existing one use git submodules.  
 ```
 git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
