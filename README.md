@@ -33,7 +33,7 @@ Clone the bootstrapper
 ```
 git clone git@github.com:sblantipodi/arduino_bootstrapper.git
 ```
-Rename main files with the name of your projects.
+Simply edit those file as per description, few minutes required.
 
     .
     ├── ...
