@@ -21,14 +21,14 @@ There is two way to bootstrap your software using this utilities.
 - Start a project from scratch
 - Import this utilities to your existing project
 
-
-### Import this utilities to your existing project
-To link this project to your existing one, you can use a git submodules.  
+### Import those utilities to your existing project
+To link this project to your existing one use git submodules.  
 ```
 git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
 ```
+Please follow the `Bootstrap a project from scratch` instructions without the initial glone part.
 
-### Start a project from scratch
+### Bootstrap a project from scratch
 Clone the bootstrapper
 ```
 git clone git@github.com:sblantipodi/arduino_bootstrapper.git
