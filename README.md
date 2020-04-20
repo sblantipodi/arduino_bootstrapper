@@ -26,7 +26,7 @@ Clone the bootstrapper
 ```
 git clone git@github.com:sblantipodi/arduino_bootstrapper.git
 ```
-Simply edit those file as per description, few minutes required.
+Simply edit those file as per description, _few minutes required_
 
     .
     ├── ...
