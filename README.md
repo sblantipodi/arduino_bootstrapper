@@ -18,22 +18,8 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 
 ## How To
 There is two way to bootstrap your software using this utilities.
-1) Import this utilities to your existing project
-2) Start a project from scratch
-
-### Import those utilities to your existing project
-To link this project to your existing one use git submodules.  
-```
-git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
-```
-Add extra dirs to your `platformio.ini`
-```
-lib_extra_dirs = arduino_bootstrapper
-```
-Copy `~/arduino_bootstrapper/include/Secrets.h` to your `include` directory  
-Copy `~/arduino_bootstrapper/src/Configuration.h` to your `src` directory  
-  
-Please follow the `Bootstrap a project from scratch` instructions without the initial git clone part.
+1) Start a project from scratch
+2) Import this utilities to your existing project
 
 ### Bootstrap a project from scratch
 Clone the bootstrapper
@@ -62,6 +48,19 @@ Simply edit those file as per description, few minutes required.
     ├── platformio.ini           # Edit platform with the one you are using (default: ESP8266, board: d1_mini)  
     └── ...
     
+### Import those utilities to your existing project
+To link this project to your existing one use git submodules.  
+```
+git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
+```
+Add extra dirs to your `platformio.ini`
+```
+lib_extra_dirs = arduino_bootstrapper
+```
+Copy `~/arduino_bootstrapper/include/Secrets.h` to your `include` directory  
+Copy `~/arduino_bootstrapper/src/Configuration.h` to your `src` directory  
+  
+Please follow the `Bootstrap a project from scratch` instructions without the initial git clone part.
 
 #### Enable symlinks in GIT for Windows
 export MSYS=winsymlinks:nativestrict
