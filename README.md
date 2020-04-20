@@ -26,6 +26,10 @@ To link this project to your existing one use git submodules.
 ```
 git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
 ```
+Add extra dirs to your `platformio.ini`
+```
+lib_extra_dirs = arduino_bootstrapper
+```
 Please follow the `Bootstrap a project from scratch` instructions without the initial git clone part.
 
 ### Bootstrap a project from scratch
@@ -52,11 +56,9 @@ Simply edit those file as per description, few minutes required.
     │   ├── WifiManager.h        # Core header file with utility classes for Wifi and OTA upload management
     │   ├── Helpers.h            # Core header file with helper classes 
     │   └── ...       
+    ├── platformio.ini           # Edit platform with the one you are using (default: ESP8266, board: d1_mini)  
     └── ...
     
-
-
-lib_extra_dirs = arduino_bootstrapper
 
 #### Enable symlinks in GIT for Windows
 export MSYS=winsymlinks:nativestrict
