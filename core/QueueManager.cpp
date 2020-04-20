@@ -1,0 +1,78 @@
+#include "QueueManager.h"
+
+WiFiClient espClient;
+PubSubClient mqttClient(espClient);
+
+/********************************** SETUP MQTT QUEUE *****************************************/
+void QueueManager::setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)) {
+  
+  mqttClient.setServer(mqtt_server, mqtt_port);
+  mqttClient.setCallback(callback);
+
+}
+
+/********************************** MQTT RECONNECT *****************************************/
+void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
+
+  // Helpers classes
+  Helpers helper;
+  
+  // how many attemps to MQTT connection
+  int brokermqttcounter = 0;
+  // Loop until we're reconnected
+  while (!mqttClient.connected()) {   
+    if (PRINT_TO_DISPLAY) {
+      display.clearDisplay();
+      display.setTextSize(1);
+      display.setCursor(0,0);
+    }
+    if (brokermqttcounter <= 20) {
+      helper.smartPrintln(F("Connecting to"));
+      helper.smartPrintln(F("MQTT Broker..."));
+    }
+    helper.smartDisplay();
+
+    // Manage hardware button if any
+    manageHardwareButton();
+
+    // Attempt to connect to MQTT server with QoS = 1 (pubsubclient supports QoS 1 for subscribe only, published msg have QoS 0 this is why I implemented a custom solution)
+    if (mqttClient.connect(WIFI_DEVICE_NAME, mqtt_username, mqtt_password, 0, 1, 0, 0, 1)) {
+
+      helper.smartPrintln(F(""));
+      helper.smartPrintln(F("CONNECTED"));
+      helper.smartPrintln(F(""));
+      helper.smartPrintln(F("Reading data from"));
+      helper.smartPrintln(F("the network..."));
+      helper.smartDisplay();
+
+      // Subscribe to MQTT topics
+      manageQueueSubscription();
+
+      delay(DELAY_2000);
+      brokermqttcounter = 0;
+
+      // reset the lastMQTTConnection to off, will be initialized by next time update
+      // lastMQTTConnection = OFF_CMD;
+
+    } else {
+
+      helper.smartPrintln(F("Number of attempts="));
+      helper.smartPrintln(brokermqttcounter);
+      helper.smartDisplay();
+
+      // after 10 attemps all peripherals are shut down
+      if (brokermqttcounter >= MAX_RECONNECT) {
+        helper.smartPrintln(F("Max retry reached, powering off peripherals."));
+        helper.smartDisplay();
+        // Manage disconnections, powering off peripherals
+        manageDisconnections();
+      } else if (brokermqttcounter > 10000) {
+        brokermqttcounter = 0;
+      }
+      brokermqttcounter++;
+      // Wait 500 millis before retrying
+      delay(500);
+    }
+  }
+  
+}
