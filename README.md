@@ -21,3 +21,11 @@ lib_extra_dirs = arduino_bootstrapper
 
 abilitarte i sumblink
 export MSYS=winsymlinks:nativestrict
+
+## Credits
+- Davide Perini
+
+## License
+
+This program is licensed under MIT License
+
