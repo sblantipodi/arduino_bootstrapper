@@ -81,7 +81,7 @@ void WifiManager::setupWiFi(void (*manageDisconnectionFunction)(), void (*manage
   delay(DELAY_1500);
 
   // reset the lastWIFiConnection to off, will be initialized by next time update
-  // lastWIFiConnection = off_cmd;
+  lastWIFiConnection = OFF_CMD;
 
 }
 

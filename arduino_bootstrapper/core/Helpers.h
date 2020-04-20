@@ -3,6 +3,8 @@
 
 #include "../../include/Configuration.h"
 
+extern String lastMQTTConnection;
+extern String lastWIFiConnection;
 
 const int DELAY_10 = 10;
 const int DELAY_50 = 50;

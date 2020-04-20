@@ -1,8 +1,8 @@
 #include "Helpers.h"
 
-// lastMQTTConnection = "OFF";
-// lastWIFiConnection = "OFF";
 
+String lastMQTTConnection = "OFF";
+String lastWIFiConnection = "OFF";
 
 void Helpers::smartPrint(String msg) {
 
