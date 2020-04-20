@@ -44,7 +44,10 @@ Rename main files with the name of your projects.
     ├── include                  # Project header folder
     │   ├── ChangeName.h         # Main header file, rename it with the name of your project
     │   ├── Secrets.h            # Configure your Wifi info (SSID, PWD), MQTT server info (USERNAME, PWD, PORT), OTA PWD
-    │   ├── Configuration.h      # Configure all the required info (ex: Wifi device name, microcontroller static IP, DNS gateway, ecc.)
+    │   ├── Configuration.h      # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
+    │   └── ...       
+    ├── core                     # Project src folder
+    │   ├── BootstrapManager.h   # Main file with loop() and setup() function, rename it with the name of your project
     │   └── ...       
     └── ...
     
