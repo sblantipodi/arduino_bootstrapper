@@ -18,8 +18,8 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 
 ## How To
 There is two way to bootstrap your software using this utilities.
-- Start a project from scratch
 - Import this utilities to your existing project
+- Start a project from scratch
 
 ### Import those utilities to your existing project
 To link this project to your existing one use git submodules.  
@@ -30,6 +30,9 @@ Add extra dirs to your `platformio.ini`
 ```
 lib_extra_dirs = arduino_bootstrapper
 ```
+Copy `~/arduino_bootstrapper/include/Secrets.h` to your `include` directory
+Copy `~/arduino_bootstrapper/src/Configuration.h` to your `src` directory
+
 Please follow the `Bootstrap a project from scratch` instructions without the initial git clone part.
 
 ### Bootstrap a project from scratch
