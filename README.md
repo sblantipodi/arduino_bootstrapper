@@ -1,6 +1,7 @@
 # Arduino Bootstrapper
 
-Utility classes for bootstrapping arduino projects with Wifi management, OTA upload management, memory management, MQTT and queue management  
+Utility classes for bootstrapping arduino projects with Wifi management, OTA upload management, memory management,   
+MQTT and queue management  
 _Written for Arduino IDE and PlatformIO._
 
 [![GitHub version](https://img.shields.io/github/v/release/sblantipodi/arduino_bootstrapper.svg)](https://img.shields.io/github/v/release/sblantipodi/arduino_bootstrapper.svg)
