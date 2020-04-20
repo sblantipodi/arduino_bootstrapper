@@ -80,7 +80,6 @@ In your `loop()` function add the bootstrap manager function
 bootstrapManager.bootstrapLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
 ```
 
-
 Please follow the `Bootstrap a project from scratch` instructions without the initial git clone part.
 
 #### Enable symlinks in GIT for Windows
