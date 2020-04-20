@@ -18,8 +18,8 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 
 ## How To
 There is two way to bootstrap your software using this utilities.
-- Import this utilities to your existing project
-- Start a project from scratch
+1) Import this utilities to your existing project
+2) Start a project from scratch
 
 ### Import those utilities to your existing project
 To link this project to your existing one use git submodules.  
