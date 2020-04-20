@@ -68,8 +68,8 @@ class BootstrapManager {
 };
 ```  
 
-- `manageDisconnections()`           # OPTIONAL: put the logic you need in case your microcontroller is disconnected from the network
-- `manageHardwareButton()`           # OPTIONAL: put special instruction for hardware button management during network disconnections
+- `manageDisconnections()`           # _OPTIONAL_ put the logic you need in case your microcontroller is disconnected from the network
+- `manageHardwareButton()`           # _OPTIONAL_ put special instruction for hardware button management during network disconnections
 - `manageQueueSubscription()`        # subscribe to the desired mqtt topics
 - `callback()`                       # callback function called when a message arrives from the queue
     
