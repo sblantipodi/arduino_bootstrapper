@@ -19,9 +19,6 @@ void WifiManager::setupWiFi(void (*manageDisconnectionFunction)(), void (*manage
   helper.smartPrintln(F("DPsoftware domotics"));
   helper.smartDisplay();
   delay(DELAY_3000);
-  
-  // Read config.json from SPIFFS
-  // readConfigFromSPIFFS();
 
   if (PRINT_TO_DISPLAY) {
     display.clearDisplay();
