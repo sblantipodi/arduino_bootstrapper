@@ -37,10 +37,9 @@ Rename main files with the name of your projects.
 
     .
     ├── ...
-    ├── test                    # Test files (alternatively `spec` or `tests`)
-    │   ├── benchmarks          # Load and stress tests
-    │   ├── integration         # End-to-end, integration tests (alternatively `e2e`)
-    │   └── unit                # Unit tests
+    ├── src                    # Test files (alternatively `spec` or `tests`)
+    │   ├── ChangeName.cpp     # Main file with loop() and setup() function
+    │   └── unit               # Unit tests
     └── ...
     
 ## License
