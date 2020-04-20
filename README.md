@@ -21,6 +21,13 @@ There is two way to bootstrap your software using this utilities.
 1) Start a project from scratch
 2) Import this utilities to your existing project
 
+There are other projects that uses this utility, you can explor their souces here:
+[Smart Thermostat](https://github.com/sblantipodi/smart_thermostat)  
+[Solar Station](https://github.com/sblantipodi/solar_station)  
+[PC Ambilight](https://github.com/sblantipodi/pc_ambilight)  
+[Smart Watch Winder](https://github.com/sblantipodi/smart_watch_winder)  
+
+
 ## Bootstrap a project from scratch
 Clone the bootstrapper
 ```
