@@ -26,7 +26,7 @@ To link this project to your existing one use git submodules.
 ```
 git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
 ```
-Please follow the `Bootstrap a project from scratch` instructions without the initial glone part.
+Please follow the `Bootstrap a project from scratch` instructions without the initial git clone part.
 
 ### Bootstrap a project from scratch
 Clone the bootstrapper
