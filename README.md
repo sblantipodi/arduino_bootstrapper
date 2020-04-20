@@ -7,7 +7,7 @@ _Written for Arduino IDE and PlatformIO._
 [![GitHub version](https://img.shields.io/github/v/release/sblantipodi/arduino_bootstrapper.svg)](https://img.shields.io/github/v/release/sblantipodi/arduino_bootstrapper.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/sblantipodi/arduino_bootstrapper/graphs/commit-activity)
-[![DPsoftware](https://img.shields.io/static/v1?label=DP&message=Software&color=orange)](https://img.shields.io/static/v1?label=DP&message=Software&color=orange)
+[![DPsoftware](https:/www.dpsoftware.org)](https://img.shields.io/static/v1?label=DP&message=Software&color=orange)
 
 If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 
