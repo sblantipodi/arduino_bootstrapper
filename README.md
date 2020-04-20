@@ -46,8 +46,11 @@ Rename main files with the name of your projects.
     │   ├── Secrets.h            # Configure your Wifi info (SSID, PWD), MQTT server info (USERNAME, PWD, PORT), OTA PWD
     │   ├── Configuration.h      # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
     │   └── ...       
-    ├── core                     # Project src folder
-    │   ├── BootstrapManager.h   # Main file with loop() and setup() function, rename it with the name of your project
+    ├── core                     # Folder for core files, edit those files and contribute!
+    │   ├── BootstrapManager.h   # Core header file with utility classes
+    │   ├── QueueManager.h   # Core header file with utility classes
+    │   ├── WifiManager.h   # Core header file with utility classes
+    │   ├── Helpers.h   # Core header file with utility classes    
     │   └── ...       
     └── ...
     
