@@ -129,7 +129,7 @@ void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
   int effectiveOffset = (yoffset >= 0 && !lastPageScrollTriggered) ? 0 : yoffset;
 
   if (haVersion[0] != '\0') {
-    display.drawBitmap((display.width()-HABIGLOGOW)-1, effectiveOffset, HABIGLOGO, HABIGLOGOW, HABIGLOGOH, 1);
+    display.drawBitmap((display.width()-HABIGLOGOW)-1, effectiveOffset+5, HABIGLOGO, HABIGLOGOW, HABIGLOGOH, 1);
   }  
   display.setCursor(0, effectiveOffset);
   display.setTextSize(1);
