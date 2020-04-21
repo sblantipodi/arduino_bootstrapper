@@ -37,10 +37,12 @@ const int BUFFER_SIZE = JSON_OBJECT_SIZE(MAX_JSON_OBJECT_SIZE);
 class BootstrapManager {
   
   public:
-    void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int));
-    void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)());
-    void nonBlokingBlink();
-    void printInfo();
+    void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)); // bootstrap setup()
+    void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // bootstrap loop()
+    void nonBlokingBlink(); // blink default LED when sending data to the queue
+    void getMicrocontrollerInfo(); // print or display microcontroller's info
+    void drawInfoPage(String softwareVersion, String author); // draw a page with all the microcontroller's info
+    void drawScreenSaver(String txt); // useful for OLED displays
 
 };
 

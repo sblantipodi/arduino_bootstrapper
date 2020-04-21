@@ -23,6 +23,14 @@
 String lastMQTTConnection = "OFF";
 String lastWIFiConnection = "OFF";
 String lastBoot = " ";
+
+bool screenSaverTriggered = false;
+
+bool lastPageScrollTriggered = false;
+int yoffset = 150;
+String haVersion = "";
+String IP = "";
+
 unsigned long previousMillis = 0;     
 const long interval = 200;           
 bool ledTriggered = false;

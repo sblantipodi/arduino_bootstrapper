@@ -95,7 +95,8 @@ void WifiManager::setupWiFi(void (*manageDisconnectionFunction)(), void (*manage
   }
 
   helper.smartPrintln(F("WIFI CONNECTED"));
-  helper.smartPrintln(WiFi.localIP());
+  IP = WiFi.localIP().toString();
+  helper.smartPrintln(IP);
 
   delay(DELAY_1500);
 
