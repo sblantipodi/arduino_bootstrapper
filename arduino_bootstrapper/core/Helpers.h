@@ -55,6 +55,7 @@ class Helpers {
     void smartPrint(int msg);
     void smartPrintln(int msg);
     void smartDisplay();
+    String getValue(String data, char separator, int index);
 
 };
 
