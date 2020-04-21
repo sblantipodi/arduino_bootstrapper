@@ -21,12 +21,12 @@
 
 
 /********************************** SETUP WIFI *****************************************/
-void WifiManager::setupWiFi(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)()) {
+void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
   
   // Helpers classes
   Helpers helper;
 
-  int reconnectAttemp = 0;
+  wifiReconnectAttemp = 0;
 
   // DPsoftware domotics 
   if (PRINT_TO_DISPLAY) {
@@ -69,27 +69,30 @@ void WifiManager::setupWiFi(void (*manageDisconnectionFunction)(), void (*manage
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
 
-    manageHardwareButton();  
-    if (reconnectAttemp >= MAX_RECONNECT) {
-      manageDisconnectionFunction();
-    }       
+    manageHardwareButton();   
 
     delay(DELAY_500);
     Serial.print(F("."));
-    reconnectAttemp++;
-    if (reconnectAttemp > 10) {
+    wifiReconnectAttemp++;
+    if (wifiReconnectAttemp > 10) {
+      // if fastDisconnectionManagement we need to execute the callback immediately, 
+      // example: power off a watering system can't wait MAX_RECONNECT attemps
+      if (fastDisconnectionManagement) {
+        manageDisconnections();
+      }
       if (PRINT_TO_DISPLAY) {
         display.setCursor(0,0);
         display.clearDisplay();
       }
       helper.smartPrint(F("Wifi attemps= "));
-      helper.smartPrint(reconnectAttemp);
-      if (reconnectAttemp >= MAX_RECONNECT) {
+      helper.smartPrint(wifiReconnectAttemp);
+      if (wifiReconnectAttemp >= MAX_RECONNECT) {
         helper.smartPrintln(F("Max retry reached, powering off peripherals."));
+        manageDisconnections();
       }
       helper.smartDisplay();
-    } else if (reconnectAttemp > 10000) {
-      reconnectAttemp = 0;
+    } else if (wifiReconnectAttemp > 10000) {
+      wifiReconnectAttemp = 0;
     }
 
   }

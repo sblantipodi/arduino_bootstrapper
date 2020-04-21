@@ -45,7 +45,7 @@ namespace WifiConfig {
 class WifiManager {
 
   public:
-    void setupWiFi(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)());
+    void setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
     void setupOTAUpload();
     int getQuality();
 

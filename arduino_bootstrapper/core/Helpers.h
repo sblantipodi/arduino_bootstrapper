@@ -46,6 +46,10 @@ extern String timedate;
 extern String date;
 extern String currentime;
 
+extern int wifiReconnectAttemp;
+extern int mqttReconnectAttemp;
+extern bool fastDisconnectionManagement;
+
 const int DELAY_10 = 10;
 const int DELAY_50 = 50;
 const int DELAY_200 = 200;

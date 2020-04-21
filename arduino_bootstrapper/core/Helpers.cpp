@@ -41,6 +41,10 @@ String timedate = "OFF";
 String date = "OFF";
 String currentime = "OFF";
 
+int wifiReconnectAttemp = 0;
+int mqttReconnectAttemp = 0;
+bool fastDisconnectionManagement = false;
+
 void Helpers::smartPrint(String msg) {
 
   if (PRINT_TO_DISPLAY) {

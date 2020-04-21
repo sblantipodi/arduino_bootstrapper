@@ -43,6 +43,7 @@ class BootstrapManager {
     void getMicrocontrollerInfo(); // print or display microcontroller's info
     void drawInfoPage(String softwareVersion, String author); // draw a page with all the microcontroller's info
     void drawScreenSaver(String txt); // useful for OLED displays
+    int getSignalQuality(); // Get Wifi signal quality
 
 };
 

@@ -37,7 +37,8 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
   Helpers helper;
   
   // how many attemps to MQTT connection
-  int brokermqttcounter = 0;
+  mqttReconnectAttemp = 0;
+
   // Loop until we're reconnected
   while (!mqttClient.connected()) {   
     if (PRINT_TO_DISPLAY) {
@@ -45,7 +46,7 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       display.setTextSize(1);
       display.setCursor(0,0);
     }
-    if (brokermqttcounter <= 20) {
+    if (mqttReconnectAttemp <= 20) {
       helper.smartPrintln(F("Connecting to"));
       helper.smartPrintln(F("MQTT Broker..."));
     }
@@ -68,7 +69,7 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       manageQueueSubscription();
 
       delay(DELAY_2000);
-      brokermqttcounter = 0;
+      mqttReconnectAttemp = 0;
 
       // reset the lastMQTTConnection to off, will be initialized by next time update
       lastMQTTConnection = OFF_CMD;
@@ -76,21 +77,30 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
     } else {
 
       helper.smartPrintln(F("MQTT attempts="));
-      helper.smartPrintln(brokermqttcounter);
+      helper.smartPrintln(mqttReconnectAttemp);
       helper.smartDisplay();
 
-      // after 10 attemps all peripherals are shut down
-      if (brokermqttcounter >= MAX_RECONNECT) {
+      if (wifiReconnectAttemp > 10) {
+        // if fastDisconnectionManagement we need to execute the callback immediately, 
+        // example: power off a watering system can't wait MAX_RECONNECT attemps
+        if (fastDisconnectionManagement) {
+          manageDisconnections();
+        }
+      }
+
+      // after MAX_RECONNECT attemps all peripherals are shut down
+      if (mqttReconnectAttemp >= MAX_RECONNECT) {
         helper.smartPrintln(F("Max retry reached, powering off peripherals."));
         helper.smartDisplay();
         // Manage disconnections, powering off peripherals
         manageDisconnections();
-      } else if (brokermqttcounter > 10000) {
-        brokermqttcounter = 0;
+      } else if (mqttReconnectAttemp > 10000) {
+        mqttReconnectAttemp = 0;
       }
-      brokermqttcounter++;
+      mqttReconnectAttemp++;
       // Wait 500 millis before retrying
-      delay(500);
+      delay(DELAY_500);
+
     }
   }
   

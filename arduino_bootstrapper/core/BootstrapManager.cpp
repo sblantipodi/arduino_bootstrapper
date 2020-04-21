@@ -148,3 +148,7 @@ void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
   display.drawBitmap((((display.width()/2)-(ARDUINOLOGOW/2))), effectiveOffset+175, ARDUINOLOGO, ARDUINOLOGOW, ARDUINOLOGOH, 1);
 
 }
+
+int BootstrapManager::getSignalQuality() {
+  return wifiManager.getQuality();
+}

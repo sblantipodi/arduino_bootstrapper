@@ -37,7 +37,7 @@ class QueueManager {
   public:
 
     void setupMQTTQueue(void (*callback)(char*, byte*, unsigned int));
-    void mqttReconnect(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)());
+    void mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)());
 
 };
 
