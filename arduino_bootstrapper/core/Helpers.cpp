@@ -37,6 +37,10 @@ bool ledTriggered = false;
 int blinkCounter = 0;
 const int blinkTimes = 6; 
 
+String timedate = "OFF";
+String date = "OFF";
+String currentime = "OFF";
+
 void Helpers::smartPrint(String msg) {
 
   if (PRINT_TO_DISPLAY) {
@@ -108,4 +112,11 @@ String Helpers::getValue(String data, char separator, int index) {
 
   return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 
+}
+
+// Set date and time based on a timestamp
+void Helpers::setDateTime(const char* timeConst) {
+  timedate = timeConst;
+  date = timedate.substring(8,10) + "/" + timedate.substring(5,7) + "/" + timedate.substring(0,4);
+  currentime = timedate.substring(11,16);
 }

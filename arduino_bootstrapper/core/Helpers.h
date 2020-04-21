@@ -42,6 +42,10 @@ extern bool ledTriggered;
 extern int blinkCounter;
 extern const int blinkTimes; // 6 equals to 3 blink on and 3 off
 
+extern String timedate;
+extern String date;
+extern String currentime;
+
 const int DELAY_10 = 10;
 const int DELAY_50 = 50;
 const int DELAY_200 = 200;
@@ -106,6 +110,7 @@ class Helpers {
     void smartPrintln(int msg);
     void smartDisplay();
     String getValue(String data, char separator, int index);
+	void setDateTime(const char* timeConst);
 
 };
 
