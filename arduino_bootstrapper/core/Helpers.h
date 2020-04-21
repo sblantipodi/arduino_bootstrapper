@@ -24,6 +24,8 @@
 
 extern String lastMQTTConnection;
 extern String lastWIFiConnection;
+extern String lastBoot;
+
 // Blink LED vars
 extern unsigned long previousMillis;     // will store last time LED was updated
 extern const long interval;           // interval at which to blink (milliseconds)

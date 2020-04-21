@@ -57,6 +57,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
 
 // Blink LED_BUILTIN without bloking delay
 void BootstrapManager::nonBlokingBlink() {
+
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval && ledTriggered) {
     // save the last time you blinked the LED
@@ -70,4 +71,27 @@ void BootstrapManager::nonBlokingBlink() {
       digitalWrite(LED_BUILTIN, HIGH);
     }
   }  
+
+}
+
+void BootstrapManager::printInfo() {
+
+  // Helpers classes
+  Helpers helper;
+  
+  helper.smartPrint(F("Wifi: ")); helper.smartPrint(wifiManager.getQuality()); helper.smartPrintln(F("%")); 
+  helper.smartPrint(F("Heap: ")); helper.smartPrint(ESP.getFreeHeap()/1024); helper.smartPrintln(F(" KB")); 
+  helper.smartPrint(F("Free Flash: ")); helper.smartPrint(ESP.getFreeSketchSpace()/1024); helper.smartPrintln(F(" KB")); 
+  helper.smartPrint(F("Frequency: ")); helper.smartPrint(ESP.getCpuFreqMHz()); helper.smartPrintln(F("MHz")); 
+
+  helper.smartPrint(F("Flash: ")); helper.smartPrint(ESP.getFlashChipSize()/1024); helper.smartPrintln(F(" KB")); 
+  helper.smartPrint(F("Sketch: ")); helper.smartPrint(ESP.getSketchSize()/1024); helper.smartPrintln(F(" KB")); 
+  helper.smartPrint(F("IP: ")); helper.smartPrintln(WiFi.localIP());
+  helper.smartPrintln(F("MAC: ")); helper.smartPrintln(WiFi.macAddress());
+  helper.smartPrint(F("SDK: ")); helper.smartPrintln(ESP.getSdkVersion());
+  helper.smartPrint(F("Arduino Core: ")); helper.smartPrintln(ESP.getCoreVersion());
+  helper.smartPrintln(F("Last Boot: ")); helper.smartPrintln(lastBoot);
+  helper.smartPrintln(F("Last WiFi connection:")); helper.smartPrintln(lastWIFiConnection);
+  helper.smartPrintln(F("Last MQTT connection:")); helper.smartPrintln(lastMQTTConnection);
+
 }

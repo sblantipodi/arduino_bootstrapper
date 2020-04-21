@@ -22,6 +22,7 @@
 
 String lastMQTTConnection = "OFF";
 String lastWIFiConnection = "OFF";
+String lastBoot = " ";
 unsigned long previousMillis = 0;     
 const long interval = 200;           
 bool ledTriggered = false;

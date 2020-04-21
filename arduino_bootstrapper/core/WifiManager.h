@@ -47,6 +47,7 @@ class WifiManager {
   public:
     void setupWiFi(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)());
     void setupOTAUpload();
+    int getQuality();
 
 };
 
