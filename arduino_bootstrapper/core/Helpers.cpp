@@ -31,7 +31,7 @@ int yoffset = 150;
 String haVersion = "";
 String IP = "";
 
-unsigned long previousMillis = 0;     
+long previousMillis = 0;     
 const long interval = 200;           
 bool ledTriggered = false;
 int blinkCounter = 0;

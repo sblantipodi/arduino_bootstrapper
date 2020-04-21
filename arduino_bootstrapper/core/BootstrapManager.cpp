@@ -58,7 +58,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
 // Blink LED_BUILTIN without bloking delay
 void BootstrapManager::nonBlokingBlink() {
 
-  unsigned long currentMillis = millis();
+  long currentMillis = millis();
   if (currentMillis - previousMillis >= interval && ledTriggered) {
     // save the last time you blinked the LED
     previousMillis = currentMillis;

@@ -36,7 +36,7 @@ extern String haVersion;
 extern String IP;
 
 // Blink LED vars
-extern unsigned long previousMillis;     // will store last time LED was updated
+extern long previousMillis;     // will store last time LED was updated
 extern const long interval;           // interval at which to blink (milliseconds)
 extern bool ledTriggered;
 extern int blinkCounter;
