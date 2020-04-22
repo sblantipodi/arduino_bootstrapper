@@ -20,11 +20,6 @@
 #include "BootstrapManager.h"
 
 
-// WifiManager class for Wifi management
-WifiManager wifiManager;
-// QueueManager class for MQTT queue management
-QueueManager queueManager;
-
 /********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
 void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)) {
   // Initialize Wifi manager
@@ -46,12 +41,48 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   }
   
   ArduinoOTA.handle();
+  
+  queueManager.queueLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
 
-  if (!mqttClient.connected()) {
-    queueManager.mqttReconnect(manageDisconnections, manageQueueSubscription, manageHardwareButton);
-  }
+}
 
-  mqttClient.loop();
+/********************************** SEND A SIMPLE MESSAGE ON THE QUEUE **********************************/
+void BootstrapManager::publish(const char *topic, const char *payload, boolean retained) {
+
+  Serial.print("MSG ON THE QUEUE ON TOPIC= "); Serial.println(topic);
+  Serial.println(payload);
+  queueManager.publish(topic, payload, retained); 
+
+}
+
+/********************************** SEND A JSON MESSAGE ON THE QUEUE **********************************/
+void BootstrapManager::publish(const char *topic, JsonObject objectToSend, boolean retained) {
+
+  StaticJsonDocument<BUFFER_SIZE> doc;
+
+  char buffer[measureJson(objectToSend) + 1];
+  serializeJson(objectToSend, buffer, sizeof(buffer));
+
+  Serial.print("MSG ON THE QUEUE ON TOPIC= "); Serial.println(topic);
+  serializeJsonPretty(objectToSend, Serial); Serial.println();
+
+  queueManager.publish(topic, buffer, retained);
+
+}
+
+/********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
+void BootstrapManager::subscribe(const char *topic) {
+
+  Serial.print("TOPIC SUBSCRIBED= "); Serial.println(topic);
+  queueManager.subscribe(topic);
+
+}
+
+// return a new json object instance
+JsonObject BootstrapManager::getJsonObject() {
+
+  JsonObject root = doc.to<JsonObject>();
+  return root;
 
 }
 
@@ -149,6 +180,19 @@ void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
 
 }
 
-int BootstrapManager::getSignalQuality() {
-  return wifiManager.getQuality();
+void BootstrapManager::sendState(const char *topic, JsonObject objectToSend, String version) {
+
+  objectToSend["Whoami"] = WIFI_DEVICE_NAME;  
+  objectToSend["IP"] = IP;
+  objectToSend["MAC"] = MAC;
+  objectToSend["ver"] = version;
+  objectToSend["time"] = timedate;
+  objectToSend["wifi"] = wifiManager.getQuality();
+
+  // publish state only if it has received time from HA
+  if (timedate != OFF_CMD) {
+    // This topic should be retained, we don't want unknown values on battery voltage or wifi signal
+    publish(topic, objectToSend, true);
+  }
+
 }

@@ -20,12 +20,11 @@
 #include "WifiManager.h"
 
 
+WiFiClient espClient;
+
 /********************************** SETUP WIFI *****************************************/
 void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
   
-  // Helpers classes
-  Helpers helper;
-
   wifiReconnectAttemp = 0;
 
   // DPsoftware domotics 
@@ -45,7 +44,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
     display.setCursor(0,0);
   }
   helper.smartPrintln(F("Connecting to: "));
-  helper.smartPrint(ssid); helper.smartPrintln(F("..."));
+  helper.smartPrint(SSID); helper.smartPrintln(F("..."));
   helper.smartDisplay();
  
   delay(DELAY_2000);
@@ -57,14 +56,14 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   WiFi.mode(WIFI_STA);      // Disable AP mode
   //WiFi.setSleepMode(WIFI_NONE_SLEEP);
   WiFi.setAutoConnect(true);  
-  WiFi.config(WifiConfig::arduinoip, WifiConfig::mydns, WifiConfig::mygateway);
+  WiFi.config(IP_MICROCONTROLLER, IP_DNS, IP_GATEWAY);
   WiFi.hostname(WIFI_DEVICE_NAME);
 
   // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
   WiFi.setOutputPower(WIFI_POWER);
   
   // Start wifi connection
-  WiFi.begin(ssid, password);
+  WiFi.begin(SSID, PASSWORD);
 
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -99,6 +98,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 
   helper.smartPrintln(F("WIFI CONNECTED"));
   IP = WiFi.localIP().toString();
+  MAC = WiFi.macAddress();
   helper.smartPrintln(IP);
 
   delay(DELAY_1500);
@@ -117,7 +117,7 @@ void WifiManager::setupOTAUpload() {
   ArduinoOTA.setHostname(WIFI_DEVICE_NAME);
 
   // No authentication by default
-  ArduinoOTA.setPassword((const char *)OTApassword);
+  ArduinoOTA.setPassword((const char *)OTAPASSWORD);
 
   ArduinoOTA.onStart([]() {
     Serial.println(F("Starting"));

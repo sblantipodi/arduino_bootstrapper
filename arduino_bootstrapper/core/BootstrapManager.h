@@ -22,7 +22,6 @@
 
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <PubSubClient.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
@@ -31,19 +30,29 @@
 #include "WifiManager.h"
 #include "QueueManager.h"
 
+
 // Maximum JSON Object Size
 const int BUFFER_SIZE = JSON_OBJECT_SIZE(MAX_JSON_OBJECT_SIZE);
  
 class BootstrapManager {
-  
+
+  private:
+    WifiManager wifiManager; // WifiManager classes for Wifi management
+    QueueManager queueManager; // QueueManager classes for MQTT queue management
+    StaticJsonDocument<BUFFER_SIZE> doc;
+
   public:
     void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)); // bootstrap setup()
     void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // bootstrap loop()
+    void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
+    void publish(const char *topic, JsonObject objectToSend, boolean retained); // send a message on the queue
+    void subscribe(const char *topic); // subscribe to a queue topic
+    JsonObject getJsonObject(); // return a new json object instance
     void nonBlokingBlink(); // blink default LED when sending data to the queue
     void getMicrocontrollerInfo(); // print or display microcontroller's info
     void drawInfoPage(String softwareVersion, String author); // draw a page with all the microcontroller's info
     void drawScreenSaver(String txt); // useful for OLED displays
-    int getSignalQuality(); // Get Wifi signal quality
+    void sendState(const char *topic, JsonObject objectToSend, String version); // send microcontroller's info on the queue 
 
 };
 

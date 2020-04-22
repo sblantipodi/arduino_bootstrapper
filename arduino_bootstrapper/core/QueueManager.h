@@ -20,25 +20,22 @@
 #ifndef _DPSOFTWARE_QUEUE_MANAGER_H
 #define _DPSOFTWARE_QUEUE_MANAGER_H
 
-#include <Arduino.h>
 #include <PubSubClient.h>
-#include <SPI.h>
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
-#include "Helpers.h"
-#include "../../include/Secrets.h"
-#include "../../include/Configuration.h"
+#include "WifiManager.h"
 
 
-extern PubSubClient mqttClient;
- 
 class QueueManager {
-  
+
+  private:
+    Helpers helper;
+
   public:
-
-    void setupMQTTQueue(void (*callback)(char*, byte*, unsigned int));
-    void mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)());
-
+    void setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)); // setup the queue
+    void mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // manage reconnection on the queue
+    void queueLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // manage queue loop 
+    void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
+    void subscribe(const char *topic); // subscribe to a queue topic
+ 
 };
 
 #endif

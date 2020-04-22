@@ -34,6 +34,7 @@ extern int yoffset;
 
 extern String haVersion;
 extern String IP;
+extern String MAC;
 
 // Blink LED vars
 extern long previousMillis;     // will store last time LED was updated

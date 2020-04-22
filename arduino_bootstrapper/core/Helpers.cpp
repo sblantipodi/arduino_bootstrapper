@@ -30,6 +30,7 @@ bool lastPageScrollTriggered = false;
 int yoffset = 150;
 String haVersion = "";
 String IP = "";
+String MAC = "";
 
 long previousMillis = 0;     
 const long interval = 200;           
