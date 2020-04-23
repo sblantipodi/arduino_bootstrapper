@@ -35,7 +35,8 @@ BootstrapManager bootstrapManager;
 
 
 /************* MQTT TOPICS **************************/
-const char* smartostat_sensor_state_topic = "tele/smartostat/SENSOR";
+const char* CHANGE_ME_TOPIC = "tele/changeme/CHANGEME";
+const char* CHANGE_ME_JSON_TOPIC = "tele/changeme/CHANGEME_JSON";
 
 
 /********************************** FUNCTION DECLARATION (NEEDED BY PLATFORMIO WHILE COMPILING CPP FILES) *****************************************/

@@ -23,7 +23,7 @@
 #include <ESP8266WiFi.h>
 #include <Adafruit_SSD1306.h>
 
-#define DEBUG_QUEUE_MSG false
+#define DEBUG_QUEUE_MSG true
 
 const String AUTHOR = "DPsoftware";
 
