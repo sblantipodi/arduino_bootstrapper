@@ -126,6 +126,7 @@ void Helpers::setDateTime(const char* timeConst) {
   currentime = timedate.substring(11,16);
 }
 
-char* isOnOff(JsonObject json) {
-
+// Return ON OFF value
+const char* Helpers::isOnOff(StaticJsonDocument<BUFFER_SIZE> json) {
+  return (strcmp(json[VALUE], ON_CMD) == 0) ? ON_CMD : OFF_CMD;
 }

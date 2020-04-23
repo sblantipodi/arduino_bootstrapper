@@ -91,22 +91,21 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byt
   }
 
   char message[length + 1];
-  for (int i = 0; i < length; i++) {
+  for (unsigned int i = 0; i < length; i++) {
     message[i] = (char)payload[i];
   }
   message[length] = '\0';
-        // Serial.println(message);
 
-  DeserializationError error = deserializeJson(doc, payload, length);
+  DeserializationError error = deserializeJson(doc, payload);
 
   // non json msg
   if (error) {
     JsonObject root = getJsonObject();
     root[VALUE] = message;
     String msg = root[VALUE];
-    // if (DEBUG_QUEUE_MSG) {
-      // Serial.println(msg);
-    // }  
+    if (DEBUG_QUEUE_MSG) {
+      Serial.println(msg);
+    }  
     return root;
   } else { // return json doc
     if (DEBUG_QUEUE_MSG) {

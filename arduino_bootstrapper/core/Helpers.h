@@ -24,6 +24,9 @@
 #include "../../include/Configuration.h"
 
 
+// Maximum JSON Object Size
+const int BUFFER_SIZE = JSON_OBJECT_SIZE(MAX_JSON_OBJECT_SIZE);
+
 extern String lastMQTTConnection;
 extern String lastWIFiConnection;
 extern String lastBoot;
@@ -118,7 +121,7 @@ class Helpers {
     void smartDisplay();
     String getValue(String data, char separator, int index);
 	void setDateTime(const char* timeConst);
-	char* isOnOff(JsonObject json);
+	const char* isOnOff(StaticJsonDocument<BUFFER_SIZE> json);
 
 };
 
