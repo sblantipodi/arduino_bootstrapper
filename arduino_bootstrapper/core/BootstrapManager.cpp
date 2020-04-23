@@ -49,7 +49,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
 /********************************** SEND A SIMPLE MESSAGE ON THE QUEUE **********************************/
 void BootstrapManager::publish(const char *topic, const char *payload, boolean retained) {
 
-  Serial.print(F("QUEUE MSG SENT [")); Serial.println(topic); Serial.println(F("] "));
+  Serial.print(F("QUEUE MSG SENT [")); Serial.print(topic); Serial.println(F("] "));
   Serial.println(payload);
   queueManager.publish(topic, payload, retained); 
 
