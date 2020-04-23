@@ -18,25 +18,12 @@
   If not, see <https://opensource.org/licenses/MIT/>.
 */
 
-#include "Configuration.h"
-
-// Initialize the display
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); 
 #include "ChangeName.h"
 
 void setup() {
 
   Serial.begin(SERIAL_RATE);
-  Serial.print("setup");
-  // LED_BUILTIN
-  pinMode(LED_BUILTIN, OUTPUT);
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;); // Don't proceed, loop forever
-  }
-  display.setTextColor(WHITE);
-  // Bootsrap setup() with Wifi and MQTT functions
+
   bootstrapManager.bootstrapSetup(manageDisconnections, manageHardwareButton, callback);
 
   // ENTER YOUR CODE HERE

@@ -49,7 +49,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
 /********************************** SEND A SIMPLE MESSAGE ON THE QUEUE **********************************/
 void BootstrapManager::publish(const char *topic, const char *payload, boolean retained) {
 
-  Serial.print("MSG ON THE QUEUE ON TOPIC= "); Serial.println(topic);
+  Serial.print(F("QUEUE MSG SENT [")); Serial.println(topic); Serial.println(F("] "));
   Serial.println(payload);
   queueManager.publish(topic, payload, retained); 
 
@@ -58,12 +58,10 @@ void BootstrapManager::publish(const char *topic, const char *payload, boolean r
 /********************************** SEND A JSON MESSAGE ON THE QUEUE **********************************/
 void BootstrapManager::publish(const char *topic, JsonObject objectToSend, boolean retained) {
 
-  StaticJsonDocument<BUFFER_SIZE> doc;
-
   char buffer[measureJson(objectToSend) + 1];
   serializeJson(objectToSend, buffer, sizeof(buffer));
 
-  Serial.print("MSG ON THE QUEUE ON TOPIC= "); Serial.println(topic);
+  Serial.print(F("QUEUE MSG SENT [")); Serial.print(topic); Serial.println(F("] "));
   serializeJsonPretty(objectToSend, Serial); Serial.println();
 
   queueManager.publish(topic, buffer, retained);
@@ -73,8 +71,25 @@ void BootstrapManager::publish(const char *topic, JsonObject objectToSend, boole
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
 void BootstrapManager::subscribe(const char *topic) {
 
-  Serial.print("TOPIC SUBSCRIBED= "); Serial.println(topic);
+  Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));
   queueManager.subscribe(topic);
+
+}
+
+/********************************** PRINT THE MESSAGE ARRIVING FROM THE QUEUE **********************************/
+StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byte* payload, unsigned int length) {
+    
+  Serial.print(F("QUEUE MSG ARRIVED [")); Serial.print(topic); Serial.println(F("] "));
+  DeserializationError error = deserializeJson(doc, payload, length);
+
+  // non json msg
+  if (error) {
+    doc[VALUE] = payload;
+    return doc;
+  } else { // return json doc
+    serializeJsonPretty(doc, Serial); Serial.println();
+    return doc;
+  }
 
 }
 

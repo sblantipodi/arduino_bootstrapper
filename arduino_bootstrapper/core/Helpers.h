@@ -64,6 +64,7 @@ const int DELAY_5000 = 5000;
 
 const char* const ON_CMD = "ON";
 const char* const OFF_CMD = "OFF";
+const String VALUE = "value";
 
 // 'arduino', 45x31px
 const unsigned char ARDUINOLOGO [] PROGMEM = {

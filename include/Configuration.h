@@ -27,7 +27,7 @@
 // Serial rate for debug
 #define SERIAL_RATE 115200
 // Specify if you want to use a display or only Serial
-const bool PRINT_TO_DISPLAY = true;
+const bool PRINT_TO_DISPLAY = false;
 // Display specs
 #define OLED_RESET LED_BUILTIN // Pin used for integrated D1 Mini blue LED
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
