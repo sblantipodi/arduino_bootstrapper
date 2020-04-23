@@ -49,8 +49,10 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
 /********************************** SEND A SIMPLE MESSAGE ON THE QUEUE **********************************/
 void BootstrapManager::publish(const char *topic, const char *payload, boolean retained) {
 
-  Serial.print(F("QUEUE MSG SENT [")); Serial.print(topic); Serial.println(F("] "));
-  Serial.println(payload);
+  if (DEBUG_QUEUE_MSG) {
+    Serial.print(F("QUEUE MSG SENT [")); Serial.print(topic); Serial.println(F("] "));
+    Serial.println(payload);
+  }
   queueManager.publish(topic, payload, retained); 
 
 }
@@ -61,33 +63,55 @@ void BootstrapManager::publish(const char *topic, JsonObject objectToSend, boole
   char buffer[measureJson(objectToSend) + 1];
   serializeJson(objectToSend, buffer, sizeof(buffer));
 
-  Serial.print(F("QUEUE MSG SENT [")); Serial.print(topic); Serial.println(F("] "));
-  serializeJsonPretty(objectToSend, Serial); Serial.println();
-
   queueManager.publish(topic, buffer, retained);
+
+  if (DEBUG_QUEUE_MSG) {
+    Serial.print(F("QUEUE MSG SENT [")); Serial.print(topic); Serial.println(F("] "));
+    serializeJsonPretty(objectToSend, Serial); Serial.println();
+  }
 
 }
 
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
 void BootstrapManager::subscribe(const char *topic) {
-
-  Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));
+  
   queueManager.subscribe(topic);
+  
+  if (DEBUG_QUEUE_MSG) {
+    Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));  
+  }
 
 }
 
 /********************************** PRINT THE MESSAGE ARRIVING FROM THE QUEUE **********************************/
 StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byte* payload, unsigned int length) {
-    
-  Serial.print(F("QUEUE MSG ARRIVED [")); Serial.print(topic); Serial.println(F("] "));
+  
+  if (DEBUG_QUEUE_MSG) {
+    Serial.print(F("QUEUE MSG ARRIVED [")); Serial.print(topic); Serial.println(F("] "));
+  }
+
+  char message[length + 1];
+  for (int i = 0; i < length; i++) {
+    message[i] = (char)payload[i];
+  }
+  message[length] = '\0';
+        // Serial.println(message);
+
   DeserializationError error = deserializeJson(doc, payload, length);
 
   // non json msg
   if (error) {
-    doc[VALUE] = payload;
-    return doc;
+    JsonObject root = getJsonObject();
+    root[VALUE] = message;
+    String msg = root[VALUE];
+    // if (DEBUG_QUEUE_MSG) {
+      // Serial.println(msg);
+    // }  
+    return root;
   } else { // return json doc
-    serializeJsonPretty(doc, Serial); Serial.println();
+    if (DEBUG_QUEUE_MSG) {
+      serializeJsonPretty(doc, Serial); Serial.println();
+    }
     return doc;
   }
 
@@ -96,8 +120,7 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byt
 // return a new json object instance
 JsonObject BootstrapManager::getJsonObject() {
 
-  JsonObject root = doc.to<JsonObject>();
-  return root;
+  return doc.to<JsonObject>();
 
 }
 

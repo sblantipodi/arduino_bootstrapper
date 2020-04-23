@@ -23,6 +23,9 @@
 #include <ESP8266WiFi.h>
 #include <Adafruit_SSD1306.h>
 
+#define DEBUG_QUEUE_MSG false
+
+const String AUTHOR = "DPsoftware";
 
 // Serial rate for debug
 #define SERIAL_RATE 115200

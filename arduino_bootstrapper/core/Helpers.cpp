@@ -125,3 +125,7 @@ void Helpers::setDateTime(const char* timeConst) {
   date = timedate.substring(8,10) + "/" + timedate.substring(5,7) + "/" + timedate.substring(0,4);
   currentime = timedate.substring(11,16);
 }
+
+char* isOnOff(JsonObject json) {
+
+}

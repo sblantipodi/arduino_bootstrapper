@@ -20,6 +20,7 @@
 #ifndef _DPSOFTWARE_HELPERS_UTILS_H
 #define _DPSOFTWARE_HELPERS_UTILS_H
 
+#include <ArduinoJson.h>
 #include "../../include/Configuration.h"
 
 
@@ -117,6 +118,7 @@ class Helpers {
     void smartDisplay();
     String getValue(String data, char separator, int index);
 	void setDateTime(const char* timeConst);
+	char* isOnOff(JsonObject json);
 
 };
 
