@@ -66,10 +66,10 @@ const int DELAY_2000 = 2000;
 const int DELAY_4000 = 4000;
 const int DELAY_5000 = 5000;
 
-const char* const ON_CMD = "ON";
-const char* const OFF_CMD = "OFF";
-const char* const on_CMD = "on";
-const char* const off_CMD = "off";
+const String ON_CMD = "ON";
+const String OFF_CMD = "OFF";
+const String on_CMD = "on";
+const String off_CMD = "off";
 const String VALUE = "value";
 
 // 'arduino', 45x31px
@@ -122,8 +122,10 @@ class Helpers {
     void smartPrintln(int msg);
     void smartDisplay();
     String getValue(String data, char separator, int index);
-	void setDateTime(const char* timeConst);
-	const char* isOnOff(StaticJsonDocument<BUFFER_SIZE> json);
+	String getValue(String string);
+	char* string2char(const String command);
+	void setDateTime(String timeConst);
+	String isOnOff(StaticJsonDocument<BUFFER_SIZE> json);
 
 };
 

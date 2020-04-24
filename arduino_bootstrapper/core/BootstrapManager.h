@@ -36,15 +36,16 @@ class BootstrapManager {
   private:
     WifiManager wifiManager; // WifiManager classes for Wifi management
     QueueManager queueManager; // QueueManager classes for MQTT queue management
-    StaticJsonDocument<BUFFER_SIZE> doc;
 
   public:
+    StaticJsonDocument<BUFFER_SIZE> jsonDoc;
+    // using JsonDocument = StaticJsonDocument<BUFFER_SIZE>;
+    StaticJsonDocument<BUFFER_SIZE> parseQueueMsg(char* topic, byte* payload, unsigned int length); // print the message arriving from the queue
     void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)); // bootstrap setup()
     void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // bootstrap loop()
     void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
     void publish(const char *topic, JsonObject objectToSend, boolean retained); // send a message on the queue
-    void subscribe(const char *topic); // subscribe to a queue topic
-    StaticJsonDocument<BUFFER_SIZE> parseQueueMsg(char* topic, byte* payload, unsigned int length); // print the message arriving from the queue
+    void subscribe(const char *topic); // subscribe to a queue topic    
     JsonObject getJsonObject(); // return a new json object instance
     void nonBlokingBlink(); // blink default LED when sending data to the queue
     void getMicrocontrollerInfo(); // print or display microcontroller's info

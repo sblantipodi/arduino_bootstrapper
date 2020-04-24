@@ -86,6 +86,8 @@ void BootstrapManager::subscribe(const char *topic) {
 /********************************** PRINT THE MESSAGE ARRIVING FROM THE QUEUE **********************************/
 StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byte* payload, unsigned int length) {
   
+  // JsonDocument jsonDoc;
+  
   if (DEBUG_QUEUE_MSG) {
     Serial.print(F("QUEUE MSG ARRIVED [")); Serial.print(topic); Serial.println(F("] "));
   }
@@ -96,22 +98,22 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byt
   }
   message[length] = '\0';
 
-  DeserializationError error = deserializeJson(doc, payload);
+  DeserializationError error = deserializeJson(jsonDoc, payload);
 
   // non json msg
-  if (error) {
-    JsonObject root = getJsonObject();
+  if (error) {    
+    JsonObject root = jsonDoc.to<JsonObject>();
     root[VALUE] = message;
-    String msg = root[VALUE];
     if (DEBUG_QUEUE_MSG) {
+      String msg = root[VALUE];
       Serial.println(msg);
     }  
-    return root;
+    return jsonDoc;
   } else { // return json doc
     if (DEBUG_QUEUE_MSG) {
-      serializeJsonPretty(doc, Serial); Serial.println();
+      serializeJsonPretty(jsonDoc, Serial); Serial.println();
     }
-    return doc;
+    return jsonDoc;
   }
 
 }
@@ -119,8 +121,9 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byt
 // return a new json object instance
 JsonObject BootstrapManager::getJsonObject() {
 
-  return doc.to<JsonObject>();
-
+  // JsonDocument jsonDoc;
+  return jsonDoc.to<JsonObject>();
+  
 }
 
 // Blink LED_BUILTIN without bloking delay
