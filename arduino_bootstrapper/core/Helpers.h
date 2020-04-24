@@ -68,6 +68,8 @@ const int DELAY_5000 = 5000;
 
 const char* const ON_CMD = "ON";
 const char* const OFF_CMD = "OFF";
+const char* const on_CMD = "on";
+const char* const off_CMD = "off";
 const String VALUE = "value";
 
 // 'arduino', 45x31px

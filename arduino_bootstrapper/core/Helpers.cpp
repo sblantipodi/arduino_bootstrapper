@@ -128,5 +128,5 @@ void Helpers::setDateTime(const char* timeConst) {
 
 // Return ON OFF value
 const char* Helpers::isOnOff(StaticJsonDocument<BUFFER_SIZE> json) {
-  return (strcmp(json[VALUE], ON_CMD) == 0) ? ON_CMD : OFF_CMD;
+  return ((strcmp(json[VALUE], ON_CMD) == 0) || (strcmp(json[VALUE], on_CMD) == 0)) ? ON_CMD : OFF_CMD;
 }
