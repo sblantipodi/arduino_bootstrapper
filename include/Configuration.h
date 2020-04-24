@@ -55,9 +55,9 @@ const char* const MQTT_SERVER = "192.168.1.3";
 // MQTT server port
 const int MQTT_PORT = 1883;
 // Maximum number of reconnection (WiFi/MQTT) attemp before powering off peripherals
-#define MAX_RECONNECT 50
+#define MAX_RECONNECT 500
 // Maximum JSON Object Size
-#define MAX_JSON_OBJECT_SIZE 20
+#define MAX_JSON_OBJECT_SIZE 50
 
 #endif
 
