@@ -71,6 +71,7 @@ const String OFF_CMD = "OFF";
 const String on_CMD = "on";
 const String off_CMD = "off";
 const String VALUE = "value";
+const String EMPTY_STR = "";
 
 // 'arduino', 45x31px
 const unsigned char ARDUINOLOGO [] PROGMEM = {
