@@ -50,6 +50,7 @@ extern const int blinkTimes; // 6 equals to 3 blink on and 3 off
 extern String timedate;
 extern String date;
 extern String currentime;
+extern String ERROR;
 
 extern int wifiReconnectAttemp;
 extern int mqttReconnectAttemp;

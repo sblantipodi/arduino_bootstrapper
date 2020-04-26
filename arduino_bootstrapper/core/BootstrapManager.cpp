@@ -85,9 +85,7 @@ void BootstrapManager::subscribe(const char *topic) {
 
 /********************************** PRINT THE MESSAGE ARRIVING FROM THE QUEUE **********************************/
 StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byte* payload, unsigned int length) {
-  
-  // JsonDocument jsonDoc;
-  
+    
   if (DEBUG_QUEUE_MSG) {
     Serial.print(F("QUEUE MSG ARRIVED [")); Serial.print(topic); Serial.println(F("] "));
   }
@@ -121,7 +119,6 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byt
 // return a new json object instance
 JsonObject BootstrapManager::getJsonObject() {
 
-  // JsonDocument jsonDoc;
   return jsonDoc.to<JsonObject>();
   
 }
@@ -189,6 +186,7 @@ void BootstrapManager::drawScreenSaver(String txt) {
 
 }
 
+// draw some infos about your controller
 void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
 
   yoffset -= 1;
@@ -220,6 +218,7 @@ void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
 
 }
 
+// send the state of your controller to the mqtt queue
 void BootstrapManager::sendState(const char *topic, JsonObject objectToSend, String version) {
 
   objectToSend["Whoami"] = WIFI_DEVICE_NAME;  
@@ -234,5 +233,76 @@ void BootstrapManager::sendState(const char *topic, JsonObject objectToSend, Str
     // This topic should be retained, we don't want unknown values on battery voltage or wifi signal
     publish(topic, objectToSend, true);
   }
+
+}
+
+// write json file to storage
+void BootstrapManager::writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename) {
+  
+  if (SPIFFS.begin()) {
+    Serial.println(F("\nSaving config.json\n"));
+    // SPIFFS.format();
+    File configFile = SPIFFS.open("/"+filename, "w");
+    if (!configFile) {
+      Serial.println(F("Failed to open config file for writing"));
+    }
+    serializeJsonPretty(jsonDoc, Serial);
+    serializeJson(jsonDoc, configFile);
+    configFile.close();
+    Serial.println(F("\nConfig saved\n"));
+  } else {
+    Serial.println(F("Failed to mount FS for write"));
+  }
+
+}
+
+// read json file from storage
+DynamicJsonDocument BootstrapManager::readSPIFFS(DynamicJsonDocument jsonDoc, String filename) {
+
+  // Helpers classes
+  Helpers helper;
+
+  if (PRINT_TO_DISPLAY) {
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.setTextSize(1);
+  }
+  helper.smartPrintln(F("Mounting SPIFSS..."));
+  helper.smartDisplay();
+  // SPIFFS.remove("/config.json");
+  if (SPIFFS.begin()) {
+    helper.smartPrintln(F("FS mounted"));
+    if (SPIFFS.exists("/" + filename)) {
+      //file exists, reading and loading
+      helper.smartPrintln("Reading " + filename + " file...");
+      File configFile = SPIFFS.open("/" + filename, "r");
+      if (configFile) {
+        helper.smartPrintln(F("Config OK"));
+        size_t size = configFile.size();
+        // Allocate a buffer to store contents of the file.
+        std::unique_ptr<char[]> buf(new char[size]);
+
+        configFile.readBytes(buf.get(), size);
+        DeserializationError deserializeError = deserializeJson(jsonDoc, buf.get());
+        Serial.println("\nReading " + filename);
+        serializeJsonPretty(jsonDoc, Serial);
+        if (!deserializeError) {
+          helper.smartPrintln(F("JSON parsed"));
+        } else {
+          jsonDoc[VALUE] = ERROR;
+          helper.smartPrintln(F("Failed to load json file"));
+        }
+      } 
+    } else {
+      jsonDoc[VALUE] = ERROR;
+      helper.smartPrintln("Error reading " + filename + " file...");
+    }
+  } else {
+    jsonDoc[VALUE] = ERROR;
+    helper.smartPrintln(F("failed to mount FS"));
+  }
+  helper.smartDisplay();
+  delay(DELAY_4000);
+  return jsonDoc;
 
 }

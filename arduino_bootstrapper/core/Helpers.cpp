@@ -41,6 +41,7 @@ const int blinkTimes = 6;
 String timedate = "OFF";
 String date = "OFF";
 String currentime = "OFF";
+String ERROR = "ERROR";
 
 int wifiReconnectAttemp = 0;
 int mqttReconnectAttemp = 0;

@@ -52,6 +52,8 @@ class BootstrapManager {
     void drawInfoPage(String softwareVersion, String author); // draw a page with all the microcontroller's info
     void drawScreenSaver(String txt); // useful for OLED displays
     void sendState(const char *topic, JsonObject objectToSend, String version); // send microcontroller's info on the queue 
+    void writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
+    DynamicJsonDocument readSPIFFS(DynamicJsonDocument jsonDoc, String filename); // read json file from storage
 
 };
 
