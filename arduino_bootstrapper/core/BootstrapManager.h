@@ -46,6 +46,7 @@ class BootstrapManager {
     void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
     void publish(const char *topic, JsonObject objectToSend, boolean retained); // send a message on the queue
     void subscribe(const char *topic); // subscribe to a queue topic    
+    void subscribe(const char *topic, uint8_t qos); // subscribe to a queue topic with qos 0 or 1   
     JsonObject getJsonObject(); // return a new json object instance
     void nonBlokingBlink(); // blink default LED when sending data to the queue
     void getMicrocontrollerInfo(); // print or display microcontroller's info

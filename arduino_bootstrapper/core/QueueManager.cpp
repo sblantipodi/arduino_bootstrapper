@@ -127,3 +127,10 @@ void QueueManager::subscribe(const char *topic) {
 
 }
 
+/********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
+void QueueManager::subscribe(const char *topic, uint8_t qos) {
+
+  mqttClient.subscribe(topic, qos);
+
+}
+

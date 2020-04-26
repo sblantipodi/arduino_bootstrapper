@@ -83,6 +83,17 @@ void BootstrapManager::subscribe(const char *topic) {
 
 }
 
+/********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
+void BootstrapManager::subscribe(const char *topic, uint8_t qos) {
+  
+  queueManager.subscribe(topic, qos);
+  
+  if (DEBUG_QUEUE_MSG) {
+    Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));  
+  }
+
+}
+
 /********************************** PRINT THE MESSAGE ARRIVING FROM THE QUEUE **********************************/
 StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byte* payload, unsigned int length) {
     

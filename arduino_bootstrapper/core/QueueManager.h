@@ -35,6 +35,7 @@ class QueueManager {
     void queueLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // manage queue loop 
     void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
     void subscribe(const char *topic); // subscribe to a queue topic
+    void subscribe(const char *topic, uint8_t qos); // subscribe to a queue topic with qos 0 or 1
  
 };
 
