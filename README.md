@@ -93,7 +93,7 @@ Copy and configure `~/arduino_bootstrapper/include/Configuration.cpp` into your 
   
 Please include BootrapManager.h into your main header file:
 ```c++
-#include "../arduino_bootstrapper/core/BootstrapManager.h"
+#include "BootstrapManager.h"
 ```
 and initialize the BootstrapManager class:
 ```
