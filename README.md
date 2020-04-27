@@ -17,6 +17,9 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 ## Credits
 - Davide Perini
 
+## How to get help if you are stuck?
+Open an issue here on Github, your questions could be useful to other users.
+
 ## How To
 There is two way to bootstrap your software using this utilities.
 1) Start a project from scratch
