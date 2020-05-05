@@ -1,0 +1,32 @@
+name: PlatformIO CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install platformio
+        python --version
+    - name: Install submodules 
+      run: |        
+        pwd
+        git submodule update --init
+        ls
+        sed -i 's,^lib_extra_dirs =.*$,lib_extra_dirs = /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/arduino_bootstrapper/arduino_bootstrapper,' platformio.ini
+        cat platformio.ini
+    - name: Run PlatformIO
+      run: platformio run 
+    - name: Creating artifact from BIN file
+      uses: actions/upload-artifact@v1
+      with:
+        name: firmware_build_artifact_arduino_bootstrapper.bin
+        path: .pio/build/arduino_bootstrapper/firmware.bin
