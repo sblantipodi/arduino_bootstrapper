@@ -26,7 +26,7 @@
 
 language: c++
 python:
-    - "2.7"
+    - "3.7"
 
 sudo: false
 cache:
