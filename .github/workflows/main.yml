@@ -24,7 +24,7 @@ jobs:
         sed -i 's,^lib_extra_dirs =.*$,lib_extra_dirs = /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/arduino_bootstrapper/arduino_bootstrapper,' platformio.ini
         cat platformio.ini
     - name: Run PlatformIO
-      run: platformio run 
+      run: platformio run -e bootstrapper
     - name: Creating artifact from BIN file
       uses: actions/upload-artifact@v1
       with:
