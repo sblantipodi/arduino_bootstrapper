@@ -4,6 +4,7 @@ Utility classes for bootstrapping arduino projects with Wifi management, OTA upl
 MQTT and queue management.  
 _Written for Arduino IDE and PlatformIO._
 
+![PlatformIO CI](https://github.com/sblantipodi/arduino_bootstrapper/workflows/PlatformIO%20CI/badge.svg)
 [![GitHub version](https://img.shields.io/github/v/release/sblantipodi/arduino_bootstrapper.svg)](https://img.shields.io/github/v/release/sblantipodi/arduino_bootstrapper.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/sblantipodi/arduino_bootstrapper/graphs/commit-activity)
