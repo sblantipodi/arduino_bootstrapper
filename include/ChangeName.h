@@ -21,7 +21,6 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <Version.h>
 #include "Configuration.h"
 #include "../arduino_bootstrapper/core/BootstrapManager.h"
 
