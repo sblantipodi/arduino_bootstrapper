@@ -29,4 +29,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: firmware_build_artifact_arduino_bootstrapper.bin
-        path: .pio/build/arduino_bootstrapper/firmware.bin
+        path: .pio/build/bootstrapper/firmware.bin
