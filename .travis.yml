@@ -38,5 +38,5 @@ install:
     - sudo platformio update
 
 script:
-    - sudo platformio ci --project-conf=platoformio.ini
+    - sudo platformio ci --project-conf=platformio.ini
     - sudo platformio run
