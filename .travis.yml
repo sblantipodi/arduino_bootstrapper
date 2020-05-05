@@ -38,7 +38,7 @@ install:
     - sudo platformio update
 
 script:
-    - platformio run
+    - sudo platformio run
 
 
 #
