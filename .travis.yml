@@ -34,8 +34,8 @@ cache:
         - "~/.platformio"
 
 install:
-    - pip install -U platformio
-    - platformio update
+    - sudo pip install -U platformio
+    - sudo platformio update
 
 script:
     - platformio run
