@@ -21,6 +21,8 @@ jobs:
         pwd
         git submodule update --init
         ls
+    - name: Set lib extra dirs for CI
+      run: |        
         sed -i 's,^lib_extra_dirs =.*$,lib_extra_dirs = /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/arduino_bootstrapper,' platformio.ini
         cat platformio.ini
     - name: Run PlatformIO
