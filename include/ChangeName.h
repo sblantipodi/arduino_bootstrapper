@@ -22,7 +22,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include "Configuration.h"
-#include "../arduino_bootstrapper/core/BootstrapManager.h"
+#include "BootstrapManager.h"
 
 
 /****************** BOOTSTRAP MANAGER ******************/
