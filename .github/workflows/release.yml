@@ -28,6 +28,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             Changes in this Release
-            ${{ commitmsg }}
+            echo $commitmsg
           draft: false
           prerelease: false        
