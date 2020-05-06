@@ -122,5 +122,17 @@ This project uses symlinks, Windows does not enable symlinks by default, to enab
 export MSYS=winsymlinks:nativestrict
 ```
 
+#### Continuous Integrations
+This project supports CI via GitHub Actions.
+In the `.github/workflows` folder there are two workflows
+ - one for automatic release that is triggered when a git tag is pushed
+ - one for building the project and creating the artifact (binary firmware)
+If you use this syntax:
+```
+git tag -a v1.0.0 -m "your commit msg";
+git push origin --tags;
+```
+text in the commit message will be the description of your release.
+
 ## License
 This program is licensed under MIT License
