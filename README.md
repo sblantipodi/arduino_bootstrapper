@@ -122,7 +122,7 @@ This project uses symlinks, Windows does not enable symlinks by default, to enab
 export MSYS=winsymlinks:nativestrict
 ```
 
-#### Continuous Integrations
+## Continuous Integrations
 This project supports CI via GitHub Actions.
 In the `.github/workflows` folder there are two workflows
  - one for automatic release that is triggered when a git tag is pushed
