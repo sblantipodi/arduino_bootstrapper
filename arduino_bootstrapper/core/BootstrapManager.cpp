@@ -334,10 +334,10 @@ bool BootstrapManager::isWifiConfigured() {
     return true;
   } else {
     // DynamicJsonDocument mydoc(1024);
-    DynamicJsonDocument mydoc = readSPIFFS("setup.json");
-    String prova = mydoc["qsid"];
+    DynamicJsonDocument mydoc = readSPIFFS("setup.json");    
     if (mydoc.containsKey("qsid")) {
       Serial.println("VALUE OK");
+      String prova = mydoc["qsid"];
       return true;
     } else {
       Serial.println("No setup file");
