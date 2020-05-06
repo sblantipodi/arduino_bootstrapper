@@ -38,13 +38,13 @@ jobs:
         name: firmware_build_artifact_arduino_bootstrapper.bin
         path: .pio/build/bootstrapper/firmware.bin
 
-on:
-  push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+# on:
+#   push:
+#     # Sequence of patterns matched against refs/tags
+#     tags:
+#       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
-name: Create Release
+# name: Create Release
 
 # jobs:
 #   build:
