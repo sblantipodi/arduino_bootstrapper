@@ -28,5 +28,5 @@ jobs:
           body: |
             Changes in this Release
             ${{ env.commitmsg }}
-          draft: true
+          draft: false
           prerelease: false        
