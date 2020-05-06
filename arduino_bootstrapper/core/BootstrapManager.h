@@ -30,7 +30,7 @@
 #include "WifiManager.h"
 #include "QueueManager.h"
 
- 
+
 class BootstrapManager {
 
   private:
@@ -54,7 +54,7 @@ class BootstrapManager {
     void drawScreenSaver(String txt); // useful for OLED displays
     void sendState(const char *topic, JsonObject objectToSend, String version); // send microcontroller's info on the queue 
     void writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
-    DynamicJsonDocument readSPIFFS(DynamicJsonDocument jsonDoc, String filename); // read json file from storage
+    DynamicJsonDocument readSPIFFS(String filename); // read json file from storage
     bool isWifiConfigured(); // check if wifi is correctly configured
     void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
 

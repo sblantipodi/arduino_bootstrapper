@@ -20,7 +20,17 @@
 #include "WifiManager.h"
 
 
+//Establishing Local server at port 80 whenever required
+ESP8266WebServer server(80);
+// WiFiClient
 WiFiClient espClient;
+// WebServer content
+String content;
+// WebServer status code
+int statusCode;
+// WebServer HTML frontend
+String htmlString;
+
 
 /********************************** SETUP WIFI *****************************************/
 void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
@@ -161,13 +171,161 @@ int WifiManager::getQuality() {
 
 // check if wifi is correctly configured
 bool WifiManager::isWifiConfigured() {
-  if ((SSID.size() > 0) && !(strcmp(SSID, "XXX") != 0)) {
+
+  if (strcmp(SSID, "XXX") != 0) {
     return true;
   }
   return false;
+
 }
 
 // if no ssid available, launch web server to get config params via browser
 void WifiManager::launchWebServerForOTAConfig() {
+  
+  WiFi.disconnect();
+  Serial.println("Turning the HotSpot On");
+  launchWeb();
+  setupAP();
+  
+  while ((WiFi.status() != WL_CONNECTED)) {
+    Serial.print(".");
+    delay(100);
+    server.handleClient();
+  }
+  
+}
 
+void WifiManager::launchWeb() {
+
+  Serial.println("");
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("WiFi connected");
+  }    
+  Serial.print("Local IP: ");
+  Serial.println(WiFi.localIP());
+  Serial.print("SoftAP IP: ");
+  Serial.println(WiFi.softAPIP());
+  createWebServer();
+  server.begin();
+  Serial.println("Server started");
+
+}
+
+void WifiManager::setupAP(void) {
+
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  delay(DELAY_200);
+  int n = WiFi.scanNetworks();
+  Serial.println("scan done");
+  if (n == 0) {
+    Serial.println("no networks found");
+  } else {
+    Serial.print(n);
+    Serial.println(" networks found");
+    for (int i = 0; i < n; ++i) {
+      // Print SSID and RSSI for each network found
+      Serial.print(i + 1);
+      Serial.print(": ");
+      Serial.print(WiFi.SSID(i));
+      Serial.print(" (");
+      Serial.print(WiFi.RSSI(i));
+      Serial.print(")");
+      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+      delay(10);
+    }
+  }
+  Serial.println("");
+  htmlString = "<ol>";
+  for (int i = 0; i < n; ++i)
+  {
+    // Print SSID and RSSI for each network found
+    htmlString += "<li>";
+    htmlString += WiFi.SSID(i);
+    htmlString += " (";
+    htmlString += WiFi.RSSI(i);
+
+    htmlString += ")";
+    htmlString += (WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*";
+    htmlString += "</li>";
+  }
+  htmlString += "</ol>";
+  delay(100);
+  WiFi.softAP("ArduinoStar", "");
+  launchWeb();
+
+}
+
+void WifiManager::createWebServer() {
+  {
+    server.on("/", []() {
+      IPAddress ip = WiFi.softAPIP();
+      String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
+      content = "<!DOCTYPE HTML>\r\n<html>Hello from ESP8266 at ";
+      content += ipStr;
+      content += "<p>";
+      content += htmlString;
+      content += "</p><form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><input name='pass' length=235><input name='OTApass' length=64><input name='mqttuser' length=64><input name='mqttpass' length=64><input type='submit'></form>";
+      content += "</html>";
+      server.send(200, "text/html", content);
+    });
+
+    server.on("/setting", []() {
+      String qsid = server.arg("ssid");
+      String qpass = server.arg("pass");
+      String OTApass = server.arg("OTApass");
+      String mqttuser = server.arg("mqttuser");
+      String mqttpass = server.arg("mqttpass");
+
+      if (qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0) {
+        
+        Serial.println(qsid);
+        Serial.println("");
+        Serial.println(qpass);
+        Serial.println("");
+        Serial.println(OTApass);
+        Serial.println("");
+        Serial.println(mqttuser);
+        Serial.println("");
+        Serial.println(mqttpass);
+        Serial.println("");
+
+        // writeConfigToSpiffs(qsid, qpass, OTApass, mqttuser, mqttpass);    
+        DynamicJsonDocument doc(1024);
+        doc["qsid"] = qsid;     
+        doc["qpass"] = qpass;     
+        doc["OTApass"] = OTApass;     
+        doc["mqttuser"] = mqttuser;     
+        doc["mqttpass"] = mqttpass;  
+
+        // Write SPIFFS
+        if (SPIFFS.begin()) {
+          Serial.println(F("\nSaving setup.json\n"));
+          // SPIFFS.format();
+          File configFile = SPIFFS.open("/setup.json", "w");
+          if (!configFile) {
+            Serial.println(F("Failed to open config file for writing"));
+          }
+          serializeJsonPretty(doc, Serial);
+          serializeJson(doc, configFile);
+          configFile.close();
+          Serial.println(F("\nConfig saved\n"));
+        } else {
+          Serial.println(F("Failed to mount FS for write"));
+        }
+        
+        delay(DELAY_200);
+        content = "{\"Success\":\"saved to eeprom... reset to boot into new wifi\"}";
+        statusCode = 200;
+        ESP.reset();
+      } else {
+        content = "{\"Error\":\"404 not found\"}";
+        statusCode = 404;
+        Serial.println("Sending 404");
+      }
+      server.sendHeader("Access-Control-Allow-Origin", "*");
+      server.send(statusCode, "application/json", content);
+    });
+
+  } 
 }

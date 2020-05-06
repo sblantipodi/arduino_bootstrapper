@@ -22,6 +22,8 @@
 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
+#include <ESP8266HTTPClient.h>
+#include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 #include "Helpers.h"
@@ -29,13 +31,24 @@
 #include "../../include/Configuration.h"
 
 
+//Establishing Local server at port 80 whenever required
+extern ESP8266WebServer server;
 // WiFi Client
 extern WiFiClient espClient;
+// WebServer content
+extern String content;
+// WebServer status code
+extern int statusCode;
+// WebServer HTML frontend
+extern String htmlString;
 
 class WifiManager {
 
-  private:
+  private:    
     Helpers helper;
+    void createWebServer();
+    void setupAP(void);
+    void launchWeb();
 
   public:
     void setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());

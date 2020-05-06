@@ -25,7 +25,7 @@ void setup() {
   Serial.begin(SERIAL_RATE);
 
   bootstrapManager.bootstrapSetup(manageDisconnections, manageHardwareButton, callback);
-
+  
   // ENTER YOUR CODE HERE
 
 }
@@ -68,26 +68,24 @@ void callback(char* topic, byte* payload, unsigned int length) {
 /********************************** START MAIN LOOP *****************************************/
 void loop() {
 
-  // Bootsrap loop() with Wifi, MQTT and OTA functions
-  bootstrapManager.bootstrapLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
-
-  // ENTER YOUR CODE HERE
-
-  Serial.print("Hello World");
-  delay(1000);
-
-  if (bootstrapManager.isWifiConfigured()) {
-    Serial.println("OOOK");
-  } else {
-    Serial.println("KOOO");
-  }
-
-  // Send MSG to the MQTT queue with no retention
-  bootstrapManager.publish(CHANGE_ME_TOPIC, "SEND SIMPLE MSG TO THE QUEUE", false);  
+  if (isConfigFileOk) {
   
-  // Send JSON MSG to the MQTT queue with no retention
-  JsonObject root = bootstrapManager.getJsonObject();    
-  root["ROOT_EXAMPLE"] = "SEND JSON MSG TO THE QUEUE";
-  bootstrapManager.publish(CHANGE_ME_JSON_TOPIC, root, false);  
+    // Bootsrap loop() with Wifi, MQTT and OTA functions
+    bootstrapManager.bootstrapLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
+
+    // ENTER YOUR CODE HERE
+
+    Serial.print("Hello World");
+    delay(1000);
+
+    // Send MSG to the MQTT queue with no retention
+    bootstrapManager.publish(CHANGE_ME_TOPIC, "SEND SIMPLE MSG TO THE QUEUE", false);  
+    
+    // Send JSON MSG to the MQTT queue with no retention
+    JsonObject root = bootstrapManager.getJsonObject();    
+    root["ROOT_EXAMPLE"] = "SEND JSON MSG TO THE QUEUE";
+    bootstrapManager.publish(CHANGE_ME_JSON_TOPIC, root, false);  
+
+  }
   
 }

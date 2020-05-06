@@ -19,7 +19,7 @@
 
 #include "Helpers.h"
 
-
+bool isConfigFileOk = false;
 String lastMQTTConnection = "OFF";
 String lastWIFiConnection = "OFF";
 String lastBoot = " ";
@@ -122,24 +122,32 @@ String Helpers::getValue(String data, char separator, int index) {
 
 // Set date and time based on a timestamp
 void Helpers::setDateTime(String timeConst) {
+
   timedate = timeConst;
   date = timedate.substring(8,10) + "/" + timedate.substring(5,7) + "/" + timedate.substring(0,4);
   currentime = timedate.substring(11,16);
+
 }
 
 // Return ON OFF value
 String Helpers::isOnOff(StaticJsonDocument<BUFFER_SIZE> json) {
+
   String str = json[VALUE];
   return ((str == ON_CMD) || (str == on_CMD)) ? ON_CMD : OFF_CMD ;
+
 }
 
 // Useful for Arduino Json lib to disambiguate types
 String Helpers::getValue(String string) {
+
   return string;
+
 }
 
 // String to char*
 char* Helpers::string2char(const String command){
+
   char *p = const_cast<char*>(command.c_str());
   return p;
+
 }

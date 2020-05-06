@@ -22,12 +22,20 @@
 
 /********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
 void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)) {
-  // Initialize Wifi manager
-  wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
-  // Initialize Queue Manager
-  queueManager.setupMQTTQueue(callback);
-  // Initialize OTA manager
-  wifiManager.setupOTAUpload();
+  
+  if (isWifiConfigured()) {
+    isConfigFileOk = true;
+    // Initialize Wifi manager
+    wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
+    // Initialize Queue Manager
+    queueManager.setupMQTTQueue(callback);
+    // Initialize OTA manager
+    wifiManager.setupOTAUpload();
+  } else {
+    isConfigFileOk = false;
+    launchWebServerForOTAConfig();
+  }
+  
 }
 
 /********************************** BOOTSTRAP FUNCTIONS FOR LOOP() *****************************************/
@@ -156,9 +164,7 @@ void BootstrapManager::nonBlokingBlink() {
 // Print or display microcontroller infos
 void BootstrapManager::getMicrocontrollerInfo() {
 
-  // Helpers classes
   Helpers helper;
-
   helper.smartPrint(F("Wifi: ")); helper.smartPrint(wifiManager.getQuality()); helper.smartPrintln(F("%")); 
   helper.smartPrint(F("Heap: ")); helper.smartPrint(ESP.getFreeHeap()/1024); helper.smartPrintln(F(" KB")); 
   helper.smartPrint(F("Free Flash: ")); helper.smartPrint(ESP.getFreeSketchSpace()/1024); helper.smartPrintln(F(" KB")); 
@@ -268,10 +274,11 @@ void BootstrapManager::writeToSPIFFS(DynamicJsonDocument jsonDoc, String filenam
 }
 
 // read json file from storage
-DynamicJsonDocument BootstrapManager::readSPIFFS(DynamicJsonDocument jsonDoc, String filename) {
+DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
 
   // Helpers classes
   Helpers helper;
+  DynamicJsonDocument jsonDoc(1024);
 
   if (PRINT_TO_DISPLAY) {
     display.clearDisplay();
@@ -297,8 +304,10 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(DynamicJsonDocument jsonDoc, St
         DeserializationError deserializeError = deserializeJson(jsonDoc, buf.get());
         Serial.println("\nReading " + filename);
         serializeJsonPretty(jsonDoc, Serial);
+        configFile.close();
         if (!deserializeError) {
-          helper.smartPrintln(F("JSON parsed"));
+          helper.smartPrintln(F("JSON parsed"));   
+          return jsonDoc;      
         } else {
           jsonDoc[VALUE] = ERROR;
           helper.smartPrintln(F("Failed to load json file"));
@@ -320,10 +329,27 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(DynamicJsonDocument jsonDoc, St
 
 // check if wifi is correctly configured
 bool BootstrapManager::isWifiConfigured() {
-  return wifiManager.isWifiConfigured();
+
+  if (wifiManager.isWifiConfigured()) {
+    return true;
+  } else {
+    // DynamicJsonDocument mydoc(1024);
+    DynamicJsonDocument mydoc = readSPIFFS("setup.json");
+    String prova = mydoc["qsid"];
+    if (mydoc.containsKey("qsid")) {
+      Serial.println("VALUE OK");
+      return true;
+    } else {
+      Serial.println("No setup file");
+    }
+  }
+  return false;
+
 }
 
 // if no ssid available, launch web server to get config params via browser
 void BootstrapManager::launchWebServerForOTAConfig() {
+
   return wifiManager.launchWebServerForOTAConfig();
+
 }
