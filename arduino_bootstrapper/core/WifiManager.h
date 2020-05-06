@@ -41,6 +41,8 @@ class WifiManager {
     void setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
     void setupOTAUpload();
     int getQuality();
+    bool isWifiConfigured(); // check if wifi is correctly configured
+    void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
 
 };
 

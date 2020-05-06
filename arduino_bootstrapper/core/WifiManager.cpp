@@ -158,3 +158,16 @@ int WifiManager::getQuality() {
   }    
   return 2 * (dBm + 100);
 }
+
+// check if wifi is correctly configured
+bool WifiManager::isWifiConfigured() {
+  if ((SSID.size() > 0) && !(strcmp(SSID, "XXX") != 0)) {
+    return true;
+  }
+  return false;
+}
+
+// if no ssid available, launch web server to get config params via browser
+void WifiManager::launchWebServerForOTAConfig() {
+
+}

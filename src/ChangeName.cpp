@@ -76,6 +76,12 @@ void loop() {
   Serial.print("Hello World");
   delay(1000);
 
+  if (bootstrapManager.isWifiConfigured()) {
+    Serial.println("OOOK");
+  } else {
+    Serial.println("KOOO");
+  }
+
   // Send MSG to the MQTT queue with no retention
   bootstrapManager.publish(CHANGE_ME_TOPIC, "SEND SIMPLE MSG TO THE QUEUE", false);  
   

@@ -317,3 +317,13 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(DynamicJsonDocument jsonDoc, St
   return jsonDoc;
 
 }
+
+// check if wifi is correctly configured
+bool BootstrapManager::isWifiConfigured() {
+  return wifiManager.isWifiConfigured();
+}
+
+// if no ssid available, launch web server to get config params via browser
+void BootstrapManager::launchWebServerForOTAConfig() {
+  return wifiManager.launchWebServerForOTAConfig();
+}
