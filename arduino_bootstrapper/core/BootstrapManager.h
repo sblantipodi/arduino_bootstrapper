@@ -36,6 +36,7 @@ class BootstrapManager {
   private:
     WifiManager wifiManager; // WifiManager classes for Wifi management
     QueueManager queueManager; // QueueManager classes for MQTT queue management
+    Helpers helper;
 
   public:
     StaticJsonDocument<BUFFER_SIZE> jsonDoc;

@@ -126,7 +126,8 @@ export MSYS=winsymlinks:nativestrict
 This project supports CI via GitHub Actions.
 In the `.github/workflows` folder there are two workflows
  - one for automatic release that is triggered when a git tag is pushed
- - one for building the project and creating the artifact (binary firmware)
+ - one for building the project and creating the artifact (binary firmware)  
+ 
 If you use this syntax:
 ```
 git tag -a v1.0.0 -m "your commit msg";

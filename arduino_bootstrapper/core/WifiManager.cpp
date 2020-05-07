@@ -54,7 +54,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
     display.setCursor(0,0);
   }
   helper.smartPrintln(F("Connecting to: "));
-  helper.smartPrint(SSID); helper.smartPrintln(F("..."));
+  helper.smartPrint(qsid); helper.smartPrintln(F("..."));
   helper.smartDisplay();
  
   delay(DELAY_2000);
@@ -73,7 +73,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   WiFi.setOutputPower(WIFI_POWER);
   
   // Start wifi connection
-  WiFi.begin(SSID, PASSWORD);
+  WiFi.begin(qsid, qpass);
 
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -127,7 +127,7 @@ void WifiManager::setupOTAUpload() {
   ArduinoOTA.setHostname(WIFI_DEVICE_NAME);
 
   // No authentication by default
-  ArduinoOTA.setPassword((const char *)OTAPASSWORD);
+  ArduinoOTA.setPassword((const char *)helper.string2char(OTApass));
 
   ArduinoOTA.onStart([]() {
     Serial.println(F("Starting"));
@@ -237,8 +237,7 @@ void WifiManager::setupAP(void) {
   }
   Serial.println("");
   htmlString = "<ol>";
-  for (int i = 0; i < n; ++i)
-  {
+  for (int i = 0; i < n; ++i) {
     // Print SSID and RSSI for each network found
     htmlString += "<li>";
     htmlString += WiFi.SSID(i);
@@ -251,7 +250,7 @@ void WifiManager::setupAP(void) {
   }
   htmlString += "</ol>";
   delay(100);
-  WiFi.softAP("ArduinoStar", "");
+  WiFi.softAP(WIFI_DEVICE_NAME, "");
   launchWeb();
 
 }

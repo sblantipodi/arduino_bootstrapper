@@ -31,6 +31,11 @@ int yoffset = 150;
 String haVersion = "";
 String IP = "";
 String MAC = "";
+String qsid = "XXX";
+String qpass = "XXX";
+String OTApass = "XXX";
+String mqttuser = "XXX";
+String mqttpass = "XXX";
 
 long previousMillis = 0;     
 const long interval = 200;           

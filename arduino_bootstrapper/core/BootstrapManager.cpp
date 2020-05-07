@@ -276,8 +276,6 @@ void BootstrapManager::writeToSPIFFS(DynamicJsonDocument jsonDoc, String filenam
 // read json file from storage
 DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
 
-  // Helpers classes
-  Helpers helper;
   DynamicJsonDocument jsonDoc(1024);
 
   if (PRINT_TO_DISPLAY) {
@@ -331,13 +329,21 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
 bool BootstrapManager::isWifiConfigured() {
 
   if (wifiManager.isWifiConfigured()) {
+    qsid = SSID;
+    qpass = PASSWORD;
+    OTApass = OTAPASSWORD;
+    mqttuser = MQTT_USERNAME;
+    mqttpass = MQTT_PASSWORD;         
     return true;
   } else {
-    // DynamicJsonDocument mydoc(1024);
     DynamicJsonDocument mydoc = readSPIFFS("setup.json");    
     if (mydoc.containsKey("qsid")) {
-      Serial.println("VALUE OK");
-      String prova = mydoc["qsid"];
+      Serial.println("SPIFFS OK, restoring WiFi and MQTT config.");
+      qsid = helper.getValue(mydoc["qsid"]);
+      qpass = helper.getValue(mydoc["qpass"]);
+      OTApass = helper.getValue(mydoc["OTApass"]);
+      mqttuser = helper.getValue(mydoc["mqttuser"]);
+      mqttpass = helper.getValue(mydoc["mqttpass"]);
       return true;
     } else {
       Serial.println("No setup file");

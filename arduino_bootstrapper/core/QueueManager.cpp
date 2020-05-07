@@ -54,7 +54,7 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
     manageHardwareButton();
 
     // Attempt to connect to MQTT server with QoS = 1 (pubsubclient supports QoS 1 for subscribe only, published msg have QoS 0 this is why I implemented a custom solution)
-    if (mqttClient.connect(WIFI_DEVICE_NAME, MQTT_USERNAME, MQTT_PASSWORD, 0, 1, 0, 0, 1)) {
+    if (mqttClient.connect(WIFI_DEVICE_NAME, helper.string2char(mqttuser), helper.string2char(mqttpass), 0, 1, 0, 0, 1)) {
 
       helper.smartPrintln(F(""));
       helper.smartPrintln(F("CONNECTED"));

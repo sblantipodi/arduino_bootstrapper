@@ -40,6 +40,11 @@ extern int yoffset;
 extern String haVersion;
 extern String IP;
 extern String MAC;
+extern String qsid;
+extern String qpass;
+extern String OTApass;
+extern String mqttuser;
+extern String mqttpass;
 
 // Blink LED vars
 extern long previousMillis;     // will store last time LED was updated
