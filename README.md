@@ -135,5 +135,7 @@ git push origin --tags;
 ```
 text in the commit message will be the description of your release.
 
+![Access Point Frontend](https://raw.githubusercontent.com/sblantipodi/arduino_bootstrapper/master/data/img/arduinobootstrapper.png | width=48)
+
 ## License
 This program is licensed under MIT License
