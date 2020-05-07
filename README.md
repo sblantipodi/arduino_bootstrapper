@@ -45,7 +45,7 @@ Simply edit those file as per description, _few minutes required_
     │   └── ...   
     ├── include                  # Project header folder
     │   ├── ChangeName.h         # Main header file, rename it with the name of your project
-    │   ├── Secrets.h            # Configure your Wifi info (SSID, PWD), MQTT server info (USERNAME, PWD, PORT), OTA PWD
+    │   ├── Secrets.h.template   # Configure WiFi/MQTT passwords and then rename the file in Secrets.h
     │   ├── Configuration.h      # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
     │   └── ...       
     ├── core                     # Folder for core files, edit those files and contribute!
@@ -135,6 +135,10 @@ git push origin --tags;
 ```
 text in the commit message will be the description of your release.
 
+## Access Point frontend 
+Arduino Bootstrapper will search for a `Secrets.h` file inside the `include` folder,
+if you don't configure it, access point is started, you can go to http://192.168.4.1 to access the gui that will let you
+enter all the passwords without the needs of hardcoding them.
 ![Access Point Frontend](https://raw.githubusercontent.com/sblantipodi/arduino_bootstrapper/master/data/img/arduinobootstrapper.png)
 
 ## License
