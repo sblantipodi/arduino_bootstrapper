@@ -38,7 +38,7 @@ const bool PRINT_TO_DISPLAY = false;
 extern Adafruit_SSD1306 display;
 
 // SENSORNAME will be used as device network name
-#define WIFI_DEVICE_NAME "YOURWIFINAME"
+#define WIFI_DEVICE_NAME "ArduinoBootstrapper"
 // Port for the OTA firmware uplaod
 const int OTA_PORT = 8199;
 // STATIC IP FOR THE MICROCONTROLLER

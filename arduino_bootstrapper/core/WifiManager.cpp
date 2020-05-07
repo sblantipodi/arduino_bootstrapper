@@ -236,19 +236,21 @@ void WifiManager::setupAP(void) {
     }
   }
   Serial.println("");
-  htmlString = "<ol>";
+  htmlString = "<table id='wifi'><tr><th>SSID</th><th>RSSI</th><th>Enctipted</th></tr>";
   for (int i = 0; i < n; ++i) {
-    // Print SSID and RSSI for each network found
-    htmlString += "<li>";
+    htmlString += "<tr>";
+    htmlString += "<td>"; 
     htmlString += WiFi.SSID(i);
-    htmlString += " (";
+    htmlString += "</td>";
+    htmlString += "<td>";
     htmlString += WiFi.RSSI(i);
-
-    htmlString += ")";
-    htmlString += (WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*";
-    htmlString += "</li>";
+    htmlString += "</td>";
+    htmlString += "<td>";
+    htmlString += ((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? "PUBLIC" : "ENCRYPTED");
+    htmlString += "</td>";
+    htmlString += "</tr>";
   }
-  htmlString += "</ol>";
+  htmlString += "</table>";
   delay(100);
   WiFi.softAP(WIFI_DEVICE_NAME, "");
   launchWeb();
@@ -260,11 +262,18 @@ void WifiManager::createWebServer() {
     server.on("/", []() {
       IPAddress ip = WiFi.softAPIP();
       String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
-      content = "<!DOCTYPE HTML>\r\n<html>Hello from ESP8266 at ";
-      content += ipStr;
-      content += "<p>";
+      content = "<!DOCTYPE HTML>\r\n<html><head><style>body {padding:0% 5% 0% 5%;font-size:4vw;width: 90%;font-weight:bold;text-align:center; color:#202020}#centerContainer { margin: 0px auto; }input {font-size:4vw;width: 100%;padding: 12px 20px;margin: 8px 0;box-sizing: border-box;border: 3px solid orange;-webkit-transition: 0.5s;transition: 0.5s;outline: none;}input:focus {border: 3px solid #BF5F00;font-weight:bold;}#wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 8px;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 12px;padding-bottom: 12px;text-align: left; background-color: orange;color: white;}.button {background-color: orange;border: none;color: white;padding: 20px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;}.button3 {font-size:4vw;border-radius: 8px;width:100%;font-weight:bold;}label{font-size:4vw;}</style></head><body><div id='centerContainer'>";
+      content += "<h1>";
+      content += WIFI_DEVICE_NAME;
+      content += "</h1>";
       content += htmlString;
-      content += "</p><form method='get' action='setting'><label>SSID: </label><input name='ssid' length=32><input name='pass' length=235><input name='OTApass' length=64><input name='mqttuser' length=64><input name='mqttpass' length=64><input type='submit'></form>";
+      content += "<br><br><form method='get' action='setting'>";
+      content += "<label for='ssid'>SSID</label><input type='text' id='ssid' name='ssid'>";
+      content += "<label for='pass'>WIFI PASSWORD</label><input type='password' id='pass' name='pass'>";
+      content += "<label for='OTApass'>OTA PASSWORD</label><input type='password' id='OTApass' name='OTApass'>";
+      content += "<label for='mqttuser'>MQTT USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
+      content += "<label for='mqttpass'>MQTT PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
+      content += "</form><br><br><button class='button button3'>STORE CONFIG</button></div></body>";
       content += "</html>";
       server.send(200, "text/html", content);
     });
