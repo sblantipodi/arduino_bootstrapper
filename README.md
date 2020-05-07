@@ -136,9 +136,10 @@ git push origin --tags;
 text in the commit message will be the description of your release.
 
 ## Access Point frontend 
-Arduino Bootstrapper will search for a `Secrets.h` file inside the `include` folder,
-if you don't configure it, access point is started, you can go to http://192.168.4.1 to access the gui that will let you
-enter all the passwords without the needs of hardcoding them.
+Arduino Bootstrapper will search for a `Secrets.h` file inside the `include` folder,  
+if you don't configure it access point is started,
+you can go to http://192.168.4.1 to access the gui that will let you enter all the passwords without the needs of hardcoding them.
+  
 ![Access Point Frontend](https://raw.githubusercontent.com/sblantipodi/arduino_bootstrapper/master/data/img/arduinobootstrapper.png)
 
 ## License
