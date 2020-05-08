@@ -291,6 +291,7 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
 
   if (!jsonFile) {
     helper.smartPrintln("Failed to open [" + filename + "] file");
+    helper.smartDisplay();
   }
 
   size_t size = jsonFile.size();
@@ -312,13 +313,17 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
   jsonFile.close();
   if (error) {
     helper.smartPrintln("Failed to parse [" + filename + "] file");
+    helper.smartDisplay();
+    delay(DELAY_2000);
   } else {
-    helper.smartPrintln(F("JSON parsed"));   
+    helper.smartPrintln("[" + filename + "]\nJSON parsed");  
+    helper.smartDisplay();
+    delay(DELAY_2000); 
     return jsonDoc;
   }
 
   helper.smartDisplay();
-  delay(DELAY_4000);
+  delay(DELAY_2000);
   return jsonDoc;
 
 }
