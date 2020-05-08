@@ -39,22 +39,22 @@ Simply edit those file as per description, _few minutes required_
 
     .
     ├── ...
-    ├── src                      # Project src folder
-    │   ├── ChangeName.cpp       # Main file with loop() and setup() function, rename it with the name of your project
-    │   ├── Configuration.cpp    # Config impl, initialize global vars here like the one used for displays
+    ├── src                             # Project src folder
+    │   ├── ChangeName.cpp              # Main file with loop() and setup() function, rename it with the name of your project
+    │   ├── Configuration.cpp.template  # Config impl, initialize global vars here like the one used for displays
     │   └── ...   
-    ├── include                  # Project header folder
-    │   ├── ChangeName.h         # Main header file, rename it with the name of your project
-    │   ├── Secrets.h.template   # Configure WiFi/MQTT passwords and then rename the file in Secrets.h
-    │   ├── Configuration.h      # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
+    ├── include                         # Project header folder
+    │   ├── ChangeName.h                # Main header file, rename it with the name of your project
+    │   ├── Secrets.h.template          # Configure WiFi/MQTT passwords and then rename the file in Secrets.h
+    │   ├── Configuration.h.template    # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
     │   └── ...       
-    ├── core                     # Folder for core files, edit those files and contribute!
-    │   ├── BootstrapManager.h   # Core header file with utility classes for bootstrapping
-    │   ├── QueueManager.h       # Core header file with utility classes for Queue and MQTT management
-    │   ├── WifiManager.h        # Core header file with utility classes for Wifi and OTA upload management
-    │   ├── Helpers.h            # Core header file with helper classes 
+    ├── core                            # Folder for core files, edit those files and contribute!
+    │   ├── BootstrapManager.h          # Core header file with utility classes for bootstrapping
+    │   ├── QueueManager.h              # Core header file with utility classes for Queue and MQTT management
+    │   ├── WifiManager.h               # Core header file with utility classes for Wifi and OTA upload management
+    │   ├── Helpers.h                   # Core header file with helper classes 
     │   └── ...       
-    ├── platformio.ini           # Edit platform with the one you are using (default: ESP8266, board: d1_mini)  
+    ├── platformio.ini                  # Edit platform with the one you are using (default: ESP8266, board: d1_mini)  
     └── ...
     
 ***NOTE:***  
@@ -91,9 +91,9 @@ Add extra dirs to your `platformio.ini`
 ```ini
 lib_extra_dirs = arduino_bootstrapper
 ```
-Copy and configure `~/arduino_bootstrapper/include/Secrets.h` into your `include` folder  
-Copy and configure `~/arduino_bootstrapper/include/Configuration.h` into your `include` folder  
-Copy and configure `~/arduino_bootstrapper/src/Configuration.cpp` into your `src` folder  
+Copy and configure `~/arduino_bootstrapper/include/Secrets.h.template` into your `include/Secrets.h` folder  
+Copy and configure `~/arduino_bootstrapper/include/Configuration.h.template` into your `include/Configuration.h` folder  
+Copy and configure `~/arduino_bootstrapper/src/Configuration.cpp.template` into your `src/Configuration.cpp` folder 
   
 Please include BootrapManager.h into your main header file:
 ```c++
