@@ -45,7 +45,7 @@ Simply edit those file as per description, _few minutes required_
     │   └── ...   
     ├── include                         # Project header folder
     │   ├── ChangeName.h                # Main header file, rename it with the name of your project
-    │   ├── Secrets.h.template          # Configure WiFi/MQTT passwords and then rename the file in Secrets.h
+    │   ├── Secrets.h.template          # Configure WiFi/MQTT passwords 
     │   ├── Configuration.h.template    # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
     │   └── ...       
     ├── core                            # Folder for core files, edit those files and contribute!
