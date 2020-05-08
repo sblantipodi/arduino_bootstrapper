@@ -93,7 +93,7 @@ lib_extra_dirs = arduino_bootstrapper
 ```
 Copy and configure `~/arduino_bootstrapper/include/Secrets.h` into your `include` folder  
 Copy and configure `~/arduino_bootstrapper/include/Configuration.h` into your `include` folder  
-Copy and configure `~/arduino_bootstrapper/include/Configuration.cpp` into your `src` folder  
+Copy and configure `~/arduino_bootstrapper/src/Configuration.cpp` into your `src` folder  
   
 Please include BootrapManager.h into your main header file:
 ```c++

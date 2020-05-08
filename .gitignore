@@ -1,3 +1,5 @@
 .vscode
 .pio
 include/Secrets.h
+include/Configuration.h
+src/Configuration.cpp
