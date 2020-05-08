@@ -1,5 +1,5 @@
 /*
-  Configuration.cpp - Configuration impl
+  ChangeName.cpp - Configuration impl
 
   Copyright (C) 2020  Davide Perini
   
@@ -20,4 +20,4 @@
 #include "Configuration.h"
 
 // Initialize the display
-Adafruit_SSD1306 (SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); 
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); 
