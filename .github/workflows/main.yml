@@ -27,7 +27,9 @@ jobs:
         cat platformio.ini
     - name: Setup template config files
       run: |        
-        cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Secrets.h.template /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Secrets.h     
+      cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Secrets.h.template /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Secrets.h     
+      cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Configuration.h.template /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Configuration.h     
+      cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/src/Configuration.cpp.template /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/src/Configuration.cpp     
     - name: Run PlatformIO
       run: platformio run -e bootstrapper
     - name: Creating artifact from BIN file
