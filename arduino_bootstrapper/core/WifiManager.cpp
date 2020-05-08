@@ -267,13 +267,13 @@ void WifiManager::createWebServer() {
       content += WIFI_DEVICE_NAME;
       content += "</h1>";
       content += htmlString;
-      content += "<br><br><form method='get' action='setting'>";
+      content += "<br><br><form method='get' action='setting' id='form1'>";
       content += "<label for='ssid'>SSID</label><input type='text' id='ssid' name='ssid'>";
       content += "<label for='pass'>WIFI PASSWORD</label><input type='password' id='pass' name='pass'>";
       content += "<label for='OTApass'>OTA PASSWORD</label><input type='password' id='OTApass' name='OTApass'>";
       content += "<label for='mqttuser'>MQTT USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
       content += "<label for='mqttpass'>MQTT PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
-      content += "</form><br><br><button class='button button3'>STORE CONFIG</button></div></body>";
+      content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><br></div></body>";
       content += "</html>";
       server.send(200, "text/html", content);
     });
@@ -287,18 +287,17 @@ void WifiManager::createWebServer() {
 
       if (qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0) {
         
+        Serial.println("qsid");
         Serial.println(qsid);
-        Serial.println("");
+        Serial.println("qpass");
         Serial.println(qpass);
-        Serial.println("");
+        Serial.println("OTApass");
         Serial.println(OTApass);
-        Serial.println("");
+        Serial.println("mqttuser");
         Serial.println(mqttuser);
-        Serial.println("");
+        Serial.println("mqttpass");
         Serial.println(mqttpass);
-        Serial.println("");
 
-        // writeConfigToSpiffs(qsid, qpass, OTApass, mqttuser, mqttpass);    
         DynamicJsonDocument doc(1024);
         doc["qsid"] = qsid;     
         doc["qpass"] = qpass;     
@@ -306,24 +305,20 @@ void WifiManager::createWebServer() {
         doc["mqttuser"] = mqttuser;     
         doc["mqttpass"] = mqttpass;  
 
-        // Write SPIFFS
-        if (SPIFFS.begin()) {
-          Serial.println(F("\nSaving setup.json\n"));
-          // SPIFFS.format();
-          File configFile = SPIFFS.open("/setup.json", "w");
-          if (!configFile) {
-            Serial.println(F("Failed to open config file for writing"));
-          }
-          serializeJsonPretty(doc, Serial);
-          serializeJson(doc, configFile);
-          configFile.close();
-          Serial.println(F("\nConfig saved\n"));
+        // Write to LittleFS
+        Serial.println(F("\nSaving setup.json\n"));
+        File jsonFile = LittleFS.open("/setup.json", "w");
+        if (!jsonFile) {
+          Serial.println("Failed to open [setup.json] file for writing");
         } else {
-          Serial.println(F("Failed to mount FS for write"));
+          serializeJsonPretty(doc, Serial);
+          serializeJson(doc, jsonFile);
+          jsonFile.close();
+          Serial.println("[setup.json] written correctly");
         }
-        
+
         delay(DELAY_200);
-        content = "{\"Success\":\"saved to eeprom... reset to boot into new wifi\"}";
+        content = "{\"Success\":\"saved to LittleFS... reset to boot into new wifi\"}";
         statusCode = 200;
         ESP.reset();
       } else {
@@ -333,6 +328,7 @@ void WifiManager::createWebServer() {
       }
       server.sendHeader("Access-Control-Allow-Origin", "*");
       server.send(statusCode, "application/json", content);
+
     });
 
   } 

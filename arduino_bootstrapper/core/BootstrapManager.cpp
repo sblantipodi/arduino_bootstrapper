@@ -23,6 +23,11 @@
 /********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
 void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)) {
   
+  if (!LittleFS.begin()) {
+    Serial.println("LittleFS mount failed");
+    return;
+  }
+
   if (isWifiConfigured()) {
     isConfigFileOk = true;
     // Initialize Wifi manager
@@ -254,71 +259,64 @@ void BootstrapManager::sendState(const char *topic, JsonObject objectToSend, Str
 }
 
 // write json file to storage
-void BootstrapManager::writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename) {
-  
-  if (SPIFFS.begin()) {
-    Serial.println(F("\nSaving config.json\n"));
-    // SPIFFS.format();
-    File configFile = SPIFFS.open("/"+filename, "w");
-    if (!configFile) {
-      Serial.println(F("Failed to open config file for writing"));
-    }
-    serializeJsonPretty(jsonDoc, Serial);
-    serializeJson(jsonDoc, configFile);
-    configFile.close();
-    Serial.println(F("\nConfig saved\n"));
+void BootstrapManager::writeToLittleFS(DynamicJsonDocument jsonDoc, String filename) {
+
+  File jsonFile = LittleFS.open("/" + filename, "w");
+  if (!jsonFile) {
+    helper.smartPrintln("Failed to open [" + filename + "] file for writing");
   } else {
-    Serial.println(F("Failed to mount FS for write"));
+    serializeJsonPretty(jsonDoc, Serial);
+    serializeJson(jsonDoc, jsonFile);
+    jsonFile.close();
+    helper.smartPrintln("[" + filename + "] written correctly");
   }
 
 }
 
 // read json file from storage
-DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
+DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
 
-  DynamicJsonDocument jsonDoc(1024);
+  // Helpers classes
+  Helpers helper;
 
   if (PRINT_TO_DISPLAY) {
     display.clearDisplay();
     display.setCursor(0, 0);
     display.setTextSize(1);
   }
-  helper.smartPrintln(F("Mounting SPIFSS..."));
+  helper.smartPrintln(F("Mounting LittleFS..."));
   helper.smartDisplay();
-  // SPIFFS.remove("/config.json");
-  if (SPIFFS.begin()) {
-    helper.smartPrintln(F("FS mounted"));
-    if (SPIFFS.exists("/" + filename)) {
-      //file exists, reading and loading
-      helper.smartPrintln("Reading " + filename + " file...");
-      File configFile = SPIFFS.open("/" + filename, "r");
-      if (configFile) {
-        helper.smartPrintln(F("Config OK"));
-        size_t size = configFile.size();
-        // Allocate a buffer to store contents of the file.
-        std::unique_ptr<char[]> buf(new char[size]);
 
-        configFile.readBytes(buf.get(), size);
-        DeserializationError deserializeError = deserializeJson(jsonDoc, buf.get());
-        Serial.println("\nReading " + filename);
-        serializeJsonPretty(jsonDoc, Serial);
-        configFile.close();
-        if (!deserializeError) {
-          helper.smartPrintln(F("JSON parsed"));   
-          return jsonDoc;      
-        } else {
-          jsonDoc[VALUE] = ERROR;
-          helper.smartPrintln(F("Failed to load json file"));
-        }
-      } 
-    } else {
-      jsonDoc[VALUE] = ERROR;
-      helper.smartPrintln("Error reading " + filename + " file...");
-    }
-  } else {
-    jsonDoc[VALUE] = ERROR;
-    helper.smartPrintln(F("failed to mount FS"));
+  File jsonFile = LittleFS.open("/" + filename, "r");
+
+  if (!jsonFile) {
+    helper.smartPrintln("Failed to open [" + filename + "] file");
   }
+
+  size_t size = jsonFile.size();
+  if (size > 1024) {
+    helper.smartPrintln("[" + filename + "] file size is too large");
+  }
+
+  // Allocate a buffer to store contents of the file.
+  std::unique_ptr<char[]> buf(new char[size]);
+
+  // We don't use String here because ArduinoJson library requires the input
+  // buffer to be mutable. If you don't use ArduinoJson, you may as well
+  // use configFile.readString instead.
+  jsonFile.readBytes(buf.get(), size);
+
+  DynamicJsonDocument jsonDoc(1024);
+  auto error = deserializeJson(jsonDoc, buf.get());
+  serializeJsonPretty(jsonDoc, Serial);
+  jsonFile.close();
+  if (error) {
+    helper.smartPrintln("Failed to parse [" + filename + "] file");
+  } else {
+    helper.smartPrintln(F("JSON parsed"));   
+    return jsonDoc;
+  }
+
   helper.smartDisplay();
   delay(DELAY_4000);
   return jsonDoc;
@@ -336,9 +334,9 @@ bool BootstrapManager::isWifiConfigured() {
     mqttpass = MQTT_PASSWORD;         
     return true;
   } else {
-    DynamicJsonDocument mydoc = readSPIFFS("setup.json");    
+    DynamicJsonDocument mydoc = readLittleFS("setup.json");    
     if (mydoc.containsKey("qsid")) {
-      Serial.println("SPIFFS OK, restoring WiFi and MQTT config.");
+      Serial.println("LittleFS OK, restoring WiFi and MQTT config.");
       qsid = helper.getValue(mydoc["qsid"]);
       qpass = helper.getValue(mydoc["qpass"]);
       OTApass = helper.getValue(mydoc["OTApass"]);

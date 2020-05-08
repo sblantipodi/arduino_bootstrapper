@@ -26,6 +26,8 @@
 #include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include <FS.h>
+#include <LittleFS.h>
 #include "Helpers.h"
 #include "../../include/Secrets.h"
 #include "../../include/Configuration.h"

@@ -25,6 +25,8 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
+#include <FS.h>
+#include <LittleFS.h>
 #include "../../include/Configuration.h"
 #include "Helpers.h"
 #include "WifiManager.h"
@@ -54,8 +56,8 @@ class BootstrapManager {
     void drawInfoPage(String softwareVersion, String author); // draw a page with all the microcontroller's info
     void drawScreenSaver(String txt); // useful for OLED displays
     void sendState(const char *topic, JsonObject objectToSend, String version); // send microcontroller's info on the queue 
-    void writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
-    DynamicJsonDocument readSPIFFS(String filename); // read json file from storage
+    void writeToLittleFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
+    DynamicJsonDocument readLittleFS(String filename); // read json file from storage
     bool isWifiConfigured(); // check if wifi is correctly configured
     void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
 
