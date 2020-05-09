@@ -30,6 +30,9 @@ jobs:
         cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Secrets.h.template /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Secrets.h     
         cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Configuration.h.template /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/Configuration.h     
         cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/src/Configuration.cpp.template /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/src/Configuration.cpp     
+    # - name: Setup tmate session
+    #   uses: mxschmitt/action-tmate@v2         
+    # - name: Run PlatformIO (smartostat)        
     - name: Run PlatformIO
       run: platformio run -e bootstrapper
     - name: Creating artifact from BIN file
