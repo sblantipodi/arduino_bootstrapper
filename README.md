@@ -2,6 +2,7 @@
 
 Utility classes for bootstrapping arduino projects with Wifi management, OTA upload management, memory management,   
 MQTT and queue management.  
+Espressif ESP8266 is the default board used but it can be easily generalized for other boards.
 _Written for Arduino IDE and PlatformIO._
 
 [![GitHub Actions CI](https://github.com/sblantipodi/arduino_bootstrapper/workflows/GitHub%20Actions%20CI/badge.svg)](https://github.com/sblantipodi/arduino_bootstrapper/actions)
