@@ -23,9 +23,9 @@ Open an issue here on Github, your questions could be useful to other users.
 
 ## How To
 There is three way to bootstrap your software using this utilities.  
-__1) Bootstrap a project from scratch__  
-__2) Import those utilities to your existing project via PlatformIO Library Registry (easyest way to import)__  
-__3) Import those utilities to your existing project via git submodules (faster updates to latest releases)__  
+1) Bootstrap a project from scratch  
+2) Import those utilities to your existing project via PlatformIO Library Registry (easyest way to import)  
+3) Import those utilities to your existing project via git submodules (faster updates to latest releases)  
     
 #### There are other projects that uses this utility, you can explore their sources here:  
 [Smart Thermostat](https://github.com/sblantipodi/smart_thermostat), [Solar Station](https://github.com/sblantipodi/solar_station), [PC Ambilight](https://github.com/sblantipodi/pc_ambilight), [Smart Watch Winder](https://github.com/sblantipodi/smart_watch_winder)  
