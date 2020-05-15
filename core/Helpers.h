@@ -21,7 +21,7 @@
 #define _DPSOFTWARE_HELPERS_UTILS_H
 
 #include <ArduinoJson.h>
-#include "../../include/Configuration.h"
+#include "Configuration.h"
 
 
 // Maximum JSON Object Size

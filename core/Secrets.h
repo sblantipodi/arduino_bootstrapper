@@ -1,6 +1,6 @@
 /*
-  ChangeName.cpp - Configuration impl
-
+  Secrets.h - Store your secrets here
+  
   Copyright (C) 2020  Davide Perini
   
   Permission is hereby granted, free of charge, to any person obtaining a copy of 
@@ -17,7 +17,32 @@
   If not, see <https://opensource.org/licenses/MIT/>.
 */
 
-#include "Configuration.h"
+#ifndef _DPSOFTWARE_SECRETS_H
+#define _DPSOFTWARE_SECRETS_H
 
-// Initialize the display
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); 
+#ifndef WIFI_SSID
+#define WIFI_SSID "XXX"
+#endif
+const char* const SSID = WIFI_SSID;
+
+#ifndef WIFI_PWD
+#define WIFI_PWD "XXX"
+#endif
+const char* const PASSWORD = WIFI_PWD;
+
+#ifndef MQTT_USER
+#define MQTT_USER "XXX"
+#endif
+const char* const MQTT_USERNAME = MQTT_USER;
+
+#ifndef MQTT_PWD
+#define MQTT_PWD "XXX"
+#endif
+const char* const MQTT_PASSWORD = MQTT_PWD;
+
+#ifndef OTA_PWD
+#define OTA_PWD "XXX"
+#endif
+const char* const OTAPASSWORD = OTA_PWD; //the password you will need to enter for OTA upload
+
+#endif

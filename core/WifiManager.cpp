@@ -172,6 +172,7 @@ int WifiManager::getQuality() {
 // check if wifi is correctly configured
 bool WifiManager::isWifiConfigured() {
 
+Serial.println(PASSWORD);
   if (strcmp(SSID, "XXX") != 0) {
     return true;
   }

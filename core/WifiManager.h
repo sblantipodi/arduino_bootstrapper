@@ -29,8 +29,8 @@
 #include <FS.h>
 #include <LittleFS.h>
 #include "Helpers.h"
-#include "../../include/Secrets.h"
-#include "../../include/Configuration.h"
+#include "Secrets.h"
+#include "Configuration.h"
 
 
 //Establishing Local server at port 80 whenever required

@@ -27,7 +27,7 @@
 #include <Adafruit_SSD1306.h>
 #include <FS.h>
 #include <LittleFS.h>
-#include "../../include/Configuration.h"
+#include "Configuration.h"
 #include "Helpers.h"
 #include "WifiManager.h"
 #include "QueueManager.h"

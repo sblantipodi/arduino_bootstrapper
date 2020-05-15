@@ -23,14 +23,25 @@
 #include <ESP8266WiFi.h>
 #include <Adafruit_SSD1306.h>
 
-#define DEBUG_QUEUE_MSG true
-
-const String AUTHOR = "DPsoftware";
+#ifndef AUTHOR
+#define AUTHOR "DPsoftware"
+#endif
 
 // Serial rate for debug
+#ifndef SERIAL_RATE
 #define SERIAL_RATE 115200
+#endif
+
+#ifndef DEBUG_QUEUE_MSG
+#define DEBUG_QUEUE_MSG false
+#endif
+
 // Specify if you want to use a display or only Serial
-const bool PRINT_TO_DISPLAY = false;
+#ifndef DISPLAY_ENABLED
+#define DISPLAY_ENABLED false;
+#endif
+const bool PRINT_TO_DISPLAY = DISPLAY_ENABLED;
+
 // Display specs
 #define OLED_RESET LED_BUILTIN // Pin used for integrated D1 Mini blue LED
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
@@ -38,27 +49,60 @@ const bool PRINT_TO_DISPLAY = false;
 extern Adafruit_SSD1306 display;
 
 // SENSORNAME will be used as device network name
+#ifndef WIFI_DEVICE_NAME
 #define WIFI_DEVICE_NAME "ArduinoBootstrapper"
-// Port for the OTA firmware uplaod
-const int OTA_PORT = 8199;
-// STATIC IP FOR THE MICROCONTROLLER
-const IPAddress IP_MICROCONTROLLER = IPAddress(192, 168, 1, 99);
-// Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
-const double WIFI_POWER = 0;
-
-// GATEWAY IP
-const IPAddress IP_GATEWAY = IPAddress(192, 168, 1, 1);
-// GATEWAY IP
-const IPAddress IP_DNS = IPAddress(192, 168, 1, 1);
-// MQTT server IP
-const char* const MQTT_SERVER = "192.168.1.3";
-// MQTT server port
-const int MQTT_PORT = 1883;
-// Maximum number of reconnection (WiFi/MQTT) attemp before powering off peripherals
-#define MAX_RECONNECT 500
-// Maximum JSON Object Size
-#define MAX_JSON_OBJECT_SIZE 50
-
 #endif
 
+// Port for the OTA firmware uplaod
+#ifndef MICROCONTROLLER_OTA_PORT
+#define MICROCONTROLLER_OTA_PORT 8199
+#endif
+const int OTA_PORT = MICROCONTROLLER_OTA_PORT;
 
+// Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
+#ifndef WIFI_SIGNAL_STRENGTH
+#define WIFI_SIGNAL_STRENGTH 0
+#endif
+const double WIFI_POWER = WIFI_SIGNAL_STRENGTH;
+
+// GATEWAY IP
+#ifndef GATEWAY_IP
+#define GATEWAY_IP 192,168,1,1
+#endif
+const IPAddress IP_GATEWAY = IPAddress(GATEWAY_IP);
+
+// DNS IP
+#ifndef DNS_IP
+#define DNS_IP 192,168,1,1
+#endif
+const IPAddress IP_DNS = IPAddress(DNS_IP);
+
+// STATIC IP FOR THE MICROCONTROLLER
+#ifndef MICROCONTROLLER_IP
+#define MICROCONTROLLER_IP 192,168,1,99
+#endif
+const IPAddress IP_MICROCONTROLLER = IPAddress(MICROCONTROLLER_IP);
+
+// MQTT server IP
+#ifndef MQTT_SERVER_IP
+#define MQTT_SERVER_IP "192.168.1.3"
+#endif
+const char* const MQTT_SERVER = MQTT_SERVER_IP;
+
+// MQTT server port
+#ifndef MQTT_SERVER_PORT
+#define MQTT_SERVER_PORT 1883
+#endif
+const int MQTT_PORT = MQTT_SERVER_PORT;
+
+// Maximum number of reconnection (WiFi/MQTT) attemp before powering off peripherals
+#ifndef MAX_RECONNECT
+#define MAX_RECONNECT 500
+#endif
+
+// Maximum JSON Object Size
+#ifndef MAX_JSON_OBJECT_SIZE
+#define MAX_JSON_OBJECT_SIZE 50
+#endif
+
+#endif
