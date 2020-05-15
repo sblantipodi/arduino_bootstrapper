@@ -25,6 +25,8 @@ Open an issue here on Github, your questions could be useful to other users.
 There is two way to bootstrap your software using this utilities.
 1) Start a project from scratch
 2) Import this utilities to your existing project
+    a) import via git submodules
+    b) import via PlatformIO Library Registry (easyest way to import)
 
 #### There are other projects that uses this utility, you can explore their sources here:  
 [Smart Thermostat](https://github.com/sblantipodi/smart_thermostat), [Solar Station](https://github.com/sblantipodi/solar_station), [PC Ambilight](https://github.com/sblantipodi/pc_ambilight), [Smart Watch Winder](https://github.com/sblantipodi/smart_watch_winder)  
@@ -41,12 +43,9 @@ Simply edit those file as per description, _few minutes required_
     ├── ...
     ├── src                             # Project src folder
     │   ├── ChangeName.cpp              # Main file with loop() and setup() function, rename it with the name of your project
-    │   ├── Configuration.cpp.template  # Config impl, initialize global vars here like the one used for displays
     │   └── ...   
     ├── include                         # Project header folder
     │   ├── ChangeName.h                # Main header file, rename it with the name of your project
-    │   ├── Secrets.h.template          # Configure WiFi/MQTT passwords 
-    │   ├── Configuration.h.template    # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
     │   └── ...       
     ├── core                            # Folder for core files, edit those files and contribute!
     │   ├── BootstrapManager.h          # Core header file with utility classes for bootstrapping
@@ -54,7 +53,8 @@ Simply edit those file as per description, _few minutes required_
     │   ├── WifiManager.h               # Core header file with utility classes for Wifi and OTA upload management
     │   ├── Helpers.h                   # Core header file with helper classes 
     │   └── ...       
-    ├── platformio.ini                  # Edit platform with the one you are using (default: ESP8266, board: d1_mini)  
+    ├── platformio.ini                  # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
+    ├── secrets.ini.template            # Configure password and rename the file in secrets.ini 
     └── ...
     
 ***NOTE:***  
@@ -82,10 +82,10 @@ class BootstrapManager {
 - `manageQueueSubscription()`        # subscribe to the desired mqtt topics
 - `callback()`                       # callback function called when a message arrives from the queue
     
-## Import those utilities to your existing project
+## Import those utilities to your existing project 
 To link this project to your existing one use git submodules.  
 ```
-git submodule add git@github.com:sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
+git submodule add https://github.com/sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
 ```
 Add extra dirs to your `platformio.ini`
 ```ini
