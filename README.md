@@ -91,9 +91,7 @@ Add extra dirs to your `platformio.ini`
 ```ini
 lib_extra_dirs = arduino_bootstrapper
 ```
-Copy and configure `~/arduino_bootstrapper/include/Secrets.h.template` into your `include/Secrets.h` folder  
-Copy and configure `~/arduino_bootstrapper/include/Configuration.h.template` into your `include/Configuration.h` folder  
-Copy and configure `~/arduino_bootstrapper/src/Configuration.cpp.template` into your `src/Configuration.cpp` folder 
+Copy and configure `~/arduino_bootstrapper/secrets.ini.template` into `secrets.ini.template` 
   
 Please include BootrapManager.h into your main header file:
 ```c++
