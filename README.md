@@ -22,17 +22,16 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 Open an issue here on Github, your questions could be useful to other users.
 
 ## How To
-There is two way to bootstrap your software using this utilities.
-1) Start a project from scratch
-2) Import this utilities to your existing project
-    a) import via git submodules
-    b) import via PlatformIO Library Registry (easyest way to import)
-
+There is three way to bootstrap your software using this utilities.
+1) Bootstrap a project from scratch
+2) Import those utilities to your existing project via PlatformIO Library Registry (easyest way to import)
+3) Import those utilities to your existing project via git submodules (faster updates to latest releases)
+    
 #### There are other projects that uses this utility, you can explore their sources here:  
 [Smart Thermostat](https://github.com/sblantipodi/smart_thermostat), [Solar Station](https://github.com/sblantipodi/solar_station), [PC Ambilight](https://github.com/sblantipodi/pc_ambilight), [Smart Watch Winder](https://github.com/sblantipodi/smart_watch_winder)  
 
 
-## Bootstrap a project from scratch
+## 1) Bootstrap a project from scratch
 Clone the bootstrapper
 ```
 git clone git@github.com:sblantipodi/arduino_bootstrapper.git
@@ -81,8 +80,14 @@ class BootstrapManager {
 - `manageHardwareButton()`           # _OPTIONAL_ put special instruction for hardware button management during network disconnections
 - `manageQueueSubscription()`        # subscribe to the desired mqtt topics
 - `callback()`                       # callback function called when a message arrives from the queue
-    
-## Import those utilities to your existing project 
+
+## 2) Import those utilities to your existing project via PlatformIO Library Registry (easyest way to import)
+Add `lib_deps` to your `platformio.ini`
+```
+lib_deps = arduino_bootstrapper
+```
+
+## 3) Import those utilities to your existing project via git submodules (faster updates to latest releases)
 To link this project to your existing one use git submodules.  
 ```
 git submodule add https://github.com/sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
