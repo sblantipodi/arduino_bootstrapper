@@ -22,7 +22,7 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 Open an issue here on Github, your questions could be useful to other users.
 
 ## How To
-There is three way to bootstrap your software using this utilities.
+There is three way to bootstrap your software using this utilities.  
 __1) Bootstrap a project from scratch__  
 __2) Import those utilities to your existing project via PlatformIO Library Registry (easyest way to import)__  
 __3) Import those utilities to your existing project via git submodules (faster updates to latest releases)__  
