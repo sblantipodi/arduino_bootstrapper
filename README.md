@@ -22,7 +22,7 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 Open an issue here on Github, your questions could be useful to other users.
 
 ## How To
-There is three way to bootstrap your software using this utilities.  
+There is two way to bootstrap your software using this utilities.  
 1) Bootstrap a project from scratch  
 2) Import those utilities to your existing project 
     
@@ -81,18 +81,18 @@ class BootstrapManager {
 - `callback()`                       # callback function called when a message arrives from the queue
 
 ## 2) Import those utilities to your existing project 
-__via PlatformIO Library Registry (easyest way to import)__  
+You can import `Arduino Bootstrapper` into your existing projects in two way:
+1) Import via PlatformIO Library Registry (easyest way to import)
 Add `lib_deps` to your `platformio.ini`
 ```
 lib_deps = arduino_bootstrapper
 ```
-__via git submodules (faster updates to latest releases)__ 
-To link this project to your existing one use git submodules.  
+2) Import via git submodules (faster updates to latest releases)  
 ```
 git submodule add https://github.com/sblantipodi/arduino_bootstrapper.git arduino_bootstrapper
 ```  
 
-Add extra dirs to your `platformio.ini`
+For both importing method you should then add extra dirs to your `platformio.ini`
 ```ini
 lib_extra_dirs = arduino_bootstrapper
 ```
