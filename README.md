@@ -89,7 +89,7 @@ lib_deps = arduino_bootstrapper
 ```
 ```
 // For ArduinoIDE
-Simply import the ArduinoBootstrapper library from the library manager
+Simply import the Bootstrapper library from the library manager
 ```
 2) Import via git submodules (faster updates to latest releases)  
 ```
