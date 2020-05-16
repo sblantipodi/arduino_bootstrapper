@@ -40,18 +40,18 @@ Simply edit those file as per description, _few minutes required_
 
     .
     ├── ...
-    ├── examples                             # Project src folder
-    │   ├── ChangeName.cpp              # Main file with loop() and setup() function, rename and copy it into your src folder  
-    │   ├── ChangeName.h                # Main header file, rename and copy it into your include folder  
+    ├── examples                 # Project src folder
+    │   ├── ChangeName.cpp       # Main file with loop() and setup() function, rename and copy it into your src folder  
+    │   ├── ChangeName.h         # Main header file, rename and copy it into your include folder  
     │   └── ...      
-    ├── src                            # Folder for core files, edit those files and contribute!
-    │   ├── BootstrapManager.h          # Core header file with utility classes for bootstrapping
-    │   ├── QueueManager.h              # Core header file with utility classes for Queue and MQTT management
-    │   ├── WifiManager.h               # Core header file with utility classes for Wifi and OTA upload management
-    │   ├── Helpers.h                   # Core header file with helper classes 
+    ├── src                      # Folder for core files, edit those files and contribute!
+    │   ├── BootstrapManager.h   # Core header file with utility classes for bootstrapping
+    │   ├── QueueManager.h       # Core header file with utility classes for Queue and MQTT management
+    │   ├── WifiManager.h        # Core header file with utility classes for Wifi and OTA upload management
+    │   ├── Helpers.h            # Core header file with helper classes 
     │   └── ...       
-    ├── platformio.ini                  # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
-    ├── secrets.ini.template            # Configure password and rename the file in secrets.ini 
+    ├── platformio.ini           # Configure all the required info (ex: Wifi device name, DNS gateway, ecc.)
+    ├── secrets.ini.template     # Configure password and rename the file in secrets.ini 
     └── ...
     
 ***NOTE:***  
