@@ -7,15 +7,10 @@
         "url": "https://github.com/sblantipodi/arduino_bootstrapper.git"
     },
     "version": "1.3",
-    "examples": "src/*.cpp", 
+    "examples": "examples/*.cpp", 
     "exclude": "tests",
     "frameworks": "arduino",
     "platforms": [
         "espressif8266"
-    ],
-    "include": "core",
-    "build": {
-        "srcDir": "core",
-        "includeDir": "core"
-    }
+    ]
 }

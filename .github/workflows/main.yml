@@ -21,6 +21,10 @@ jobs:
         pwd
         git submodule update --init
         ls
+    - name: Setup template config files
+      run: |                
+        cp /home/runner/work/smart_thermostat/smart_thermostat/examples/ChangeName.cpp.template /home/runner/work/smart_thermostat/smart_thermostat/src/ChangeName.cpp    
+        cp /home/runner/work/smart_thermostat/smart_thermostat/examples/ChangeName.h.template /home/runner/work/smart_thermostat/smart_thermostat/include/ChangeName.h    
     # - name: Setup tmate session
     #   uses: mxschmitt/action-tmate@v2         
     - name: Static code analysis
