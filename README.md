@@ -40,13 +40,11 @@ Simply edit those file as per description, _few minutes required_
 
     .
     ├── ...
-    ├── src                             # Project src folder
-    │   ├── ChangeName.cpp              # Main file with loop() and setup() function, rename it with the name of your project
-    │   └── ...   
-    ├── include                         # Project header folder
-    │   ├── ChangeName.h                # Main header file, rename it with the name of your project
-    │   └── ...       
-    ├── core                            # Folder for core files, edit those files and contribute!
+    ├── examples                             # Project src folder
+    │   ├── ChangeName.cpp              # Main file with loop() and setup() function, rename and copy it into your src folder  
+    │   ├── ChangeName.h                # Main header file, rename and copy it into your include folder  
+    │   └── ...      
+    ├── src                            # Folder for core files, edit those files and contribute!
     │   ├── BootstrapManager.h          # Core header file with utility classes for bootstrapping
     │   ├── QueueManager.h              # Core header file with utility classes for Queue and MQTT management
     │   ├── WifiManager.h               # Core header file with utility classes for Wifi and OTA upload management
