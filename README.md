@@ -17,7 +17,7 @@ If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
 [![GitHub forks](https://img.shields.io/github/forks/sblantipodi/arduino_bootstrapper.svg?style=social&label=Fork)](https://github.com/sblantipodi/arduino_bootstrapper/network)
 
 ## Credits
-- Davide Perini
+- Davide Perini 
 
 ## How to get help if you are stuck?
 Open an issue here on Github, your questions could be useful to other users.
