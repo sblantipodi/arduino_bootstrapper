@@ -1,13 +1,14 @@
 # Arduino Bootstrapper
 
 Utility classes for bootstrapping arduino projects with Wifi management, OTA upload management, memory management,   
-MQTT and queue management. Espressif ESP8266 is the default board used but it can be easily configured for other boards.  
+MQTT and queue management. Espressif ESP8266 is the default platform used but it can be easily configured for other boards.  
 _Written for Arduino IDE and PlatformIO._
 
 [![GitHub Actions CI](https://github.com/sblantipodi/arduino_bootstrapper/workflows/GitHub%20Actions%20CI/badge.svg)](https://github.com/sblantipodi/arduino_bootstrapper/actions)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/ArduinoBootstrapper.svg?)](https://www.ardu-badge.com/ArduinoBootstrapper)
 [![GitHub version](https://img.shields.io/github/v/release/sblantipodi/arduino_bootstrapper.svg)](https://github.com/sblantipodi/arduino_bootstrapper/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/sblantipodi/arduino_bootstrapper/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-purple.svg)](https://GitHub.com/sblantipodi/arduino_bootstrapper/graphs/commit-activity)
 [![DPsoftware](https://img.shields.io/static/v1?label=DP&message=Software&color=orange)](https://www.dpsoftware.org)
 
 If you like **Arduino Bootstrapper**, give it a star, or fork it and contribute!
