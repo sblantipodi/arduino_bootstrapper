@@ -85,11 +85,11 @@ You can import `Arduino Bootstrapper` into your existing projects in two way:
 ```
 // For PlatformIO
 Add `lib_deps` to your `platformio.ini`
-lib_deps = ___ArduinoBootstrapper___
+lib_deps = ArduinoBootstrapper
 ```
 ```
 // For ArduinoIDE
-Simply import the ___Bootstrapper___ library from the library manager
+Simply import the Bootstrapper library from the library manager
 ```
 2) Import via git submodules (faster updates to latest releases)  
 ```
