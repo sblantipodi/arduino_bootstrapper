@@ -75,7 +75,7 @@ void loop() {
 
     // ENTER YOUR CODE HERE
 
-    Serial.print("Hello WorldA");
+    Serial.print("Hello World");
     delay(1000);
 
     // Send MSG to the MQTT queue with no retention
