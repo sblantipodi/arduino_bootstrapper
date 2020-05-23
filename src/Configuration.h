@@ -105,4 +105,9 @@ const int MQTT_PORT = MQTT_SERVER_PORT;
 #define MAX_JSON_OBJECT_SIZE 50
 #endif
 
+// Maximum JSON Object Size
+#ifndef MQTT_MAX_PACKET_SIZE
+#define MQTT_MAX_PACKET_SIZE 1024
+#endif
+
 #endif

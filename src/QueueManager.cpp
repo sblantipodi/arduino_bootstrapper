@@ -27,6 +27,7 @@ void QueueManager::setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)) 
 
   mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
   mqttClient.setCallback(callback);
+  mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
 
 }
 
