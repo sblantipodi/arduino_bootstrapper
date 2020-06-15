@@ -26,8 +26,11 @@
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 #include <FS.h>
-#include <LittleFS.h>
-#include "Configuration.h"
+#if defined(ESP8266)
+  #include <LittleFS.h>
+#elif defined(ESP32)
+  #include "SPIFFS.h"
+#endif #include "Configuration.h"
 #include "Helpers.h"
 #include "WifiManager.h"
 #include "QueueManager.h"
@@ -56,8 +59,13 @@ class BootstrapManager {
     void drawInfoPage(String softwareVersion, String author); // draw a page with all the microcontroller's info
     void drawScreenSaver(String txt); // useful for OLED displays
     void sendState(const char *topic, JsonObject objectToSend, String version); // send microcontroller's info on the queue 
-    void writeToLittleFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
-    DynamicJsonDocument readLittleFS(String filename); // read json file from storage
+    #if defined(ESP8266)
+      void writeToLittleFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
+      DynamicJsonDocument readLittleFS(String filename); // read json file from storage
+    #elif defined(ESP32)
+      void writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
+      DynamicJsonDocument readSPIFFS(String filename); // read json file from storage
+    #endif
     bool isWifiConfigured(); // check if wifi is correctly configured
     void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
 

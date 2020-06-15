@@ -20,21 +20,31 @@
 #ifndef _DPSOFTWARE_WIFI_MANAGER_H
 #define _DPSOFTWARE_WIFI_MANAGER_H
 
-#include <ESP8266WiFi.h>
-#include <ESP8266mDNS.h>
-#include <ESP8266HTTPClient.h>
-#include <ESP8266WebServer.h>
-#include <WiFiUdp.h>
+#if defined(ESP8266)
+  #include <ESP8266WiFi.h>
+  #include <ESP8266mDNS.h>
+  #include <ESP8266HTTPClient.h>
+  #include <ESP8266WebServer.h>
+  #include <WiFiUdp.h>
+  #include <LittleFS.h>
+#elif defined(ESP32)
+  #include <WiFi.h>
+  #include <WebServer.h>
+  #include "SPIFFS.h"
+#endif 
 #include <ArduinoOTA.h>
 #include <FS.h>
-#include <LittleFS.h>
 #include "Helpers.h"
 #include "Secrets.h"
 #include "Configuration.h"
 
 
 //Establishing Local server at port 80 whenever required
-extern ESP8266WebServer server;
+#if defined(ESP8266)
+  extern ESP8266WebServer server;
+#elif defined(ESP32)
+  extern WebServer server;
+#endif 
 // WiFi Client
 extern WiFiClient espClient;
 // WebServer content

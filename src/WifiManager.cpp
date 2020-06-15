@@ -19,9 +19,12 @@
 
 #include "WifiManager.h"
 
-
 //Establishing Local server at port 80 whenever required
-ESP8266WebServer server(80);
+#if defined(ESP8266)
+  ESP8266WebServer server(80);
+#elif defined(ESP32)
+  WebServer server(80);
+#endif  
 // WiFiClient
 WiFiClient espClient;
 // WebServer content
@@ -67,13 +70,15 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   //WiFi.setSleepMode(WIFI_NONE_SLEEP);
   WiFi.setAutoConnect(true);  
   WiFi.config(IP_MICROCONTROLLER, IP_DNS, IP_GATEWAY);
-  WiFi.hostname(WIFI_DEVICE_NAME);
-
-  // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
-  WiFi.setOutputPower(WIFI_POWER);
-  
+  #if defined(ESP8266)
+    WiFi.hostname(WIFI_DEVICE_NAME);
+    // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
+    WiFi.setOutputPower(WIFI_POWER);
+  #elif defined(ESP32)
+    WiFi.setHostname(WIFI_DEVICE_NAME);
+  #endif 
   // Start wifi connection
-  WiFi.begin(qsid, qpass);
+  WiFi.begin(qsid.c_str(), qpass.c_str());
 
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -190,7 +195,7 @@ void WifiManager::launchWebServerForOTAConfig() {
   while ((WiFi.status() != WL_CONNECTED)) {
     Serial.print(".");
     delay(100);
-    server.handleClient();
+    server.handleClient();    
   }
   
 }
@@ -231,7 +236,11 @@ void WifiManager::setupAP(void) {
       Serial.print(" (");
       Serial.print(WiFi.RSSI(i));
       Serial.print(")");
-      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+      #if defined(ESP8266)
+        Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+      #elif defined(ESP32)
+        Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
+      #endif  
       delay(10);
     }
   }
@@ -246,7 +255,11 @@ void WifiManager::setupAP(void) {
     htmlString += WiFi.RSSI(i);
     htmlString += "</td>";
     htmlString += "<td>";
-    htmlString += ((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? "PUBLIC" : "ENCRYPTED");
+    #if defined(ESP8266)
+      htmlString += ((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? "PUBLIC" : "ENCRYPTED");
+    #elif defined(ESP32)
+      htmlString += ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? "PUBLIC" : "ENCRYPTED");
+    #endif 
     htmlString += "</td>";
     htmlString += "</tr>";
   }
@@ -305,22 +318,37 @@ void WifiManager::createWebServer() {
         doc["mqttuser"] = mqttuser;     
         doc["mqttpass"] = mqttpass;  
 
-        // Write to LittleFS
-        Serial.println(F("\nSaving setup.json\n"));
-        File jsonFile = LittleFS.open("/setup.json", "w");
-        if (!jsonFile) {
-          Serial.println("Failed to open [setup.json] file for writing");
-        } else {
-          serializeJsonPretty(doc, Serial);
-          serializeJson(doc, jsonFile);
-          jsonFile.close();
-          Serial.println("[setup.json] written correctly");
-        }
-
-        delay(DELAY_200);
-        content = "{\"Success\":\"saved to LittleFS... reset to boot into new wifi\"}";
-        statusCode = 200;
-        ESP.reset();
+        #if defined(ESP8266)
+          // Write to LittleFS
+          Serial.println(F("\nSaving setup.json\n"));
+          File jsonFile = LittleFS.open("/setup.json", "w");
+          if (!jsonFile) {
+            Serial.println("Failed to open [setup.json] file for writing");
+          } else {
+            serializeJsonPretty(doc, Serial);
+            serializeJson(doc, jsonFile);
+            jsonFile.close();
+            Serial.println("[setup.json] written correctly");
+          }
+          delay(DELAY_200);
+          content = "{\"Success\":\"saved to LittleFS... reset to boot into new wifi\"}";
+          statusCode = 200;
+          ESP.reset();
+        #elif defined(ESP32)
+          if (SPIFFS.begin()) {
+            File configFile = SPIFFS.open("/setup.json", "w");
+            if (!configFile) {
+              Serial.println("Failed to open [setup.json] file for writing");
+            }
+            serializeJsonPretty(doc, Serial);
+            serializeJson(doc, configFile);
+            configFile.close();
+            Serial.println("[setup.json] written correctly");
+          } else {
+            Serial.println(F("Failed to mount FS for write"));
+          }
+          ESP.restart();
+        #endif         
       } else {
         content = "{\"Error\":\"404 not found\"}";
         statusCode = 404;
