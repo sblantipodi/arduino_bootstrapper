@@ -335,7 +335,7 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
 
   DynamicJsonDocument jsonDoc(1024);
   auto error = deserializeJson(jsonDoc, buf.get());
-  serializeJsonPretty(jsonDoc, Serial);
+  if (filename != "setup.json") serializeJsonPretty(jsonDoc, Serial);
   jsonFile.close();
   if (error) {
     helper.smartPrintln("Failed to parse [" + filename + "] file");
@@ -385,7 +385,7 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
         configFile.readBytes(buf.get(), size);
         DeserializationError deserializeError = deserializeJson(jsonDoc, buf.get());
         Serial.println("\nReading " + filename);
-        serializeJsonPretty(jsonDoc, Serial);
+        if (filename != "setup.json") serializeJsonPretty(jsonDoc, Serial);
         if (!deserializeError) {
           helper.smartPrintln(F("JSON parsed"));
         } else {
@@ -425,7 +425,7 @@ bool BootstrapManager::isWifiConfigured() {
       DynamicJsonDocument mydoc = readSPIFFS("setup.json");    
     #endif
     if (mydoc.containsKey("qsid")) {
-      Serial.println("LittleFS OK, restoring WiFi and MQTT config.");
+      Serial.println("Storage OK, restoring WiFi and MQTT config.");
       qsid = helper.getValue(mydoc["qsid"]);
       qpass = helper.getValue(mydoc["qpass"]);
       OTApass = helper.getValue(mydoc["OTApass"]);

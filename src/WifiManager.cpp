@@ -137,12 +137,15 @@ void WifiManager::setupOTAUpload() {
   ArduinoOTA.onStart([]() {
     Serial.println(F("Starting"));
   });
+
   ArduinoOTA.onEnd([]() {
     Serial.println(F("\nEnd"));
   });
+
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   });
+
   ArduinoOTA.onError([](ota_error_t error) {
     Serial.printf("Error[%u]: ", error);
     if (error == OTA_AUTH_ERROR) Serial.println(F("Auth Failed"));
@@ -151,6 +154,7 @@ void WifiManager::setupOTAUpload() {
     else if (error == OTA_RECEIVE_ERROR) Serial.println(F("Receive Failed"));
     else if (error == OTA_END_ERROR) Serial.println(F("End Failed"));
   });
+  
   ArduinoOTA.begin();
 
 }
@@ -188,10 +192,11 @@ bool WifiManager::isWifiConfigured() {
 void WifiManager::launchWebServerForOTAConfig() {
   
   WiFi.disconnect();
-  Serial.println("Turning the HotSpot On");
-  launchWeb();
-  setupAP();
+  Serial.println("Turning HotSpot On");
   
+  setupAP();
+  launchWeb();
+
   while ((WiFi.status() != WL_CONNECTED)) {
     Serial.print(".");
     delay(100);
