@@ -23,10 +23,12 @@
 /********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
 void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)) {
   
-  if (!LittleFS.begin()) {
-    Serial.println("LittleFS mount failed");
-    return;
-  }
+  #if defined(ESP8266)
+    if (!LittleFS.begin()) {
+      Serial.println("LittleFS mount failed");
+      return;
+    }
+  #endif
 
   if (isWifiConfigured()) {
     isConfigFileOk = true;
@@ -180,7 +182,7 @@ void BootstrapManager::getMicrocontrollerInfo() {
   helper.smartPrint(F("IP: ")); helper.smartPrintln(IP);
   helper.smartPrintln(F("MAC: ")); helper.smartPrintln(WiFi.macAddress());
   helper.smartPrint(F("SDK: ")); helper.smartPrintln(ESP.getSdkVersion());
-  helper.smartPrint(F("Arduino Core: ")); helper.smartPrintln(ESP.getCoreVersion());
+  // helper.smartPrint(F("Arduino Core: ")); helper.smartPrintln(ESP.getCoreVersion());
   helper.smartPrintln(F("Last Boot: ")); helper.smartPrintln(lastBoot);
   helper.smartPrintln(F("Last WiFi connection:")); helper.smartPrintln(lastWIFiConnection);
   helper.smartPrintln(F("Last MQTT connection:")); helper.smartPrintln(lastMQTTConnection);
@@ -259,6 +261,7 @@ void BootstrapManager::sendState(const char *topic, JsonObject objectToSend, Str
 }
 
 // write json file to storage
+#if defined(ESP8266)
 void BootstrapManager::writeToLittleFS(DynamicJsonDocument jsonDoc, String filename) {
 
   File jsonFile = LittleFS.open("/" + filename, "w");
@@ -272,8 +275,31 @@ void BootstrapManager::writeToLittleFS(DynamicJsonDocument jsonDoc, String filen
   }
 
 }
+#endif
+
+// write json file to storage
+#if defined(ESP32)
+void BootstrapManager::writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename) {
+  
+  if (SPIFFS.begin()) {
+    // SPIFFS.format();
+    File configFile = SPIFFS.open("/" + filename, "w");
+    if (!configFile) {
+      helper.smartPrintln("Failed to open [" + filename + "] file for writing");
+    }
+    serializeJsonPretty(jsonDoc, Serial);
+    serializeJson(jsonDoc, configFile);
+    configFile.close();
+    helper.smartPrintln("[" + filename + "] written correctly");
+  } else {
+    helper.smartPrintln(F("Failed to mount FS for write"));
+  }
+
+}
+#endif
 
 // read json file from storage
+#if defined(ESP8266)
 DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
 
   // Helpers classes
@@ -309,7 +335,7 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
 
   DynamicJsonDocument jsonDoc(1024);
   auto error = deserializeJson(jsonDoc, buf.get());
-  serializeJsonPretty(jsonDoc, Serial);
+  if (filename != "setup.json") serializeJsonPretty(jsonDoc, Serial);
   jsonFile.close();
   if (error) {
     helper.smartPrintln("Failed to parse [" + filename + "] file");
@@ -327,6 +353,60 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
   return jsonDoc;
 
 }
+#endif
+
+// read json file from storage
+#if defined(ESP32)
+DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
+
+  // Helpers classes
+  Helpers helper;
+
+  if (PRINT_TO_DISPLAY) {
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.setTextSize(1);
+  }
+  helper.smartPrintln(F("Mounting SPIFSS..."));
+  helper.smartDisplay();
+  // SPIFFS.remove("/config.json");
+  if (SPIFFS.begin()) {
+    helper.smartPrintln(F("FS mounted"));
+    if (SPIFFS.exists("/" + filename)) {
+      //file exists, reading and loading
+      helper.smartPrintln("Reading " + filename + " file...");
+      File configFile = SPIFFS.open("/" + filename, "r");
+      if (configFile) {
+        helper.smartPrintln(F("Config OK"));
+        size_t size = configFile.size();
+        // Allocate a buffer to store contents of the file.
+        std::unique_ptr<char[]> buf(new char[size]);
+
+        configFile.readBytes(buf.get(), size);
+        DeserializationError deserializeError = deserializeJson(jsonDoc, buf.get());
+        Serial.println("\nReading " + filename);
+        if (filename != "setup.json") serializeJsonPretty(jsonDoc, Serial);
+        if (!deserializeError) {
+          helper.smartPrintln(F("JSON parsed"));
+        } else {
+          jsonDoc[VALUE] = ERROR;
+          helper.smartPrintln(F("Failed to load json file"));
+        }
+      } 
+    } else {
+      jsonDoc[VALUE] = ERROR;
+      helper.smartPrintln("Error reading " + filename + " file...");
+    }
+  } else {
+    jsonDoc[VALUE] = ERROR;
+    helper.smartPrintln(F("failed to mount FS"));
+  }
+  helper.smartDisplay();
+  delay(DELAY_4000);
+  return jsonDoc;
+
+}
+#endif
 
 // check if wifi is correctly configured
 bool BootstrapManager::isWifiConfigured() {
@@ -339,9 +419,13 @@ bool BootstrapManager::isWifiConfigured() {
     mqttpass = MQTT_PASSWORD;         
     return true;
   } else {
-    DynamicJsonDocument mydoc = readLittleFS("setup.json");    
+    #if defined(ESP8266)
+      DynamicJsonDocument mydoc = readLittleFS("setup.json");    
+    #elif defined(ESP32)
+      DynamicJsonDocument mydoc = readSPIFFS("setup.json");    
+    #endif
     if (mydoc.containsKey("qsid")) {
-      Serial.println("LittleFS OK, restoring WiFi and MQTT config.");
+      Serial.println("Storage OK, restoring WiFi and MQTT config.");
       qsid = helper.getValue(mydoc["qsid"]);
       qpass = helper.getValue(mydoc["qpass"]);
       OTApass = helper.getValue(mydoc["OTApass"]);

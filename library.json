@@ -1,16 +1,17 @@
 {
     "name": "ArduinoBootstrapper",
     "keywords": "bootstrapper, mqtt, wifi, iot",
-    "description": "Utility classes for bootstrapping arduino projects with Wifi management, OTA upload management, memory management, MQTT and queue management.",
+    "description": "Utility classes for bootstrapping arduino projects with Wifi management, OTA upload management, memory management, MQTT and queue management. (ESP8266/ESP32 ready)",
     "repository": {
         "type": "git",
         "url": "https://github.com/sblantipodi/arduino_bootstrapper.git"
     },
-    "version": "1.4.5",
+    "version": "1.5.0",
     "examples": "examples/*.cpp", 
     "exclude": "tests",
     "frameworks": "arduino",
     "platforms": [
-        "espressif8266"
+        "espressif8266",
+        "espressif32"
     ]
 }
