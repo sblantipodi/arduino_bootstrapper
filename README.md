@@ -1,7 +1,6 @@
 # Arduino Bootstrapper
 
-Utility classes for bootstrapping arduino projects with Wifi management, OTA upload management, memory management,   
-MQTT and queue management.  
+Utility classes for bootstrapping arduino projects with Wifi management, OTA upload management, memory management, MQTT and queue management.  
 Espressif **`ESP8266/ESP32`** are the default platforms used but it can be easily configured for other platforms and boards.  
 _Written for Arduino IDE and PlatformIO._
 
