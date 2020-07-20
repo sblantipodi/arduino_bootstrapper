@@ -30,7 +30,8 @@
   #include <LittleFS.h>
 #elif defined(ESP32)
   #include "SPIFFS.h"
-#endif #include "Configuration.h"
+#endif 
+#include "Configuration.h"
 #include "Helpers.h"
 #include "WifiManager.h"
 #include "QueueManager.h"
