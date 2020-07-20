@@ -151,3 +151,9 @@ that will let you enter all the passwords without the needs of hardcoding them.
 
 ## License
 This program is licensed under MIT License
+
+## Thanks To 
+|  Thanks              |  For                           |
+|----------------------|--------------------------------|
+|<img width="200" src="http://fxexperience.com/wp-content/uploads/2013/04/jetbrains.png">| For the <a href="https://www.jetbrains.com/clion">CLion IDE</a> licenses.|
+
