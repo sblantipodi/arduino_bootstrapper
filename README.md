@@ -1,7 +1,7 @@
 # Arduino Bootstrapper
 
 Utility classes for bootstrapping arduino projects.  
-In few minutes you will be able to read and write to storage (in JSON format), read and send messages to an MQTT queue, connect to WiFi and manage disconnections, connect to WiFi without hardcoding passwords and more...  
+In few minutes you will be able to read and write to storage (in JSON format), read and send messages to an MQTT queue, connect to WiFi without hardcoding passwords and manage and more...  
 `Arduino Bootstrapper` wants to be a starting point for **creating good and reusable projects without code duplications**.
 
 Espressif **`ESP8266/ESP32`** are the default platforms used but it can be easily configured for other platforms and boards.  
