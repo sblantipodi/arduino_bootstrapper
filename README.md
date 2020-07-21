@@ -1,6 +1,9 @@
 # Arduino Bootstrapper
 
-Utility classes for bootstrapping arduino projects with Wifi management, OTA upload management, memory management, MQTT and queue management.  
+Utility classes for bootstrapping arduino projects.  
+In few minutes you will be able to read and write to storage (in JSON format), read and send messages to an MQTT queue, connect to WiFi and manage disconnections, connect to WiFi without hardcoding passwords and more...  
+`Arduino Bootstrapper` wants to be a starting point for **creating good and reusable projects without code duplications**.
+
 Espressif **`ESP8266/ESP32`** are the default platforms used but it can be easily configured for other platforms and boards.  
 _Written for Arduino IDE and PlatformIO._
 
@@ -29,7 +32,6 @@ There is two way to bootstrap your software using this utilities.
     
 #### There are other projects that uses this utility, you can explore their sources here:  
 [Smart Thermostat](https://github.com/sblantipodi/smart_thermostat), [Solar Station](https://github.com/sblantipodi/solar_station), [PC Ambilight](https://github.com/sblantipodi/pc_ambilight), [Smart Watch Winder](https://github.com/sblantipodi/smart_watch_winder)  
-
 
 ## 1) Bootstrap a project from scratch
 Clone the bootstrapper
