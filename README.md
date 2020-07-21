@@ -149,7 +149,9 @@ Arduino Bootstrapper will search for a `secrets.ini`, if you don't configure it,
 You can connect to the AP with your mobile and go to http://192.168.4.1 to access the gui  
 that will let you enter all the passwords without the needs of hardcoding them.
  
-![Access Point Frontend](https://raw.githubusercontent.com/sblantipodi/arduino_bootstrapper/master/data/img/arduinobootstrapper.png)
+<p align="center">
+  <img width="450" src="https://raw.githubusercontent.com/sblantipodi/arduino_bootstrapper/master/data/img/arduinobootstrapper.png">
+</p>
 
 ## License
 This program is licensed under MIT License
