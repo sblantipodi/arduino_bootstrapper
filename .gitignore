@@ -1,4 +1,8 @@
 .vscode
+.idea
 .pio
 src/ChangeName.cpp
 include/ChangeName.h
+cmake-build-*
+CMakeLists.txt
+CMakeListsPrivate.txt
