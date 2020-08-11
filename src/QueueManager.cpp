@@ -25,7 +25,10 @@ PubSubClient mqttClient(espClient);
 /********************************** SETUP MQTT QUEUE **********************************/
 void QueueManager::setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)) {
 
-  mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
+  mqttClient.setServer(IPAddress(helper.getValue(mqttIP,'.',0).toInt(),
+                                 helper.getValue(mqttIP,'.',1).toInt(),
+                                 helper.getValue(mqttIP,'.',2).toInt(),
+                                 helper.getValue(mqttIP,'.',3).toInt()), mqttPort.toInt());
   mqttClient.setCallback(callback);
   mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
 

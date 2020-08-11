@@ -75,21 +75,21 @@ const double WIFI_POWER = WIFI_SIGNAL_STRENGTH;
 
 // GATEWAY IP
 #ifndef GATEWAY_IP
-#define GATEWAY_IP 192,168,1,1
+#define GATEWAY_IP "192.168.1.1"
 #endif
-const IPAddress IP_GATEWAY = IPAddress(GATEWAY_IP);
+const char* const IP_GATEWAY = GATEWAY_IP;
 
 // DNS IP
 #ifndef DNS_IP
-#define DNS_IP 192,168,1,1
+#define DNS_IP "192.168.1.1"
 #endif
-const IPAddress IP_DNS = IPAddress(DNS_IP);
+const char* const IP_DNS = DNS_IP;
 
 // STATIC IP FOR THE MICROCONTROLLER
 #ifndef MICROCONTROLLER_IP
-#define MICROCONTROLLER_IP 192,168,1,99
+#define MICROCONTROLLER_IP "192.168.1.99"
 #endif
-const IPAddress IP_MICROCONTROLLER = IPAddress(MICROCONTROLLER_IP);
+const char* const IP_MICROCONTROLLER = MICROCONTROLLER_IP;
 
 // MQTT server IP
 #ifndef MQTT_SERVER_IP

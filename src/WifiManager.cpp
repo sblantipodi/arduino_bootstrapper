@@ -68,8 +68,19 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 
   WiFi.mode(WIFI_STA);      // Disable AP mode
   //WiFi.setSleepMode(WIFI_NONE_SLEEP);
-  WiFi.setAutoConnect(true);  
-  WiFi.config(IP_MICROCONTROLLER, IP_DNS, IP_GATEWAY);
+  WiFi.setAutoConnect(true);
+  WiFi.config(IPAddress(helper.getValue(microcontrollerIP,'.',0).toInt(),
+                        helper.getValue(microcontrollerIP,'.',1).toInt(),
+                        helper.getValue(microcontrollerIP,'.',2).toInt(),
+                        helper.getValue(microcontrollerIP,'.',3).toInt()),
+              IPAddress(helper.getValue(IP_GATEWAY,'.',0).toInt(),
+                        helper.getValue(IP_GATEWAY,'.',1).toInt(),
+                        helper.getValue(IP_GATEWAY,'.',2).toInt(),
+                        helper.getValue(IP_GATEWAY,'.',3).toInt()),
+              IPAddress(helper.getValue(IP_DNS,'.',0).toInt(),
+                        helper.getValue(IP_DNS,'.',1).toInt(),
+                        helper.getValue(IP_DNS,'.',2).toInt(),
+                        helper.getValue(IP_DNS,'.',3).toInt()));
   #if defined(ESP8266)
     WiFi.hostname(WIFI_DEVICE_NAME);
     // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
@@ -112,9 +123,9 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   }
 
   helper.smartPrintln(F("WIFI CONNECTED"));
-  IP = WiFi.localIP().toString();
+  microcontrollerIP = WiFi.localIP().toString();
   MAC = WiFi.macAddress();
-  helper.smartPrintln(IP);
+  helper.smartPrintln(microcontrollerIP);
 
   delay(DELAY_1500);
 
@@ -286,9 +297,12 @@ void WifiManager::createWebServer() {
       content += "</h1>";
       content += htmlString;
       content += "<br><br><form method='get' action='setting' id='form1'>";
+      content += "<label for='microcontrollerIP'>IP ADDRESS</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'>";
       content += "<label for='ssid'>SSID</label><input type='text' id='ssid' name='ssid'>";
       content += "<label for='pass'>WIFI PASSWORD</label><input type='password' id='pass' name='pass'>";
       content += "<label for='OTApass'>OTA PASSWORD</label><input type='password' id='OTApass' name='OTApass'>";
+      content += "<label for='mqttIP'>MQTT SERVER IP</label><input type='text' id='mqttIP' name='mqttIP'>";
+      content += "<label for='mqttPort'>MQTT SERVER PORT</label><input type='text' id='mqttPort' name='mqttPort'>";
       content += "<label for='mqttuser'>MQTT USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
       content += "<label for='mqttpass'>MQTT PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
       content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><br></div></body>";
@@ -297,30 +311,42 @@ void WifiManager::createWebServer() {
     });
 
     server.on("/setting", []() {
+      String microcontrollerIP = server.arg("microcontrollerIP");
       String qsid = server.arg("ssid");
       String qpass = server.arg("pass");
+      String mqttIP = server.arg("mqttIP");
+      String mqttPort = server.arg("mqttPort");
       String OTApass = server.arg("OTApass");
       String mqttuser = server.arg("mqttuser");
       String mqttpass = server.arg("mqttpass");
 
-      if (qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0) {
-        
+      if (microcontrollerIP.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0) {
+
+        Serial.println("microcontrollerIP");
+        Serial.println(microcontrollerIP);
         Serial.println("qsid");
         Serial.println(qsid);
         Serial.println("qpass");
         Serial.println(qpass);
         Serial.println("OTApass");
         Serial.println(OTApass);
+        Serial.println("mqttIP");
+        Serial.println(mqttIP);
+        Serial.println("mqttPort");
+        Serial.println(mqttPort);
         Serial.println("mqttuser");
         Serial.println(mqttuser);
         Serial.println("mqttpass");
         Serial.println(mqttpass);
 
         DynamicJsonDocument doc(1024);
-        doc["qsid"] = qsid;     
+        doc["microcontrollerIP"] = microcontrollerIP;
+        doc["qsid"] = qsid;
         doc["qpass"] = qpass;     
-        doc["OTApass"] = OTApass;     
-        doc["mqttuser"] = mqttuser;     
+        doc["OTApass"] = OTApass;
+        doc["mqttIP"] = mqttIP;
+        doc["mqttPort"] = mqttPort;
+        doc["mqttuser"] = mqttuser;
         doc["mqttpass"] = mqttpass;  
 
         #if defined(ESP8266)

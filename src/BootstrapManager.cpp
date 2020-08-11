@@ -179,7 +179,7 @@ void BootstrapManager::getMicrocontrollerInfo() {
 
   helper.smartPrint(F("Flash: ")); helper.smartPrint(ESP.getFlashChipSize()/1024); helper.smartPrintln(F(" KB")); 
   helper.smartPrint(F("Sketch: ")); helper.smartPrint(ESP.getSketchSize()/1024); helper.smartPrintln(F(" KB")); 
-  helper.smartPrint(F("IP: ")); helper.smartPrintln(IP);
+  helper.smartPrint(F("IP: ")); helper.smartPrintln(microcontrollerIP);
   helper.smartPrintln(F("MAC: ")); helper.smartPrintln(WiFi.macAddress());
   helper.smartPrint(F("SDK: ")); helper.smartPrintln(ESP.getSdkVersion());
   // helper.smartPrint(F("Arduino Core: ")); helper.smartPrintln(ESP.getCoreVersion());
@@ -246,7 +246,7 @@ void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
 void BootstrapManager::sendState(const char *topic, JsonObject objectToSend, String version) {
 
   objectToSend["Whoami"] = WIFI_DEVICE_NAME;  
-  objectToSend["IP"] = IP;
+  objectToSend["IP"] = microcontrollerIP;
   objectToSend["MAC"] = MAC;
   objectToSend["ver"] = version;
   objectToSend["time"] = timedate;
@@ -412,9 +412,12 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
 bool BootstrapManager::isWifiConfigured() {
 
   if (wifiManager.isWifiConfigured()) {
+    microcontrollerIP = IP_MICROCONTROLLER;
     qsid = SSID;
     qpass = PASSWORD;
     OTApass = OTAPASSWORD;
+    mqttIP = MQTT_SERVER;
+    mqttPort = MQTT_PORT;
     mqttuser = MQTT_USERNAME;
     mqttpass = MQTT_PASSWORD;         
     return true;
@@ -426,9 +429,12 @@ bool BootstrapManager::isWifiConfigured() {
     #endif
     if (mydoc.containsKey("qsid")) {
       Serial.println("Storage OK, restoring WiFi and MQTT config.");
+      microcontrollerIP = helper.getValue(mydoc["microcontrollerIP"]);
       qsid = helper.getValue(mydoc["qsid"]);
       qpass = helper.getValue(mydoc["qpass"]);
       OTApass = helper.getValue(mydoc["OTApass"]);
+      mqttIP = helper.getValue(mydoc["mqttIP"]);
+      mqttPort = helper.getValue(mydoc["mqttPort"]);
       mqttuser = helper.getValue(mydoc["mqttuser"]);
       mqttpass = helper.getValue(mydoc["mqttpass"]);
       return true;

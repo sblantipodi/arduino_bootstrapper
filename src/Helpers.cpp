@@ -31,9 +31,12 @@ int yoffset = 150;
 String haVersion = "";
 String IP = "";
 String MAC = "";
+String microcontrollerIP = "XXX";
 String qsid = "XXX";
 String qpass = "XXX";
 String OTApass = "XXX";
+String mqttIP = "XXX";
+String mqttPort = "XXX";
 String mqttuser = "XXX";
 String mqttpass = "XXX";
 

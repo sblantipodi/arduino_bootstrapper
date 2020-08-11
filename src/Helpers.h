@@ -38,11 +38,13 @@ extern bool lastPageScrollTriggered;
 extern int yoffset;
 
 extern String haVersion;
-extern String IP;
 extern String MAC;
+extern String microcontrollerIP;
 extern String qsid;
 extern String qpass;
 extern String OTApass;
+extern String mqttIP;
+extern String mqttPort;
 extern String mqttuser;
 extern String mqttpass;
 
