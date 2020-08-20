@@ -82,15 +82,18 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
                         helper.getValue(IP_DNS,'.',2).toInt(),
                         helper.getValue(IP_DNS,'.',3).toInt()));
   #if defined(ESP8266)
-    WiFi.hostname(WIFI_DEVICE_NAME);
+    WiFi.hostname(helper.string2char(deviceName));
     // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
     WiFi.setOutputPower(WIFI_POWER);
   #elif defined(ESP32)
-    WiFi.setHostname(WIFI_DEVICE_NAME);
-  #endif 
+    WiFi.setHostname(helper.string2char(deviceName));
+    btStop();
+  #endif
   // Start wifi connection
   WiFi.begin(qsid.c_str(), qpass.c_str());
-
+  #if defined(ESP32)
+    WiFi.setSleep(false);
+  #endif
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
 
@@ -140,7 +143,7 @@ void WifiManager::setupOTAUpload() {
   //OTA SETUP
   ArduinoOTA.setPort(OTA_PORT);
   // Hostname defaults to esp8266-[ChipID]
-  ArduinoOTA.setHostname(WIFI_DEVICE_NAME);
+  ArduinoOTA.setHostname(helper.string2char(deviceName));
 
   // No authentication by default
   ArduinoOTA.setPassword((const char *)helper.string2char(OTApass));
@@ -297,20 +300,22 @@ void WifiManager::createWebServer() {
       content += "</h1>";
       content += htmlString;
       content += "<br><br><form method='get' action='setting' id='form1'>";
+      content += "<label for='deviceName'>Device Name</label><input type='text' id='deviceName' name='deviceName' maxlength='25'>";
       content += "<label for='microcontrollerIP'>IP ADDRESS</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'>";
       content += "<label for='ssid'>SSID</label><input type='text' id='ssid' name='ssid'>";
       content += "<label for='pass'>WIFI PASSWORD</label><input type='password' id='pass' name='pass'>";
       content += "<label for='OTApass'>OTA PASSWORD</label><input type='password' id='OTApass' name='OTApass'>";
       content += "<label for='mqttIP'>MQTT SERVER IP</label><input type='text' id='mqttIP' name='mqttIP'>";
       content += "<label for='mqttPort'>MQTT SERVER PORT</label><input type='text' id='mqttPort' name='mqttPort'>";
-      content += "<label for='mqttuser'>MQTT USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
-      content += "<label for='mqttpass'>MQTT PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
-      content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><br></div></body>";
+      content += "<label for='mqttuser'>MQTT SERVER USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
+      content += "<label for='mqttpass'>MQTT SERVER PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
+      content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><p>All fields are required, please double check them before submit or you will need to reflash.</p><br></div></body>";
       content += "</html>";
       server.send(200, "text/html", content);
     });
 
     server.on("/setting", []() {
+      String deviceName = server.arg("deviceName");
       String microcontrollerIP = server.arg("microcontrollerIP");
       String qsid = server.arg("ssid");
       String qpass = server.arg("pass");
@@ -320,8 +325,10 @@ void WifiManager::createWebServer() {
       String mqttuser = server.arg("mqttuser");
       String mqttpass = server.arg("mqttpass");
 
-      if (microcontrollerIP.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0) {
+      if (deviceName.length() > 0 && microcontrollerIP.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0) {
 
+        Serial.println("deviceName");
+        Serial.println(deviceName);
         Serial.println("microcontrollerIP");
         Serial.println(microcontrollerIP);
         Serial.println("qsid");
@@ -340,6 +347,7 @@ void WifiManager::createWebServer() {
         Serial.println(mqttpass);
 
         DynamicJsonDocument doc(1024);
+        doc["deviceName"] = deviceName;
         doc["microcontrollerIP"] = microcontrollerIP;
         doc["qsid"] = qsid;
         doc["qpass"] = qpass;     

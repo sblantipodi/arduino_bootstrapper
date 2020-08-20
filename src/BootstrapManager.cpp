@@ -226,7 +226,7 @@ void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
   }  
   display.setCursor(0, effectiveOffset);
   display.setTextSize(1);
-  display.print(WIFI_DEVICE_NAME); display.print(F(" "));
+  display.print(deviceName); display.print(F(" "));
   display.println(softwareVersion);
   display.println("by " + author);
   display.println(F(""));
@@ -245,7 +245,7 @@ void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
 // send the state of your controller to the mqtt queue
 void BootstrapManager::sendState(const char *topic, JsonObject objectToSend, String version) {
 
-  objectToSend["Whoami"] = WIFI_DEVICE_NAME;  
+  objectToSend["Whoami"] = deviceName;
   objectToSend["IP"] = microcontrollerIP;
   objectToSend["MAC"] = MAC;
   objectToSend["ver"] = version;
@@ -412,6 +412,7 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
 bool BootstrapManager::isWifiConfigured() {
 
   if (wifiManager.isWifiConfigured()) {
+    deviceName = DEVICE_NAME;
     microcontrollerIP = IP_MICROCONTROLLER;
     qsid = SSID;
     qpass = PASSWORD;
@@ -429,6 +430,7 @@ bool BootstrapManager::isWifiConfigured() {
     #endif
     if (mydoc.containsKey("qsid")) {
       Serial.println("Storage OK, restoring WiFi and MQTT config.");
+      deviceName = helper.getValue(mydoc["deviceName"]);
       microcontrollerIP = helper.getValue(mydoc["microcontrollerIP"]);
       qsid = helper.getValue(mydoc["qsid"]);
       qpass = helper.getValue(mydoc["qpass"]);

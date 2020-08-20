@@ -27,6 +27,8 @@
   #include <ESP8266WebServer.h>
 #elif defined(ESP32)
   #include <WiFi.h>
+  #include <mDNS.h>
+  #include <HTTPClient.h>
   #include <WebServer.h>
 #endif  
 #include <Adafruit_SSD1306.h>
@@ -60,6 +62,7 @@ extern Adafruit_SSD1306 display;
 #ifndef WIFI_DEVICE_NAME
 #define WIFI_DEVICE_NAME "ArduinoBootstrapper"
 #endif
+const char* const DEVICE_NAME = WIFI_DEVICE_NAME;
 
 // Port for the OTA firmware uplaod
 #ifndef MICROCONTROLLER_OTA_PORT
@@ -116,6 +119,11 @@ const int MQTT_PORT = MQTT_SERVER_PORT;
 // Maximum JSON Object Size
 #ifndef MQTT_MAX_PACKET_SIZE
 #define MQTT_MAX_PACKET_SIZE 1024
+#endif
+
+// MQTT Keep Alive
+#ifndef MQTT_KEEP_ALIVE
+#define MQTT_KEEP_ALIVE 60
 #endif
 
 #endif

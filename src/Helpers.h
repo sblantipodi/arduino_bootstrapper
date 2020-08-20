@@ -39,6 +39,7 @@ extern int yoffset;
 
 extern String haVersion;
 extern String MAC;
+extern String deviceName;
 extern String microcontrollerIP;
 extern String qsid;
 extern String qpass;
