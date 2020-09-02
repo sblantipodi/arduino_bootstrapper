@@ -29,7 +29,7 @@
   #include <LittleFS.h>
 #elif defined(ESP32)
   #include <WiFi.h>
-  #include <mDNS.h>
+  #include <ESPmDNS.h>
   #include <HTTPClient.h>
   #include <WiFiUdp.h>
   #include <WebServer.h>

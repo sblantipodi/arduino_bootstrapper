@@ -27,7 +27,7 @@
   #include <ESP8266WebServer.h>
 #elif defined(ESP32)
   #include <WiFi.h>
-  #include <mDNS.h>
+  #include <ESPmDNS.h>
   #include <HTTPClient.h>
   #include <WebServer.h>
 #endif  
