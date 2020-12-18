@@ -126,4 +126,15 @@ const int MQTT_PORT = MQTT_SERVER_PORT;
 #define MQTT_KEEP_ALIVE 60
 #endif
 
+// Additional param that can be used for general purpose use
+#ifndef ADDITIONAL_PARAM_TEXT
+#define ADDITIONAL_PARAM_TEXT "ADDITIONAL PARAM"
+#endif
+
+// Additional param that can be used for general purpose use
+#ifndef ADDITIONAL_PARAM
+#define ADDITIONAL_PARAM "none"
+#endif
+const char* const PARAM_ADDITIONAL = ADDITIONAL_PARAM;
+
 #endif

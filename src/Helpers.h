@@ -48,6 +48,7 @@ extern String mqttIP;
 extern String mqttPort;
 extern String mqttuser;
 extern String mqttpass;
+extern String additionalParam;
 
 // Blink LED vars
 extern long previousMillis;     // will store last time LED was updated

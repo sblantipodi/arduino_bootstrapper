@@ -420,7 +420,8 @@ bool BootstrapManager::isWifiConfigured() {
     mqttIP = MQTT_SERVER;
     mqttPort = MQTT_PORT;
     mqttuser = MQTT_USERNAME;
-    mqttpass = MQTT_PASSWORD;         
+    mqttpass = MQTT_PASSWORD;
+    additionalParam = PARAM_ADDITIONAL;
     return true;
   } else {
     #if defined(ESP8266)
@@ -439,6 +440,7 @@ bool BootstrapManager::isWifiConfigured() {
       mqttPort = helper.getValue(mydoc["mqttPort"]);
       mqttuser = helper.getValue(mydoc["mqttuser"]);
       mqttpass = helper.getValue(mydoc["mqttpass"]);
+      additionalParam = helper.getValue(mydoc["additionalParam"]);
       return true;
     } else {
       Serial.println("No setup file");

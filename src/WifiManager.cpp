@@ -309,6 +309,7 @@ void WifiManager::createWebServer() {
       content += "<label for='mqttPort'>MQTT SERVER PORT</label><input type='text' id='mqttPort' name='mqttPort'>";
       content += "<label for='mqttuser'>MQTT SERVER USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
       content += "<label for='mqttpass'>MQTT SERVER PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
+      content += "<label for='additionalParam'>"; content += ADDITIONAL_PARAM_TEXT; content += "</label><input type='text' id='additionalParam' name='additionalParam'>";
       content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><p>All fields are required, please double check them before submit or you will need to reflash.</p><br></div></body>";
       content += "</html>";
       server.send(200, "text/html", content);
@@ -324,8 +325,9 @@ void WifiManager::createWebServer() {
       String OTApass = server.arg("OTApass");
       String mqttuser = server.arg("mqttuser");
       String mqttpass = server.arg("mqttpass");
+      String additionalParam = server.arg("additionalParam");
 
-      if (deviceName.length() > 0 && microcontrollerIP.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0) {
+      if (deviceName.length() > 0 && microcontrollerIP.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0 && additionalParam.length() > 0) {
 
         Serial.println("deviceName");
         Serial.println(deviceName);
@@ -345,6 +347,8 @@ void WifiManager::createWebServer() {
         Serial.println(mqttuser);
         Serial.println("mqttpass");
         Serial.println(mqttpass);
+        Serial.println("additionalParam");
+        Serial.println(additionalParam);
 
         DynamicJsonDocument doc(1024);
         doc["deviceName"] = deviceName;
@@ -355,7 +359,8 @@ void WifiManager::createWebServer() {
         doc["mqttIP"] = mqttIP;
         doc["mqttPort"] = mqttPort;
         doc["mqttuser"] = mqttuser;
-        doc["mqttpass"] = mqttpass;  
+        doc["mqttpass"] = mqttpass;
+        doc["additionalParam"] = additionalParam;
 
         #if defined(ESP8266)
           // Write to LittleFS

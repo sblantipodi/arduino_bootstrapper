@@ -40,6 +40,7 @@ String mqttIP = "XXX";
 String mqttPort = "XXX";
 String mqttuser = "XXX";
 String mqttpass = "XXX";
+String additionalParam = "XXX";
 
 long previousMillis = 0;     
 const long interval = 200;           
