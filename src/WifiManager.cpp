@@ -379,7 +379,8 @@ void WifiManager::createWebServer() {
           statusCode = 200;
           ESP.reset();
         #elif defined(ESP32)
-          if (SPIFFS.begin()) {
+        SPIFFS.format();
+        if (SPIFFS.begin()) {
             File configFile = SPIFFS.open("/setup.json", "w");
             if (!configFile) {
               Serial.println("Failed to open [setup.json] file for writing");
