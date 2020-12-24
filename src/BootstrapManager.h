@@ -67,6 +67,7 @@ class BootstrapManager {
       void writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
       DynamicJsonDocument readSPIFFS(String filename); // read json file from storage
     #endif
+    String readValueFromFile(String filename, String paramName); // read a param from a json file
     bool isWifiConfigured(); // check if wifi is correctly configured
     void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
 

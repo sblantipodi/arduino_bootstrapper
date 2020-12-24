@@ -353,6 +353,30 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
   return jsonDoc;
 
 }
+
+String BootstrapManager::readValueFromFile(String filename, String paramName) {
+  if (!LittleFS.begin()) {
+    Serial.println("LittleFS mount failed");
+  }
+  File jsonFile = LittleFS.open("/" + filename, "r");
+  if (!jsonFile) {
+    helper.smartPrintln("Failed to open [" + filename + "] file");
+    helper.smartDisplay();
+  }
+  size_t size = jsonFile.size();
+  std::unique_ptr<char[]> buf(new char[size]);
+  jsonFile.readBytes(buf.get(), size);
+  DynamicJsonDocument jsonDoc(1024);
+  auto error = deserializeJson(jsonDoc, buf.get());
+  serializeJsonPretty(jsonDoc, Serial);
+  jsonFile.close();
+  if (error) {
+    return "";
+  } else {
+    return jsonDoc[paramName];
+  }
+  return jsonDoc[paramName];
+}
 #endif
 
 // read json file from storage
@@ -404,6 +428,28 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
   helper.smartDisplay();
   delay(DELAY_4000);
   return jsonDoc;
+
+}
+
+String BootstrapManager::readValueFromFile(String filename, String paramName) {
+
+  if (SPIFFS.begin()) {
+    if (SPIFFS.exists("/" + filename)) {
+      File configFile = SPIFFS.open("/" + filename, "r");
+      if (configFile) {
+        size_t size = configFile.size();
+        std::unique_ptr<char[]> buf(new char[size]);
+        configFile.readBytes(buf.get(), size);
+        DeserializationError deserializeError = deserializeJson(jsonDoc, buf.get());
+        serializeJsonPretty(jsonDoc, Serial);
+        if (deserializeError) {
+          jsonDoc[VALUE] = ERROR;
+          helper.smartPrintln(F("Failed to load json file"));
+        }
+      }
+    }
+  }
+  return jsonDoc[paramName];
 
 }
 #endif
