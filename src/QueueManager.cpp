@@ -126,6 +126,13 @@ void QueueManager::publish(const char *topic, const char *payload, boolean retai
 }
 
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
+void QueueManager::unsubscribe(const char *topic) {
+
+  mqttClient.unsubscribe(topic);
+
+}
+
+/********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
 void QueueManager::subscribe(const char *topic) {
 
   mqttClient.subscribe(topic);

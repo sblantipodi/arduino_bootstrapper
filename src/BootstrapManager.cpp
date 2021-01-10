@@ -88,12 +88,23 @@ void BootstrapManager::publish(const char *topic, JsonObject objectToSend, boole
 }
 
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
-void BootstrapManager::subscribe(const char *topic) {
-  
-  queueManager.subscribe(topic);
-  
+void BootstrapManager::unsubscribe(const char *topic) {
+
+  queueManager.unsubscribe(topic);
+
   if (DEBUG_QUEUE_MSG) {
-    Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));  
+    Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));
+  }
+
+}
+
+/********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
+void BootstrapManager::subscribe(const char *topic) {
+
+  queueManager.subscribe(topic);
+
+  if (DEBUG_QUEUE_MSG) {
+    Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));
   }
 
 }
