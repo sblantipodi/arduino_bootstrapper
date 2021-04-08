@@ -25,7 +25,8 @@
 
 
 // Maximum JSON Object Size
-const int BUFFER_SIZE = JSON_OBJECT_SIZE(MAX_JSON_OBJECT_SIZE);
+const int BUFFER_SIZE = JSON_OBJECT_SIZE(50);
+const int BUFFER_SIZE_MAX_SIZE = JSON_OBJECT_SIZE(MAX_JSON_OBJECT_SIZE);
 
 extern bool isConfigFileOk;
 extern String lastMQTTConnection;

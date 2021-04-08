@@ -46,6 +46,7 @@ class BootstrapManager {
 
   public:
     StaticJsonDocument<BUFFER_SIZE> jsonDoc;
+    StaticJsonDocument<BUFFER_SIZE_MAX_SIZE> jsonDocBigSize;
     // using JsonDocument = StaticJsonDocument<BUFFER_SIZE>;
     StaticJsonDocument<BUFFER_SIZE> parseQueueMsg(char* topic, byte* payload, unsigned int length); // print the message arriving from the queue
     void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)); // bootstrap setup()
