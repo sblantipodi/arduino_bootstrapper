@@ -133,7 +133,7 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byt
   }
   message[length] = '\0';
 
-  DeserializationError error = deserializeJson(jsonDoc, payload);
+  DeserializationError error = deserializeJson(jsonDoc, (const byte*) payload, length);
 
   // non json msg
   if (error) {    
