@@ -27,13 +27,13 @@ jobs:
         cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/examples/ChangeName.cpp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/src/ChangeName.cpp    
         cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/examples/ChangeName.h /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/ChangeName.h    
     # - name: Setup tmate session
-    #   uses: mxschmitt/action-tmate@v2         
+    #   uses: mxschmitt/action-tmate@v3
     - name: Static code analysis
       run: platformio check --verbose --severity=high --skip-packages                     
     - name: Run PlatformIO
       run: platformio run -e bootstrapper
     - name: Creating artifact from BIN file
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: firmware_build_artifact_arduino_bootstrapper.bin
         path: .pio/build/bootstrapper/firmware.bin
