@@ -21,16 +21,16 @@
 #define _DPSOFTWARE_CONFIG_H
 
 #if defined(ESP8266)
-  #include <ESP8266WiFi.h>
-  #include <ESP8266mDNS.h>
-  #include <ESP8266HTTPClient.h>
-  #include <ESP8266WebServer.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
+#include <ESP8266HTTPClient.h>
+#include <ESP8266WebServer.h>
 #elif defined(ESP32)
-  #include <WiFi.h>
+#include <WiFi.h>
   #include <ESPmDNS.h>
   #include <HTTPClient.h>
   #include <WebServer.h>
-#endif  
+#endif
 #include <Adafruit_SSD1306.h>
 
 #ifndef AUTHOR
@@ -102,9 +102,9 @@ const char* const MQTT_SERVER = MQTT_SERVER_IP;
 
 // MQTT server port
 #ifndef MQTT_SERVER_PORT
-#define MQTT_SERVER_PORT 1883
+#define MQTT_SERVER_PORT "1883"
 #endif
-const int MQTT_PORT = MQTT_SERVER_PORT;
+const char* const MQTT_PORT = MQTT_SERVER_PORT;
 
 // Maximum number of reconnection (WiFi/MQTT) attemp before powering off peripherals
 #ifndef MAX_RECONNECT
