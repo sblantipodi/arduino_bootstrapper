@@ -513,3 +513,10 @@ void BootstrapManager::launchWebServerForOTAConfig() {
   return wifiManager.launchWebServerForOTAConfig();
 
 }
+
+// get the wifi quality
+int BootstrapManager::getWifiQuality() {
+
+  return wifiManager.getQuality();
+
+}

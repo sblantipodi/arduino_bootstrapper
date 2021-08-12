@@ -69,22 +69,29 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   WiFi.mode(WIFI_STA);      // Disable AP mode
   //WiFi.setSleepMode(WIFI_NONE_SLEEP);
   WiFi.setAutoConnect(true);
-  WiFi.config(IPAddress(helper.getValue(microcontrollerIP,'.',0).toInt(),
-                        helper.getValue(microcontrollerIP,'.',1).toInt(),
-                        helper.getValue(microcontrollerIP,'.',2).toInt(),
-                        helper.getValue(microcontrollerIP,'.',3).toInt()),
-              IPAddress(helper.getValue(IP_GATEWAY,'.',0).toInt(),
-                        helper.getValue(IP_GATEWAY,'.',1).toInt(),
-                        helper.getValue(IP_GATEWAY,'.',2).toInt(),
-                        helper.getValue(IP_GATEWAY,'.',3).toInt()),
-              IPAddress(helper.getValue(IP_DNS,'.',0).toInt(),
-                        helper.getValue(IP_DNS,'.',1).toInt(),
-                        helper.getValue(IP_DNS,'.',2).toInt(),
-                        helper.getValue(IP_DNS,'.',3).toInt()));
+  if (!microcontrollerIP.equals("DHCP")) {
+    WiFi.config(IPAddress(helper.getValue(microcontrollerIP, '.', 0).toInt(),
+                          helper.getValue(microcontrollerIP, '.', 1).toInt(),
+                          helper.getValue(microcontrollerIP, '.', 2).toInt(),
+                          helper.getValue(microcontrollerIP, '.', 3).toInt()),
+                IPAddress(helper.getValue(IP_GATEWAY, '.', 0).toInt(),
+                          helper.getValue(IP_GATEWAY, '.', 1).toInt(),
+                          helper.getValue(IP_GATEWAY, '.', 2).toInt(),
+                          helper.getValue(IP_GATEWAY, '.', 3).toInt()),
+                IPAddress(helper.getValue(IP_DNS, '.', 0).toInt(),
+                          helper.getValue(IP_DNS, '.', 1).toInt(),
+                          helper.getValue(IP_DNS, '.', 2).toInt(),
+                          helper.getValue(IP_DNS, '.', 3).toInt()));
+  } else {
+    Serial.println("Using DHCP");
+  }
   #if defined(ESP8266)
     WiFi.hostname(helper.string2char(deviceName));
     // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
     WiFi.setOutputPower(WIFI_POWER);
+    if (microcontrollerIP.equals("DHCP")) {
+      WiFi.config(0U, 0U,0U);
+    }
   #elif defined(ESP32)
     WiFi.setHostname(helper.string2char(deviceName));
     btStop();
@@ -294,14 +301,14 @@ void WifiManager::createWebServer() {
     server.on("/", []() {
       IPAddress ip = WiFi.softAPIP();
       String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
-      content = "<!DOCTYPE HTML>\r\n<html><head><style>body {padding:0% 5% 0% 5%;font-size:4vw;width: 90%;font-weight:bold;text-align:center; color:#202020}#centerContainer { margin: 0px auto; }input {font-size:4vw;width: 100%;padding: 12px 20px;margin: 8px 0;box-sizing: border-box;border: 3px solid orange;-webkit-transition: 0.5s;transition: 0.5s;outline: none;}input:focus {border: 3px solid #BF5F00;font-weight:bold;}#wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 8px;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 12px;padding-bottom: 12px;text-align: left; background-color: orange;color: white;}.button {background-color: orange;border: none;color: white;padding: 20px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;}.button3 {font-size:4vw;border-radius: 8px;width:100%;font-weight:bold;}label{font-size:4vw;}</style></head><body><div id='centerContainer'>";
+      content = "<!DOCTYPE HTML>\r\n<html><head><style>body {padding:0% 5% 0% 5%;font-size:4vw;width: 90%;font-weight:bold;text-align:center; color:#202020}#centerContainer { margin: 0px auto; }input {font-size:4vw;width: 100%;padding: 12px 20px;margin: 8px 0;box-sizing: border-box;border: 6px solid orange;-webkit-transition: 0.5s;transition: 0.5s;outline: none;}input:focus {border: 12px solid #BF5F00;font-weight:bold;}#wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 8px;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 12px;padding-bottom: 12px;text-align: left; background-color: orange;color: white;}.button {background-color: orange;border: none;color: white;padding: 20px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;}.button3 {font-size:4vw;border-radius: 8px;width:100%;font-weight:bold;}label{font-size:4vw;}</style></head><body><div id='centerContainer'>";
       content += "<h1>";
       content += WIFI_DEVICE_NAME;
       content += "</h1>";
       content += htmlString;
       content += "<br><br><form method='get' action='setting' id='form1'>";
       content += "<label for='deviceName'>Device Name</label><input type='text' id='deviceName' name='deviceName' maxlength='25'>";
-      content += "<label for='microcontrollerIP'>IP ADDRESS</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'>";
+      content += "<label for='microcontrollerIP'>IP ADDRESS</label><input type='text' id='microcontrollerIP' name='microcontrollerIP' placeholder='optional'>";
       content += "<label for='ssid'>SSID</label><input type='text' id='ssid' name='ssid'>";
       content += "<label for='pass'>WIFI PASSWORD</label><input type='password' id='pass' name='pass'>";
       content += "<label for='OTApass'>OTA PASSWORD</label><input type='password' id='OTApass' name='OTApass'>";
@@ -327,11 +334,14 @@ void WifiManager::createWebServer() {
       String mqttpass = server.arg("mqttpass");
       String additionalParam = server.arg("additionalParam");
 
-      if (deviceName.length() > 0 && microcontrollerIP.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0 && additionalParam.length() > 0) {
+      if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0 && additionalParam.length() > 0) {
 
         Serial.println("deviceName");
         Serial.println(deviceName);
         Serial.println("microcontrollerIP");
+        if (microcontrollerIP.length() == 0) {
+          microcontrollerIP = "DHCP";
+        }
         Serial.println(microcontrollerIP);
         Serial.println("qsid");
         Serial.println(qsid);
