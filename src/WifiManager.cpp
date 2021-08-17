@@ -307,17 +307,17 @@ void WifiManager::createWebServer() {
       content += "</h1>";
       content += htmlString;
       content += "<br><br><form method='get' action='setting' id='form1'>";
-      content += "<label for='deviceName'>Device Name</label><input type='text' id='deviceName' name='deviceName' maxlength='25'>";
-      content += "<label for='microcontrollerIP'>IP ADDRESS</label><input type='text' id='microcontrollerIP' name='microcontrollerIP' placeholder='optional'>";
-      content += "<label for='ssid'>SSID</label><input type='text' id='ssid' name='ssid'>";
-      content += "<label for='pass'>WIFI PASSWORD</label><input type='password' id='pass' name='pass'>";
-      content += "<label for='OTApass'>OTA PASSWORD</label><input type='password' id='OTApass' name='OTApass'>";
-      content += "<label for='mqttIP'>MQTT SERVER IP</label><input type='text' id='mqttIP' name='mqttIP'>";
-      content += "<label for='mqttPort'>MQTT SERVER PORT</label><input type='text' id='mqttPort' name='mqttPort'>";
+      content += "<label for='deviceName'>Device Name *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' required>";
+      content += "<label for='microcontrollerIP'>IP ADDRESS</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'>";
+      content += "<label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' required>";
+      content += "<label for='pass'>WIFI PASSWORD *</label><input type='password' id='pass' name='pass' required>";
+      content += "<label for='OTApass'>OTA PASSWORD *</label><input type='password' id='OTApass' name='OTApass' required>";
+      content += "<label for='mqttIP'>MQTT SERVER IP *</label><input type='text' id='mqttIP' name='mqttIP' required>";
+      content += "<label for='mqttPort'>MQTT SERVER PORT *</label><input type='text' id='mqttPort' name='mqttPort' required>";
       content += "<label for='mqttuser'>MQTT SERVER USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
       content += "<label for='mqttpass'>MQTT SERVER PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
       content += "<label for='additionalParam'>"; content += ADDITIONAL_PARAM_TEXT; content += "</label><input type='text' id='additionalParam' name='additionalParam'>";
-      content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><p>All fields are required, please double check them before submit or you will need to reflash.</p><br></div></body>";
+      content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><p>* Please insert the required fields, please double check them before submit or you will need to reflash.</p><br></div></body>";
       content += "</html>";
       server.send(200, "text/html", content);
     });
@@ -334,7 +334,7 @@ void WifiManager::createWebServer() {
       String mqttpass = server.arg("mqttpass");
       String additionalParam = server.arg("additionalParam");
 
-      if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0 && mqttuser.length() > 0 && mqttpass.length() > 0 && additionalParam.length() > 0) {
+      if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0) {
 
         Serial.println("deviceName");
         Serial.println(deviceName);
@@ -378,6 +378,8 @@ void WifiManager::createWebServer() {
           File jsonFile = LittleFS.open("/setup.json", "w");
           if (!jsonFile) {
             Serial.println("Failed to open [setup.json] file for writing");
+            content = "Error: can't write to storage.";
+            statusCode = 404;
           } else {
             serializeJsonPretty(doc, Serial);
             serializeJson(doc, jsonFile);
@@ -385,9 +387,8 @@ void WifiManager::createWebServer() {
             Serial.println("[setup.json] written correctly");
           }
           delay(DELAY_200);
-          content = "{\"Success\":\"saved to LittleFS... reset to boot into new wifi\"}";
+          content = "Success: rebooting the microcontroller using your credentials.";
           statusCode = 200;
-          ESP.reset();
         #elif defined(ESP32)
         SPIFFS.format();
         if (SPIFFS.begin()) {
@@ -399,18 +400,28 @@ void WifiManager::createWebServer() {
             serializeJson(doc, configFile);
             configFile.close();
             Serial.println("[setup.json] written correctly");
+            content = "Success: rebooting the microcontroller using your credentials.";
+            statusCode = 200;
           } else {
             Serial.println(F("Failed to mount FS for write"));
+            content = "Error: can't write to storage.";
+            statusCode = 404;
           }
           ESP.restart();
         #endif         
       } else {
-        content = "{\"Error\":\"404 not found\"}";
+        content = "Error: missing required fields.";
         statusCode = 404;
         Serial.println("Sending 404");
       }
       server.sendHeader("Access-Control-Allow-Origin", "*");
-      server.send(statusCode, "application/json", content);
+      server.send(statusCode, "text/plain", content);
+      delay(DELAY_500);
+      #if defined(ESP8266)
+      ESP.reset();
+      #elif defined(ESP32)
+      ESP.restart();
+      #endif
 
     });
 
