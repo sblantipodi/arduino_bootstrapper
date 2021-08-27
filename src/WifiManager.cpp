@@ -67,7 +67,9 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   delay(DELAY_200);
 
   WiFi.mode(WIFI_STA);      // Disable AP mode
+#if defined(ESP8266)
   //WiFi.setSleepMode(WIFI_NONE_SLEEP);
+#endif
   WiFi.setAutoConnect(true);
   if (!microcontrollerIP.equals("DHCP")) {
     WiFi.config(IPAddress(helper.getValue(microcontrollerIP, '.', 0).toInt(),
@@ -92,6 +94,10 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
     if (microcontrollerIP.equals("DHCP")) {
       WiFi.config(0U, 0U,0U);
     }
+    WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
+      Serial.println(F("WiFi is lost while connecting to MQTT, disconnecting. handlaer"));
+      WiFi.disconnect();
+    });
   #elif defined(ESP32)
     WiFi.setHostname(helper.string2char(deviceName));
     btStop();
@@ -105,7 +111,6 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   while (WiFi.status() != WL_CONNECTED) {
 
     manageHardwareButton();   
-
     delay(DELAY_500);
     Serial.print(F("."));
     wifiReconnectAttemp++;
@@ -120,7 +125,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
         display.clearDisplay();
       }
       helper.smartPrint(F("Wifi attemps= "));
-      helper.smartPrint(wifiReconnectAttemp);
+      helper.smartPrintln(wifiReconnectAttemp);
       if (wifiReconnectAttemp >= MAX_RECONNECT) {
         helper.smartPrintln(F("Max retry reached, powering off peripherals."));
         manageDisconnections();
@@ -407,13 +412,13 @@ void WifiManager::createWebServer() {
             content = "Error: can't write to storage.";
             statusCode = 404;
           }
-          ESP.restart();
-        #endif         
+        #endif
       } else {
         content = "Error: missing required fields.";
         statusCode = 404;
         Serial.println("Sending 404");
       }
+      delay(DELAY_500);
       server.sendHeader("Access-Control-Allow-Origin", "*");
       server.send(statusCode, "text/plain", content);
       delay(DELAY_500);

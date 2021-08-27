@@ -42,7 +42,19 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
   mqttReconnectAttemp = 0;
 
   // Loop until we're reconnected
-  while (!mqttClient.connected()) {   
+  while (!mqttClient.connected() && WiFi.status() == WL_CONNECTED) {
+
+#if defined(ESP8266)
+    if(!WiFi.localIP().isSet() || !WiFi.isConnected()){
+      Serial.println(F("WiFi is lost while connecting to MQTT, disconnecting."));
+      WiFi.disconnect();
+    }
+#elif defined(ESP32)
+    if(!WiFi.isConnected()){
+      Serial.println(F("WiFi is lost while connecting to MQTT, disconnecting."));
+      WiFi.disconnect();
+    }
+#endif
 
     if (PRINT_TO_DISPLAY) {
       display.clearDisplay();
@@ -89,11 +101,12 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       helper.smartPrintln(mqttReconnectAttemp);
       helper.smartDisplay();
 
-      if (wifiReconnectAttemp > 10) {
+      if (mqttReconnectAttemp > 10) {
         // if fastDisconnectionManagement we need to execute the callback immediately, 
         // example: power off a watering system can't wait MAX_RECONNECT attemps
         if (fastDisconnectionManagement) {
           manageDisconnections();
+          WiFi.disconnect();
         }
       }
 
