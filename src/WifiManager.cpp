@@ -21,10 +21,10 @@
 
 //Establishing Local server at port 80 whenever required
 #if defined(ESP8266)
-  ESP8266WebServer server(80);
+ESP8266WebServer server(80);
 #elif defined(ESP32)
-  WebServer server(80);
-#endif  
+WebServer server(80);
+#endif
 // WiFiClient
 WiFiClient espClient;
 // WebServer content
@@ -37,7 +37,7 @@ String htmlString;
 
 /********************************** SETUP WIFI *****************************************/
 void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
-  
+
   wifiReconnectAttemp = 0;
 
   // DPsoftware domotics 
@@ -45,7 +45,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
     display.clearDisplay();
     display.setTextSize(2);
     display.setCursor(5,17);
-    display.drawRoundRect(0, 0, display.width()-1, display.height()-1, display.height()/4, WHITE);    
+    display.drawRoundRect(0, 0, display.width()-1, display.height()-1, display.height()/4, WHITE);
   }
   helper.smartPrintln(F("DPsoftware domotics"));
   helper.smartDisplay();
@@ -59,18 +59,18 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   helper.smartPrintln(F("Connecting to: "));
   helper.smartPrint(qsid); helper.smartPrintln(F("..."));
   helper.smartDisplay();
- 
+
   delay(DELAY_2000);
 
-  WiFi.persistent(false);   // Solve possible wifi init errors (re-add at 6.2.1.16 #4044, #4083)
-  WiFi.disconnect(true);    // Delete SDK wifi config
+  WiFi.persistent(true);   // Solve possible wifi init errors (re-add at 6.2.1.16 #4044, #4083)
+  //WiFi.disconnect(true);    // Delete SDK wifi config
   delay(DELAY_200);
-
   WiFi.mode(WIFI_STA);      // Disable AP mode
 #if defined(ESP8266)
   //WiFi.setSleepMode(WIFI_NONE_SLEEP);
 #endif
   WiFi.setAutoConnect(true);
+  WiFi.setAutoReconnect(true);
   if (!microcontrollerIP.equals("DHCP")) {
     WiFi.config(IPAddress(helper.getValue(microcontrollerIP, '.', 0).toInt(),
                           helper.getValue(microcontrollerIP, '.', 1).toInt(),
@@ -87,30 +87,29 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   } else {
     Serial.println("Using DHCP");
   }
-  #if defined(ESP8266)
-    WiFi.hostname(helper.string2char(deviceName));
-    // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
-    WiFi.setOutputPower(WIFI_POWER);
-    if (microcontrollerIP.equals("DHCP")) {
-      WiFi.config(0U, 0U,0U);
-    }
-    WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
-      Serial.println(F("WiFi is lost while connecting to MQTT, disconnecting. handlaer"));
-      WiFi.disconnect();
-    });
-  #elif defined(ESP32)
-    WiFi.setHostname(helper.string2char(deviceName));
+#if defined(ESP8266)
+  WiFi.hostname(helper.string2char(deviceName));
+  // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
+  WiFi.setOutputPower(WIFI_POWER);
+  if (microcontrollerIP.equals("DHCP")) {
+    WiFi.config(0U, 0U,0U);
+  }
+  WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
+      Serial.println(F("WiFi connection is lost."));
+  });
+#elif defined(ESP32)
+  WiFi.setHostname(helper.string2char(deviceName));
     btStop();
-  #endif
+#endif
   // Start wifi connection
   WiFi.begin(qsid.c_str(), qpass.c_str());
-  #if defined(ESP32)
-    WiFi.setSleep(false);
-  #endif
+#if defined(ESP32)
+  WiFi.setSleep(false);
+#endif
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
 
-    manageHardwareButton();   
+    manageHardwareButton();
     delay(DELAY_500);
     Serial.print(F("."));
     wifiReconnectAttemp++;
@@ -161,26 +160,26 @@ void WifiManager::setupOTAUpload() {
   ArduinoOTA.setPassword((const char *)helper.string2char(OTApass));
 
   ArduinoOTA.onStart([]() {
-    Serial.println(F("Starting"));
+      Serial.println(F("Starting"));
   });
 
   ArduinoOTA.onEnd([]() {
-    Serial.println(F("\nEnd"));
+      Serial.println(F("\nEnd"));
   });
 
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+      Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   });
 
   ArduinoOTA.onError([](ota_error_t error) {
-    Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) Serial.println(F("Auth Failed"));
-    else if (error == OTA_BEGIN_ERROR) Serial.println(F("Begin Failed"));
-    else if (error == OTA_CONNECT_ERROR) Serial.println(F("Connect Failed"));
-    else if (error == OTA_RECEIVE_ERROR) Serial.println(F("Receive Failed"));
-    else if (error == OTA_END_ERROR) Serial.println(F("End Failed"));
+      Serial.printf("Error[%u]: ", error);
+      if (error == OTA_AUTH_ERROR) Serial.println(F("Auth Failed"));
+      else if (error == OTA_BEGIN_ERROR) Serial.println(F("Begin Failed"));
+      else if (error == OTA_CONNECT_ERROR) Serial.println(F("Connect Failed"));
+      else if (error == OTA_RECEIVE_ERROR) Serial.println(F("Receive Failed"));
+      else if (error == OTA_END_ERROR) Serial.println(F("End Failed"));
   });
-  
+
   ArduinoOTA.begin();
 
 }
@@ -193,14 +192,14 @@ void WifiManager::setupOTAUpload() {
 int WifiManager::getQuality() {
   if (WiFi.status() != WL_CONNECTED) {
     return -1;
-  }    
+  }
   int dBm = WiFi.RSSI();
   if (dBm <= -100) {
     return 0;
-  }    
+  }
   if (dBm >= -50) {
     return 100;
-  }    
+  }
   return 2 * (dBm + 100);
 }
 
@@ -216,19 +215,19 @@ bool WifiManager::isWifiConfigured() {
 
 // if no ssid available, launch web server to get config params via browser
 void WifiManager::launchWebServerForOTAConfig() {
-  
+
   WiFi.disconnect();
   Serial.println("Turning HotSpot On");
-  
+
   setupAP();
   launchWeb();
 
   while ((WiFi.status() != WL_CONNECTED)) {
     Serial.print(".");
     delay(100);
-    server.handleClient();    
+    server.handleClient();
   }
-  
+
 }
 
 void WifiManager::launchWeb() {
@@ -236,7 +235,7 @@ void WifiManager::launchWeb() {
   Serial.println("");
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("WiFi connected");
-  }    
+  }
   Serial.print("Local IP: ");
   Serial.println(WiFi.localIP());
   Serial.print("SoftAP IP: ");
@@ -267,11 +266,11 @@ void WifiManager::setupAP(void) {
       Serial.print(" (");
       Serial.print(WiFi.RSSI(i));
       Serial.print(")");
-      #if defined(ESP8266)
-        Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
-      #elif defined(ESP32)
-        Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
-      #endif  
+#if defined(ESP8266)
+      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
+#elif defined(ESP32)
+      Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
+#endif
       delay(10);
     }
   }
@@ -279,18 +278,18 @@ void WifiManager::setupAP(void) {
   htmlString = "<table id='wifi'><tr><th>SSID</th><th>RSSI</th><th>Enctipted</th></tr>";
   for (int i = 0; i < n; ++i) {
     htmlString += "<tr>";
-    htmlString += "<td>"; 
+    htmlString += "<td>";
     htmlString += WiFi.SSID(i);
     htmlString += "</td>";
     htmlString += "<td>";
     htmlString += WiFi.RSSI(i);
     htmlString += "</td>";
     htmlString += "<td>";
-    #if defined(ESP8266)
-      htmlString += ((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? "PUBLIC" : "ENCRYPTED");
-    #elif defined(ESP32)
-      htmlString += ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? "PUBLIC" : "ENCRYPTED");
-    #endif 
+#if defined(ESP8266)
+    htmlString += ((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? "PUBLIC" : "ENCRYPTED");
+#elif defined(ESP32)
+    htmlString += ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? "PUBLIC" : "ENCRYPTED");
+#endif
     htmlString += "</td>";
     htmlString += "</tr>";
   }
@@ -304,80 +303,80 @@ void WifiManager::setupAP(void) {
 void WifiManager::createWebServer() {
   {
     server.on("/", []() {
-      IPAddress ip = WiFi.softAPIP();
-      String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
-      content = "<!DOCTYPE HTML>\r\n<html><head><style>body {padding:0% 5% 0% 5%;font-size:4vw;width: 90%;font-weight:bold;text-align:center; color:#202020}#centerContainer { margin: 0px auto; }input {font-size:4vw;width: 100%;padding: 12px 20px;margin: 8px 0;box-sizing: border-box;border: 6px solid orange;-webkit-transition: 0.5s;transition: 0.5s;outline: none;}input:focus {border: 12px solid #BF5F00;font-weight:bold;}#wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 8px;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 12px;padding-bottom: 12px;text-align: left; background-color: orange;color: white;}.button {background-color: orange;border: none;color: white;padding: 20px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;}.button3 {font-size:4vw;border-radius: 8px;width:100%;font-weight:bold;}label{font-size:4vw;}</style></head><body><div id='centerContainer'>";
-      content += "<h1>";
-      content += WIFI_DEVICE_NAME;
-      content += "</h1>";
-      content += htmlString;
-      content += "<br><br><form method='get' action='setting' id='form1'>";
-      content += "<label for='deviceName'>Device Name *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' required>";
-      content += "<label for='microcontrollerIP'>IP ADDRESS</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'>";
-      content += "<label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' required>";
-      content += "<label for='pass'>WIFI PASSWORD *</label><input type='password' id='pass' name='pass' required>";
-      content += "<label for='OTApass'>OTA PASSWORD *</label><input type='password' id='OTApass' name='OTApass' required>";
-      content += "<label for='mqttIP'>MQTT SERVER IP *</label><input type='text' id='mqttIP' name='mqttIP' required>";
-      content += "<label for='mqttPort'>MQTT SERVER PORT *</label><input type='text' id='mqttPort' name='mqttPort' required>";
-      content += "<label for='mqttuser'>MQTT SERVER USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
-      content += "<label for='mqttpass'>MQTT SERVER PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
-      content += "<label for='additionalParam'>"; content += ADDITIONAL_PARAM_TEXT; content += "</label><input type='text' id='additionalParam' name='additionalParam'>";
-      content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><p>* Please insert the required fields, please double check them before submit or you will need to reflash.</p><br></div></body>";
-      content += "</html>";
-      server.send(200, "text/html", content);
+        IPAddress ip = WiFi.softAPIP();
+        String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
+        content = "<!DOCTYPE HTML>\r\n<html><head><style>body {padding:0% 5% 0% 5%;font-size:4vw;width: 90%;font-weight:bold;text-align:center; color:#202020}#centerContainer { margin: 0px auto; }input {font-size:4vw;width: 100%;padding: 12px 20px;margin: 8px 0;box-sizing: border-box;border: 6px solid orange;-webkit-transition: 0.5s;transition: 0.5s;outline: none;}input:focus {border: 12px solid #BF5F00;font-weight:bold;}#wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 8px;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 12px;padding-bottom: 12px;text-align: left; background-color: orange;color: white;}.button {background-color: orange;border: none;color: white;padding: 20px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;}.button3 {font-size:4vw;border-radius: 8px;width:100%;font-weight:bold;}label{font-size:4vw;}</style></head><body><div id='centerContainer'>";
+        content += "<h1>";
+        content += WIFI_DEVICE_NAME;
+        content += "</h1>";
+        content += htmlString;
+        content += "<br><br><form method='get' action='setting' id='form1'>";
+        content += "<label for='deviceName'>Device Name *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' required>";
+        content += "<label for='microcontrollerIP'>IP ADDRESS</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'>";
+        content += "<label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' required>";
+        content += "<label for='pass'>WIFI PASSWORD *</label><input type='password' id='pass' name='pass' required>";
+        content += "<label for='OTApass'>OTA PASSWORD *</label><input type='password' id='OTApass' name='OTApass' required>";
+        content += "<label for='mqttIP'>MQTT SERVER IP *</label><input type='text' id='mqttIP' name='mqttIP' required>";
+        content += "<label for='mqttPort'>MQTT SERVER PORT *</label><input type='text' id='mqttPort' name='mqttPort' required>";
+        content += "<label for='mqttuser'>MQTT SERVER USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
+        content += "<label for='mqttpass'>MQTT SERVER PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
+        content += "<label for='additionalParam'>"; content += ADDITIONAL_PARAM_TEXT; content += "</label><input type='text' id='additionalParam' name='additionalParam'>";
+        content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><p>* Please insert the required fields, please double check them before submit or you will need to reflash.</p><br></div></body>";
+        content += "</html>";
+        server.send(200, "text/html", content);
     });
 
     server.on("/setting", []() {
-      String deviceName = server.arg("deviceName");
-      String microcontrollerIP = server.arg("microcontrollerIP");
-      String qsid = server.arg("ssid");
-      String qpass = server.arg("pass");
-      String mqttIP = server.arg("mqttIP");
-      String mqttPort = server.arg("mqttPort");
-      String OTApass = server.arg("OTApass");
-      String mqttuser = server.arg("mqttuser");
-      String mqttpass = server.arg("mqttpass");
-      String additionalParam = server.arg("additionalParam");
+        String deviceName = server.arg("deviceName");
+        String microcontrollerIP = server.arg("microcontrollerIP");
+        String qsid = server.arg("ssid");
+        String qpass = server.arg("pass");
+        String mqttIP = server.arg("mqttIP");
+        String mqttPort = server.arg("mqttPort");
+        String OTApass = server.arg("OTApass");
+        String mqttuser = server.arg("mqttuser");
+        String mqttpass = server.arg("mqttpass");
+        String additionalParam = server.arg("additionalParam");
 
-      if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0) {
+        if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0) {
 
-        Serial.println("deviceName");
-        Serial.println(deviceName);
-        Serial.println("microcontrollerIP");
-        if (microcontrollerIP.length() == 0) {
-          microcontrollerIP = "DHCP";
-        }
-        Serial.println(microcontrollerIP);
-        Serial.println("qsid");
-        Serial.println(qsid);
-        Serial.println("qpass");
-        Serial.println(qpass);
-        Serial.println("OTApass");
-        Serial.println(OTApass);
-        Serial.println("mqttIP");
-        Serial.println(mqttIP);
-        Serial.println("mqttPort");
-        Serial.println(mqttPort);
-        Serial.println("mqttuser");
-        Serial.println(mqttuser);
-        Serial.println("mqttpass");
-        Serial.println(mqttpass);
-        Serial.println("additionalParam");
-        Serial.println(additionalParam);
+          Serial.println("deviceName");
+          Serial.println(deviceName);
+          Serial.println("microcontrollerIP");
+          if (microcontrollerIP.length() == 0) {
+            microcontrollerIP = "DHCP";
+          }
+          Serial.println(microcontrollerIP);
+          Serial.println("qsid");
+          Serial.println(qsid);
+          Serial.println("qpass");
+          Serial.println(qpass);
+          Serial.println("OTApass");
+          Serial.println(OTApass);
+          Serial.println("mqttIP");
+          Serial.println(mqttIP);
+          Serial.println("mqttPort");
+          Serial.println(mqttPort);
+          Serial.println("mqttuser");
+          Serial.println(mqttuser);
+          Serial.println("mqttpass");
+          Serial.println(mqttpass);
+          Serial.println("additionalParam");
+          Serial.println(additionalParam);
 
-        DynamicJsonDocument doc(1024);
-        doc["deviceName"] = deviceName;
-        doc["microcontrollerIP"] = microcontrollerIP;
-        doc["qsid"] = qsid;
-        doc["qpass"] = qpass;     
-        doc["OTApass"] = OTApass;
-        doc["mqttIP"] = mqttIP;
-        doc["mqttPort"] = mqttPort;
-        doc["mqttuser"] = mqttuser;
-        doc["mqttpass"] = mqttpass;
-        doc["additionalParam"] = additionalParam;
+          DynamicJsonDocument doc(1024);
+          doc["deviceName"] = deviceName;
+          doc["microcontrollerIP"] = microcontrollerIP;
+          doc["qsid"] = qsid;
+          doc["qpass"] = qpass;
+          doc["OTApass"] = OTApass;
+          doc["mqttIP"] = mqttIP;
+          doc["mqttPort"] = mqttPort;
+          doc["mqttuser"] = mqttuser;
+          doc["mqttpass"] = mqttpass;
+          doc["additionalParam"] = additionalParam;
 
-        #if defined(ESP8266)
+#if defined(ESP8266)
           // Write to LittleFS
           Serial.println(F("\nSaving setup.json\n"));
           File jsonFile = LittleFS.open("/setup.json", "w");
@@ -394,8 +393,8 @@ void WifiManager::createWebServer() {
           delay(DELAY_200);
           content = "Success: rebooting the microcontroller using your credentials.";
           statusCode = 200;
-        #elif defined(ESP32)
-        SPIFFS.format();
+#elif defined(ESP32)
+          SPIFFS.format();
         if (SPIFFS.begin()) {
             File configFile = SPIFFS.open("/setup.json", "w");
             if (!configFile) {
@@ -412,23 +411,23 @@ void WifiManager::createWebServer() {
             content = "Error: can't write to storage.";
             statusCode = 404;
           }
-        #endif
-      } else {
-        content = "Error: missing required fields.";
-        statusCode = 404;
-        Serial.println("Sending 404");
-      }
-      delay(DELAY_500);
-      server.sendHeader("Access-Control-Allow-Origin", "*");
-      server.send(statusCode, "text/plain", content);
-      delay(DELAY_500);
-      #if defined(ESP8266)
-      ESP.reset();
-      #elif defined(ESP32)
-      ESP.restart();
-      #endif
+#endif
+        } else {
+          content = "Error: missing required fields.";
+          statusCode = 404;
+          Serial.println("Sending 404");
+        }
+        delay(DELAY_500);
+        server.sendHeader("Access-Control-Allow-Origin", "*");
+        server.send(statusCode, "text/plain", content);
+        delay(DELAY_500);
+#if defined(ESP8266)
+        ESP.reset();
+#elif defined(ESP32)
+        ESP.restart();
+#endif
 
     });
 
-  } 
+  }
 }

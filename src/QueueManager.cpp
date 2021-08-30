@@ -37,22 +37,20 @@ void QueueManager::setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)) 
 
 /********************************** MQTT RECONNECT **********************************/
 void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
- 
+
   // how many attemps to MQTT connection
   mqttReconnectAttemp = 0;
 
   // Loop until we're reconnected
-  while (!mqttClient.connected() && WiFi.status() == WL_CONNECTED) {
+  while (!mqttClient.connected()) {
 
 #if defined(ESP8266)
     if(!WiFi.localIP().isSet() || !WiFi.isConnected()){
-      Serial.println(F("WiFi is lost while connecting to MQTT, disconnecting."));
-      WiFi.disconnect();
+      helper.smartPrintln(F("WiFi is lost while connecting to MQTT, disconnecting."));
     }
 #elif defined(ESP32)
     if(!WiFi.isConnected()){
-      Serial.println(F("WiFi is lost while connecting to MQTT, disconnecting."));
-      WiFi.disconnect();
+      helper.smartPrintln(F("WiFi is lost while connecting to MQTT, disconnecting."));
     }
 #endif
 
@@ -106,7 +104,6 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
         // example: power off a watering system can't wait MAX_RECONNECT attemps
         if (fastDisconnectionManagement) {
           manageDisconnections();
-          WiFi.disconnect();
         }
       }
 
