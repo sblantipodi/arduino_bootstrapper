@@ -130,6 +130,7 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
 
+    display.setTextSize(2);
     manageHardwareButton();
     delay(DELAY_500);
     Serial.print(F("."));
