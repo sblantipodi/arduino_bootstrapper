@@ -67,6 +67,7 @@ class WifiManager {
 
   public:
     void setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
+    void reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
     void setupOTAUpload();
     int getQuality();
     bool isWifiConfigured(); // check if wifi is correctly configured

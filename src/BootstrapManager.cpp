@@ -48,6 +48,8 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 /********************************** BOOTSTRAP FUNCTIONS FOR LOOP() *****************************************/
 void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
 
+  wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
+
   ArduinoOTA.handle();
 
   queueManager.queueLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);

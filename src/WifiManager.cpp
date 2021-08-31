@@ -110,6 +110,23 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 #if defined(ESP32)
   WiFi.setSleep(false);
 #endif
+
+  reconnectToWiFi(manageDisconnections, manageHardwareButton);
+
+  helper.smartPrintln(F("WIFI CONNECTED"));
+  microcontrollerIP = WiFi.localIP().toString();
+  MAC = WiFi.macAddress();
+  helper.smartPrintln(microcontrollerIP);
+
+  delay(DELAY_1500);
+
+  // reset the lastWIFiConnection to off, will be initialized by next time update
+  lastWIFiConnection = OFF_CMD;
+
+}
+
+void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
+
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
 
@@ -118,7 +135,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
     Serial.print(F("."));
     wifiReconnectAttemp++;
     if (wifiReconnectAttemp > 10) {
-      // if fastDisconnectionManagement we need to execute the callback immediately, 
+      // if fastDisconnectionManagement we need to execute the callback immediately,
       // example: power off a watering system can't wait MAX_RECONNECT attemps
       if (fastDisconnectionManagement) {
         manageDisconnections();
@@ -139,16 +156,6 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
     }
 
   }
-
-  helper.smartPrintln(F("WIFI CONNECTED"));
-  microcontrollerIP = WiFi.localIP().toString();
-  MAC = WiFi.macAddress();
-  helper.smartPrintln(microcontrollerIP);
-
-  delay(DELAY_1500);
-
-  // reset the lastWIFiConnection to off, will be initialized by next time update
-  lastWIFiConnection = OFF_CMD;
 
 }
 
