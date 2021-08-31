@@ -67,14 +67,14 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   delay(DELAY_200);
   WiFi.mode(WIFI_STA);      // Disable AP mode
 #if defined(ESP8266)
-  //WiFi.setSleepMode(WIFI_NONE_SLEEP);
-#endif
-  WiFi.setAutoConnect(true);
-  WiFi.setAutoReconnect(true);
+  WiFi.setSleepMode(WIFI_NONE_SLEEP);
   // Improved WiFi stability by locking WiFi to version 802.11G at 54 Mbps.
   // Some routers let the ESP connects to WiFi 802.11N at 72.2 Mbps and enables PSM, SGM and STBC.
   // The combination of those variables creates big stability problems when the WiFi module is under heavy load.
   WiFi.setPhyMode(WIFI_PHY_MODE_11G);
+#endif
+  WiFi.setAutoConnect(true);
+  WiFi.setAutoReconnect(true);
   if (!microcontrollerIP.equals("DHCP")) {
     WiFi.config(IPAddress(helper.getValue(microcontrollerIP, '.', 0).toInt(),
                           helper.getValue(microcontrollerIP, '.', 1).toInt(),
