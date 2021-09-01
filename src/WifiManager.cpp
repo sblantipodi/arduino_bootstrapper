@@ -63,7 +63,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   delay(DELAY_2000);
 
   WiFi.persistent(true);   // Solve possible wifi init errors (re-add at 6.2.1.16 #4044, #4083)
-  //WiFi.disconnect(true);    // Delete SDK wifi config
+  WiFi.disconnect(true);    // Delete SDK wifi config
   delay(DELAY_200);
   WiFi.mode(WIFI_STA);      // Disable AP mode
 #if defined(ESP8266)
@@ -127,10 +127,11 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 
 void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
 
+  wifiReconnectAttemp = 0;
+
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
 
-    display.setTextSize(2);
     manageHardwareButton();
     delay(DELAY_500);
     Serial.print(F("."));
@@ -144,6 +145,7 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
       if (PRINT_TO_DISPLAY) {
         display.setCursor(0,0);
         display.clearDisplay();
+        display.setTextSize(1);
       }
       helper.smartPrint(F("Wifi attemps= "));
       helper.smartPrintln(wifiReconnectAttemp);
