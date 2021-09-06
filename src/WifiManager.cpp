@@ -1,19 +1,19 @@
 /*
   WifiManager.cpp - Managing WiFi and OTA
-  
+
   Copyright (C) 2020 - 2021  Davide Perini
-  
-  Permission is hereby granted, free of charge, to any person obtaining a copy of 
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of
   this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
-  copies of the Software, and to permit persons to whom the Software is 
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
 
-  The above copyright notice and this permission notice shall be included in 
+  The above copyright notice and this permission notice shall be included in
   all copies or substantial portions of the Software.
-  
-  You should have received a copy of the MIT License along with this program.  
+
+  You should have received a copy of the MIT License along with this program.
   If not, see <https://opensource.org/licenses/MIT/>.
 */
 
@@ -40,7 +40,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 
   wifiReconnectAttemp = 0;
 
-  // DPsoftware domotics 
+  // DPsoftware domotics
   if (PRINT_TO_DISPLAY) {
     display.clearDisplay();
     display.setTextSize(2);
@@ -68,10 +68,6 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   WiFi.mode(WIFI_STA);      // Disable AP mode
 #if defined(ESP8266)
   WiFi.setSleepMode(WIFI_NONE_SLEEP);
-  // Improved WiFi stability by locking WiFi to version 802.11G at 54 Mbps.
-  // Some routers let the ESP connects to WiFi 802.11N at 72.2 Mbps and enables PSM, SGM and STBC.
-  // The combination of those variables creates big stability problems when the WiFi module is under heavy load.
-  WiFi.setPhyMode(WIFI_PHY_MODE_11G);
 #endif
   WiFi.setAutoConnect(true);
   WiFi.setAutoReconnect(true);
