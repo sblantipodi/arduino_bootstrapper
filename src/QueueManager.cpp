@@ -95,7 +95,6 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
         if (fastDisconnectionManagement) {
           manageDisconnections();
           helper.smartPrintln(F("Disconnecting WiFi."));
-          WiFi.disconnect();
           WiFi.reconnect();
         }
       }
@@ -107,7 +106,6 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
         // Manage disconnections, powering off peripherals
         manageDisconnections();
         helper.smartPrintln(F("Disconnecting WiFi."));
-        WiFi.disconnect();
         WiFi.reconnect();
       } else if (mqttReconnectAttemp > 10000) {
         mqttReconnectAttemp = 0;
