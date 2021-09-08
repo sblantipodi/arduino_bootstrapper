@@ -430,7 +430,7 @@ void WifiManager::createWebServer() {
         delay(DELAY_500);
         server.sendHeader("Access-Control-Allow-Origin", "*");
         server.send(statusCode, "text/plain", content);
-        delay(DELAY_500);
+        delay(DELAY_1000);
 #if defined(ESP8266)
         ESP.reset();
 #elif defined(ESP32)
