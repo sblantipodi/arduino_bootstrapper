@@ -37,6 +37,8 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     // Initialize Queue Manager
     if (mqttIP.length() > 0) {
       queueManager.setupMQTTQueue(callback);
+    } else {
+      Serial.println(F("Skip MQTT connection."));
     }
     // Initialize OTA manager
     wifiManager.setupOTAUpload();
