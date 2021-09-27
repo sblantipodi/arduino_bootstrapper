@@ -35,7 +35,9 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     // Initialize Wifi manager
     wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
     // Initialize Queue Manager
-    queueManager.setupMQTTQueue(callback);
+    if (mqttIP.length() > 0) {
+      queueManager.setupMQTTQueue(callback);
+    }
     // Initialize OTA manager
     wifiManager.setupOTAUpload();
   } else {
@@ -52,7 +54,9 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
 
   ArduinoOTA.handle();
 
-  queueManager.queueLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
+  if (mqttIP.length() > 0) {
+    queueManager.queueLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
+  }
 
 }
 
@@ -129,6 +133,35 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byt
   message[length] = '\0';
 
   DeserializationError error = deserializeJson(jsonDoc, (const byte*) payload, length);
+
+  // non json msg
+  if (error) {
+    JsonObject root = jsonDoc.to<JsonObject>();
+    root[VALUE] = message;
+    if (DEBUG_QUEUE_MSG) {
+      String msg = root[VALUE];
+      Serial.println(msg);
+    }
+    return jsonDoc;
+  } else { // return json doc
+    if (DEBUG_QUEUE_MSG) {
+      serializeJsonPretty(jsonDoc, Serial); Serial.println();
+    }
+    return jsonDoc;
+  }
+
+}
+
+/********************************** PRINT THE MESSAGE ARRIVING FROM HTTP **********************************/
+StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseHttpMsg(String payload, unsigned int length) {
+
+  char message[length + 1];
+  for (unsigned int i = 0; i < length; i++) {
+    message[i] = (char)payload[i];
+  }
+  message[length] = '\0';
+
+  DeserializationError error = deserializeJson(jsonDoc, payload.c_str(), length);
 
   // non json msg
   if (error) {

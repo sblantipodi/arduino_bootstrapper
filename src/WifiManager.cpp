@@ -174,7 +174,7 @@ void WifiManager::setupOTAUpload() {
   });
 
   ArduinoOTA.onEnd([]() {
-      Serial.println(F("\nEnd"));
+      Serial.println(F("End"));
   });
 
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
@@ -315,24 +315,118 @@ void WifiManager::createWebServer() {
     server.on("/", []() {
         IPAddress ip = WiFi.softAPIP();
         String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
-        content = "<!DOCTYPE HTML>\r\n<html><head><style>body {padding:0% 5% 0% 5%;font-size:4vw;width: 90%;font-weight:bold;text-align:center; color:#202020}#centerContainer { margin: 0px auto; }input {font-size:4vw;width: 100%;padding: 12px 20px;margin: 8px 0;box-sizing: border-box;border: 6px solid orange;-webkit-transition: 0.5s;transition: 0.5s;outline: none;}input:focus {border: 12px solid #BF5F00;font-weight:bold;}#wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 8px;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 12px;padding-bottom: 12px;text-align: left; background-color: orange;color: white;}.button {background-color: orange;border: none;color: white;padding: 20px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;}.button3 {font-size:4vw;border-radius: 8px;width:100%;font-weight:bold;}label{font-size:4vw;}</style></head><body><div id='centerContainer'>";
-        content += "<h1>";
+        content = "<!DOCTYPE HTML>\n"
+                  "<html><header>\n"
+                  "    <div>\n"
+                  "        <a href='https://github.com/sblantipodi/'>";
         content += WIFI_DEVICE_NAME;
-        content += "</h1>";
+        content +="    </a></div>\n"
+                  "    <style>\n"
+                  "        body{background: #b7b7b7; margin:0; padding:0; font-family:'Open Sans',sans-serif}"
+                  "        input[type='checkbox'] {\n"
+                  "            width: auto !important;\n"
+                  "            margin: 1vw;\n"
+                  "        }\n"
+                  "        input[type='checkbox'] {\n"
+                  "            height: 3.5vw;\n"
+                  "            width: 3.5vw;\n"
+                  "            position: relative;\n"
+                  "            -webkit-appearance: none;\n"
+                  "            cursor: pointer;\n"
+                  "            margin-right: 10px;\n"
+                  "        }\n"
+                  "        input[type='checkbox']:before {\n"
+                  "            content: '';\n"
+                  "            display: inline-block;\n"
+                  "            position: absolute;\n"
+                  "            box-sizing: border-box;\n"
+                  "            height: 3.5vw;\n"
+                  "            width: 3.5vw;\n"
+                  "            border-radius: 0.1vw;\n"
+                  "            border: 0.3vw solid orange;\n"
+                  "            background-color: #ffdca7;\n"
+                  "        }\n"
+                  "        input[type='checkbox']:hover::before {\n"
+                  "            border: 0.1vw solid darkorange;\n"
+                  "        }\n"
+                  "        input[type='checkbox']:checked:before {\n"
+                  "            content: '';\n"
+                  "            display: inline-block;\n"
+                  "            position: absolute;\n"
+                  "            box-sizing: border-box;\n"
+                  "            height: 3.5vw;\n"
+                  "            width: 3.5vw;\n"
+                  "            border-radius: 0.1vw;\n"
+                  "            border: 1vw solid #ffdca7;\n"
+                  "            background-color: #ffdca7;\n"
+                  "        }\n"
+                  "        input[type='checkbox']:checked:after {\n"
+                  "            content: '';\n"
+                  "            display: inline-block;\n"
+                  "            position: absolute;\n"
+                  "            top: 2vw;\n"
+                  "            left: 0px;\n"
+                  "            box-sizing: border-box;\n"
+                  "            height: 1vw;\n"
+                  "            width: 3.5vw;\n"
+                  "            border-left: 0.6vw solid orange;\n"
+                  "            border-bottom: 0.6vw solid orange;\n"
+                  "            -webkit-transform: translateY(-1.5px) rotate(-45deg);\n"
+                  "            transform: translateY(-1.5px) rotate(-45deg);\n"
+                  "        }\n"
+                  "        ::-webkit-input-placeholder{color: orange;}\n"
+                  "        .buttonSubmit {border-radius: 8px !important;} label {font-size: 2.5vw; color: orange;display: inline-block;margin-top: 20px;}\n"
+                  "        header,footer{background: #808080; width:100%; text-align:center}  header{padding-top:100px}  footer{padding-bottom:30px}\n"
+                  "        header>div,footer>div{background: #ff6500; color:#FFF; width:90%; margin:0  auto; padding:22px; box-sizing:border-box}\n"
+                  "        header>div>a{font-size:36px; color:#FFF; text-decoration:none}\n"
+                  "        .form{background:#fff; width:90%; margin:0 auto; padding:30px; box-sizing:border-box}\n"
+                  "        .form input{font-size:3vw; display:block; width:100%; border:none; border-bottom:solid 1px #ccc; color: orange; padding:10px 10px 10px 0; box-sizing:border-box; outline:none; font-family:'Open Sans',sans-serif;}\n"
+                  "        .line{display:block; background: #ffa500; height:3px; margin:0 auto; margin-top:-2px; width:0px; transition:width  .3s cubic-bezier(0.4,0,0.2,1)}\n"
+                  "        .form input:focus + span.line{width:100%}\n"
+                  "        #send{width:50%; margin:0 auto; margin-top:30px; background: #ffa500; border-bottom:none; color:#fff; cursor:pointer}\n"
+                  "        .social i{height:40px; width:40px; border-radius:40px; text-align:center; line-height:40px; color:#fff}\n"
+                  "       .pwd{display:block; color:#F93; text-decoration:none; width:280px; margin:20px auto; padding:10px 0}\n"
+                  "        @media(max-width:100%){header>div,footer>div,.form{width:90%} header>div>a{font-size:3vw; padding:8px 0; display:block}}\n"
+                  "        #wifi {font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;border-collapse: collapse;width: 100%;}#wifi td, #wifi th {border: 1px solid #ddd;padding: 8px;}#wifi tr:nth-child(even){background-color: #f2f2f2;}#wifi tr:hover {background-color: #ddd;}#wifi th {padding-top: 12px;padding-bottom: 12px;text-align: left; background-color: orange;color: white;}\n"
+                  "    </style>\n"
+                  "</header>\n"
+                  "<div class='form'>\n";
         content += htmlString;
-        content += "<br><br><form method='get' action='setting' id='form1'>";
-        content += "<label for='deviceName'>Device Name *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' required>";
-        content += "<label for='microcontrollerIP'>IP ADDRESS</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'>";
-        content += "<label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' required>";
-        content += "<label for='pass'>WIFI PASSWORD *</label><input type='password' id='pass' name='pass' required>";
-        content += "<label for='OTApass'>OTA PASSWORD *</label><input type='password' id='OTApass' name='OTApass' required>";
-        content += "<label for='mqttIP'>MQTT SERVER IP *</label><input type='text' id='mqttIP' name='mqttIP' required>";
-        content += "<label for='mqttPort'>MQTT SERVER PORT *</label><input type='text' id='mqttPort' name='mqttPort' required>";
-        content += "<label for='mqttuser'>MQTT SERVER USERNAME</label><input type='text' id='mqttuser' name='mqttuser'>";
-        content += "<label for='mqttpass'>MQTT SERVER PASSWORD</label><input type='password' id='mqttpass' name='mqttpass'>";
-        content += "<label for='additionalParam'>"; content += ADDITIONAL_PARAM_TEXT; content += "</label><input type='text' id='additionalParam' name='additionalParam'>";
-        content += "</form><br><br><button type='submit' form='form1' value='Submit' class='button button3'>STORE CONFIG</button><br><br><p>* Please insert the required fields, please double check them before submit or you will need to reflash.</p><br></div></body>";
-        content += "</html>";
+        content +="    <form method='get' action='setting' id='form1'>\n"
+                  "        <label for='deviceName'>Device Name *</label><input type='text' id='deviceName' name='deviceName' maxlength='25' required><span class='line'></span>\n"
+                  "        <label for='microcontrollerIP'>IP address</label><input type='text' id='microcontrollerIP' name='microcontrollerIP'><span class='line'></span>\n"
+                  "        <label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' required>"
+                  "        <label for='pass'>WiFi password *</label><input type='password' id='pass' name='pass' required><span class='line'></span>\n"
+                  "        <label for='OTApass'>OTA password *</label><input type='password' id='OTApass' name='OTApass' required><span class='line'></span>\n"
+                  "        <input type='checkbox' id='mqttCheckbox' name='mqttCheckbox' checked>"
+              "            <div id='mqttclass'><label id='labelMqttIp' for='mqttIP'>MQTT server IP *</label><input id='inputMqttIp' type='text' id='mqttIP' name='mqttIP' required><span class='line'></span>\n"
+                  "        <label for='mqttPort'>MQTT server port *</label><input type='text' id='mqttPort' name='mqttPort' required><span class='line'></span>\n"
+                  "        <label for='mqttuser'>MQTT server username</label><input type='text' id='mqttuser' name='mqttuser'><span class='line'></span>\n"
+                  "        <label for='mqttpass'>MQTT server password</label><input type='password' id='mqttpass' name='mqttpass'><span class='line'></span></div>\n";
+        content +="        <label for='additionalParam'><span class='line'></span>"; content += ADDITIONAL_PARAM_TEXT; content += "</label><input type='text' id='additionalParam' name='additionalParam'>\n"
+                  "        <input type='submit' class='buttonSubmit' value='STORE CONFIG' id='send'>\n"
+                  "    </form>\n"
+                  "</div>\n"
+                  "<footer>\n"
+                  "    <div class='social'>* Please insert the required fields, please double check them before submit or you will need to reflash.</div>\n"
+                  "    <a class='pwd' href='https://github.com/sblantipodi/'>Luciferin on GitHub</a>\n"
+                  "</footer>"
+                  "<script>\n"
+                  "    const cb = document.getElementById('mqttCheckbox');\n"
+                  "    const x = document.getElementById('mqttclass');\n"
+                  "    console.log(cb.checked);\n"
+                  "    cb.onclick = () => {\n"
+                  "        if (cb.checked) {\n"
+                  "            x.style.display = 'block';\n"
+                  "            document.getElementById('inputMqttIp').addAttribute('required')\n"
+                  "            document.getElementById('mqttPort').addAttribute('required')\n"
+                  "        } else {\n"
+                  "            x.style.display = 'none';\n"
+                  "            document.getElementById('inputMqttIp').removeAttribute('required')\n"
+                  "            document.getElementById('mqttPort').removeAttribute('required')\n"
+                  "        }\n"
+                  "    };"
+                  "</script></html>";
         server.send(200, "text/html", content);
     });
 
@@ -341,6 +435,7 @@ void WifiManager::createWebServer() {
         String microcontrollerIP = server.arg("microcontrollerIP");
         String qsid = server.arg("ssid");
         String qpass = server.arg("pass");
+        String mqttCheckbox = server.arg("mqttCheckbox");
         String mqttIP = server.arg("mqttIP");
         String mqttPort = server.arg("mqttPort");
         String OTApass = server.arg("OTApass");
@@ -348,7 +443,8 @@ void WifiManager::createWebServer() {
         String mqttpass = server.arg("mqttpass");
         String additionalParam = server.arg("additionalParam");
 
-        if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0 && mqttIP.length() > 0 && mqttPort.length() > 0) {
+        if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0
+          && ((mqttCheckbox.length() == 0) || (mqttIP.length() > 0 && mqttPort.length() > 0))) {
 
           Serial.println("deviceName");
           Serial.println(deviceName);
@@ -380,15 +476,22 @@ void WifiManager::createWebServer() {
           doc["qsid"] = qsid;
           doc["qpass"] = qpass;
           doc["OTApass"] = OTApass;
-          doc["mqttIP"] = mqttIP;
-          doc["mqttPort"] = mqttPort;
-          doc["mqttuser"] = mqttuser;
-          doc["mqttpass"] = mqttpass;
+          if (mqttCheckbox.equals("on")) {
+            doc["mqttIP"] = mqttIP;
+            doc["mqttPort"] = mqttPort;
+            doc["mqttuser"] = mqttuser;
+            doc["mqttpass"] = mqttpass;
+          } else {
+            doc["mqttIP"] = "";
+            doc["mqttPort"] = "";
+            doc["mqttuser"] = "";
+            doc["mqttpass"] = "";
+          }
           doc["additionalParam"] = additionalParam;
 
 #if defined(ESP8266)
           // Write to LittleFS
-          Serial.println(F("\nSaving setup.json\n"));
+          Serial.println(F("Saving setup.json"));
           File jsonFile = LittleFS.open("/setup.json", "w");
           if (!jsonFile) {
             Serial.println("Failed to open [setup.json] file for writing");
