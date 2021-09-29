@@ -96,6 +96,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   }
   WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event) {
       Serial.println(F("WiFi connection is lost."));
+      WiFi.reconnect();
   });
 #elif defined(ESP32)
   WiFi.setHostname(helper.string2char(deviceName));
@@ -364,11 +365,11 @@ void WifiManager::createWebServer() {
                   "            content: '';\n"
                   "            display: inline-block;\n"
                   "            position: absolute;\n"
-                  "            top: 2vw;\n"
-                  "            left: 0px;\n"
-                  "            box-sizing: border-box;\n"
-                  "            height: 1vw;\n"
-                  "            width: 3.5vw;\n"
+                  "            top: 0.6vw;"
+                  "            left: -0.1vw;"
+                  "            box-sizing: border-box;"
+                  "            height: 2.5vw;"
+                  "            width: 4.5vw;"
                   "            border-left: 0.6vw solid orange;\n"
                   "            border-bottom: 0.6vw solid orange;\n"
                   "            -webkit-transform: translateY(-1.5px) rotate(-45deg);\n"
@@ -398,7 +399,7 @@ void WifiManager::createWebServer() {
                   "        <label for='ssid'>SSID *</label><input type='text' id='ssid' name='ssid' required>"
                   "        <label for='pass'>WiFi password *</label><input type='password' id='pass' name='pass' required><span class='line'></span>\n"
                   "        <label for='OTApass'>OTA password *</label><input type='password' id='OTApass' name='OTApass' required><span class='line'></span>\n"
-                  "        <input type='checkbox' id='mqttCheckbox' name='mqttCheckbox' checked>"
+                  "        <label for='mqttCheckbox'>Enable MQTT</label><input type='checkbox' id='mqttCheckbox' name='mqttCheckbox' checked>"
               "            <div id='mqttclass'><label id='labelMqttIp' for='mqttIP'>MQTT server IP *</label><input id='inputMqttIp' type='text' id='mqttIP' name='mqttIP' required><span class='line'></span>\n"
                   "        <label for='mqttPort'>MQTT server port *</label><input type='text' id='mqttPort' name='mqttPort' required><span class='line'></span>\n"
                   "        <label for='mqttuser'>MQTT server username</label><input type='text' id='mqttuser' name='mqttuser'><span class='line'></span>\n"
@@ -418,12 +419,16 @@ void WifiManager::createWebServer() {
                   "    cb.onclick = () => {\n"
                   "        if (cb.checked) {\n"
                   "            x.style.display = 'block';\n"
-                  "            document.getElementById('inputMqttIp').addAttribute('required')\n"
-                  "            document.getElementById('mqttPort').addAttribute('required')\n"
+                  "            document.getElementById('inputMqttIp').setAttribute('required','')\n"
+                  "            document.getElementById('mqttPort').setAttribute('required','')\n"
                   "        } else {\n"
                   "            x.style.display = 'none';\n"
                   "            document.getElementById('inputMqttIp').removeAttribute('required')\n"
                   "            document.getElementById('mqttPort').removeAttribute('required')\n"
+                  "            document.getElementById(\"mqttPort\").value = \"\";"
+                  "            document.getElementById(\"mqttuser\").value = \"\";"
+                  "            document.getElementById(\"mqttpass\").value = \"\";"
+                  "            document.getElementById(\"inputMqttIp\").value = \"\";"
                   "        }\n"
                   "    };"
                   "</script></html>";
