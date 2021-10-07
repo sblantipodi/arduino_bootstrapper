@@ -63,6 +63,7 @@ void PingESP::receivePingCallback(void *opt, void *resp) {
   // Check for errors
   if (ping_resp->ping_err == -1) {
     pingError++;
+    Serial.println(F("PING KO"));
   } else {
     pingSuccess++;
   }
