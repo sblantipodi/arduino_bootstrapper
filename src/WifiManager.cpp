@@ -447,6 +447,7 @@ void WifiManager::createWebServer() {
         String mqttuser = server.arg("mqttuser");
         String mqttpass = server.arg("mqttpass");
         String additionalParam = server.arg("additionalParam");
+        DynamicJsonDocument doc(1024);
 
         if (deviceName.length() > 0 && qsid.length() > 0 && qpass.length() > 0 && OTApass.length() > 0
           && ((mqttCheckbox.length() == 0) || (mqttIP.length() > 0 && mqttPort.length() > 0))) {
@@ -475,7 +476,6 @@ void WifiManager::createWebServer() {
           Serial.println("additionalParam");
           Serial.println(additionalParam);
 
-          DynamicJsonDocument doc(1024);
           doc["deviceName"] = deviceName;
           doc["microcontrollerIP"] = microcontrollerIP;
           doc["qsid"] = qsid;
@@ -493,26 +493,33 @@ void WifiManager::createWebServer() {
             doc["mqttpass"] = "";
           }
           doc["additionalParam"] = additionalParam;
-
-#if defined(ESP8266)
-          // Write to LittleFS
-          Serial.println(F("Saving setup.json"));
-          File jsonFile = LittleFS.open("/setup.json", "w");
-          if (!jsonFile) {
-            Serial.println("Failed to open [setup.json] file for writing");
-            content = "Error: can't write to storage.";
-            statusCode = 404;
-          } else {
-            serializeJsonPretty(doc, Serial);
-            serializeJson(doc, jsonFile);
-            jsonFile.close();
-            Serial.println("[setup.json] written correctly");
-          }
-          delay(DELAY_200);
           content = "Success: rebooting the microcontroller using your credentials.";
           statusCode = 200;
+        } else {
+          content = "Error: missing required fields.";
+          statusCode = 404;
+          Serial.println("Sending 404");
+        }
+        delay(DELAY_500);
+        server.sendHeader("Access-Control-Allow-Origin", "*");
+        server.send(statusCode, "text/plain", content);
+        delay(DELAY_500);
+
+#if defined(ESP8266)
+        // Write to LittleFS
+        Serial.println(F("Saving setup.json"));
+        File jsonFile = LittleFS.open("/setup.json", "w");
+        if (!jsonFile) {
+          Serial.println("Failed to open [setup.json] file for writing");
+        } else {
+          serializeJsonPretty(doc, Serial);
+          serializeJson(doc, jsonFile);
+          jsonFile.close();
+          Serial.println("[setup.json] written correctly");
+        }
+        delay(DELAY_200);
 #elif defined(ESP32)
-          SPIFFS.format();
+        SPIFFS.format();
         if (SPIFFS.begin()) {
             File configFile = SPIFFS.open("/setup.json", "w");
             if (!configFile) {
@@ -522,22 +529,10 @@ void WifiManager::createWebServer() {
             serializeJson(doc, configFile);
             configFile.close();
             Serial.println("[setup.json] written correctly");
-            content = "Success: rebooting the microcontroller using your credentials.";
-            statusCode = 200;
           } else {
             Serial.println(F("Failed to mount FS for write"));
-            content = "Error: can't write to storage.";
-            statusCode = 404;
           }
 #endif
-        } else {
-          content = "Error: missing required fields.";
-          statusCode = 404;
-          Serial.println("Sending 404");
-        }
-        delay(DELAY_500);
-        server.sendHeader("Access-Control-Allow-Origin", "*");
-        server.send(statusCode, "text/plain", content);
         delay(DELAY_1000);
 #if defined(ESP8266)
         ESP.reset();
