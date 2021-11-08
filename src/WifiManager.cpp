@@ -410,7 +410,7 @@ void WifiManager::createWebServer() {
                   "</div>\n"
                   "<footer>\n"
                   "    <div class='social'>* Please insert the required fields, please double check them before submit or you will need to reflash.</div>\n"
-                  "    <a class='pwd' href='https://github.com/sblantipodi/'>Luciferin on GitHub</a>\n"
+                  "    <a class='pwd' href='https://github.com/sblantipodi/'>GitHub</a>\n"
                   "</footer>"
                   "<script>\n"
                   "    const cb = document.getElementById('mqttCheckbox');\n"
