@@ -31,7 +31,6 @@
   #include <HTTPClient.h>
   #include <WebServer.h>
 #endif
-#include <Adafruit_SSD1306.h>
 
 #ifndef AUTHOR
 #define AUTHOR "DPsoftware"
@@ -48,15 +47,17 @@
 
 // Specify if you want to use a display or only Serial
 #ifndef DISPLAY_ENABLED
-#define DISPLAY_ENABLED false;
+#define DISPLAY_ENABLED false
 #endif
-const bool PRINT_TO_DISPLAY = DISPLAY_ENABLED;
 
+#if (DISPLAY_ENABLED)
+#include <Adafruit_SSD1306.h>
 // Display specs
 #define OLED_RESET LED_BUILTIN // Pin used for integrated D1 Mini blue LED
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 extern Adafruit_SSD1306 display;
+#endif
 
 // SENSORNAME will be used as device network name
 #ifndef WIFI_DEVICE_NAME

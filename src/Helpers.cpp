@@ -59,49 +59,49 @@ bool fastDisconnectionManagement = false;
 
 void Helpers::smartPrint(String msg) {
 
-  if (PRINT_TO_DISPLAY) {
+  #if (DISPLAY_ENABLED) 
     display.print(msg);
-  } else {
+  #else
     Serial.print(msg);
-  }
+  #endif
 
 }
 
 void Helpers::smartPrintln(String msg) {
 
-  if (PRINT_TO_DISPLAY) {
-    display.println(msg);
-  } else {
-    Serial.println(msg);
-  }
+  #if (DISPLAY_ENABLED) 
+    display.print(msg);
+  #else
+    Serial.print(msg);
+  #endif
 
 }
 
 void Helpers::smartPrint(int msg) {
 
-  if (PRINT_TO_DISPLAY) {
+  #if (DISPLAY_ENABLED) 
     display.print(msg);
-  } else {
+  #else
     Serial.print(msg);
-  }
+  #endif
 
 }
 
 void Helpers::smartPrintln(int msg) {
 
-  if (PRINT_TO_DISPLAY) {
-    display.println(msg);
-  } else {
-    Serial.println(msg);
-  }
+  #if (DISPLAY_ENABLED) 
+    display.print(msg);
+  #else
+    Serial.print(msg);
+  #endif
 
 }
 
 void Helpers::smartDisplay() {
 
-  if (PRINT_TO_DISPLAY) {
+  #if (DISPLAY_ENABLED) 
     display.display();
-  }
+  #endif
     
 }
 
