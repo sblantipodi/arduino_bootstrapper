@@ -520,7 +520,7 @@ void WifiManager::createWebServer() {
         delay(DELAY_200);
 #elif defined(ESP32)
         SPIFFS.format();
-        if (SPIFFS.begin()) {
+        if (SPIFFS.begin(true)) {
             File configFile = SPIFFS.open("/setup.json", "w");
             if (!configFile) {
               Serial.println("Failed to open [setup.json] file for writing");

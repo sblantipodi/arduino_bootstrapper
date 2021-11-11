@@ -322,7 +322,7 @@ void BootstrapManager::writeToLittleFS(DynamicJsonDocument jsonDoc, String filen
 #if defined(ESP32)
 void BootstrapManager::writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename) {
   
-  if (SPIFFS.begin()) {
+  if (SPIFFS.begin(true)) {
     // SPIFFS.format();
     File configFile = SPIFFS.open("/" + filename, "w");
     if (!configFile) {
@@ -435,7 +435,7 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
   helper.smartPrintln(F("Mounting SPIFSS..."));
   helper.smartDisplay();
   // SPIFFS.remove("/config.json");
-  if (SPIFFS.begin()) {
+  if (SPIFFS.begin(true)) {
     helper.smartPrintln(F("FS mounted"));
     if (SPIFFS.exists("/" + filename)) {
       //file exists, reading and loading
@@ -474,7 +474,7 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
 
 String BootstrapManager::readValueFromFile(String filename, String paramName) {
 
-  if (SPIFFS.begin()) {
+  if (SPIFFS.begin(true)) {
     if (SPIFFS.exists("/" + filename)) {
       File configFile = SPIFFS.open("/" + filename, "r");
       if (configFile) {
