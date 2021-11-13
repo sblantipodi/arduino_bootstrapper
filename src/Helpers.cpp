@@ -70,9 +70,9 @@ void Helpers::smartPrint(String msg) {
 void Helpers::smartPrintln(String msg) {
 
   #if (DISPLAY_ENABLED) 
-    display.print(msg);
+    display.println(msg);
   #else
-    Serial.print(msg);
+    Serial.println(msg);
   #endif
 
 }
@@ -90,9 +90,9 @@ void Helpers::smartPrint(int msg) {
 void Helpers::smartPrintln(int msg) {
 
   #if (DISPLAY_ENABLED) 
-    display.print(msg);
+    display.println(msg);
   #else
-    Serial.print(msg);
+    Serial.println(msg);
   #endif
 
 }
