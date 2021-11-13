@@ -232,7 +232,7 @@ void BootstrapManager::getMicrocontrollerInfo() {
 
 // Draw screensaver useful for OLED displays
 void BootstrapManager::drawScreenSaver(String txt) {
-
+#if (DISPLAY_ENABLED)
   if (screenSaverTriggered) {
     display.clearDisplay();
     for (int i = 0; i < 50; i++) {
@@ -248,12 +248,12 @@ void BootstrapManager::drawScreenSaver(String txt) {
     display.setTextColor(WHITE);
     screenSaverTriggered = false;
   }
-
+#endif
 }
 
 // draw some infos about your controller
 void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
-
+#if (DISPLAY_ENABLED)
   yoffset -= 1;
   // add/remove 8 pixel for every line yoffset <= -209, if you want to add a line yoffset <= -217
   if (yoffset <= -209) {
@@ -280,7 +280,7 @@ void BootstrapManager::drawInfoPage(String softwareVersion, String author) {
 
   // add/remove 8 pixel for every line effectiveOffset+175, if you want to add a line effectiveOffset+183
   display.drawBitmap((((display.width()/2)-(ARDUINOLOGOW/2))), effectiveOffset+175, ARDUINOLOGO, ARDUINOLOGOW, ARDUINOLOGOH, 1);
-
+#endif
 }
 
 // send the state of your controller to the mqtt queue
@@ -346,11 +346,11 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
   // Helpers classes
   Helpers helper;
 
-  if (PRINT_TO_DISPLAY) {
+  #if (DISPLAY_ENABLED) 
     display.clearDisplay();
     display.setCursor(0, 0);
     display.setTextSize(1);
-  }
+  #endif
   helper.smartPrintln(F("Mounting LittleFS..."));
   helper.smartDisplay();
 
@@ -427,11 +427,11 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
   // Helpers classes
   Helpers helper;
 
-  if (PRINT_TO_DISPLAY) {
+  #if (DISPLAY_ENABLED) 
     display.clearDisplay();
     display.setCursor(0, 0);
     display.setTextSize(1);
-  }
+  #endif
   helper.smartPrintln(F("Mounting SPIFSS..."));
   helper.smartDisplay();
   // SPIFFS.remove("/config.json");

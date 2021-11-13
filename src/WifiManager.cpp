@@ -41,21 +41,21 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   wifiReconnectAttemp = 0;
 
   // DPsoftware domotics
-  if (PRINT_TO_DISPLAY) {
+  #if (DISPLAY_ENABLED) 
     display.clearDisplay();
     display.setTextSize(2);
     display.setCursor(5,17);
     display.drawRoundRect(0, 0, display.width()-1, display.height()-1, display.height()/4, WHITE);
-  }
+  #endif
   helper.smartPrintln(F("DPsoftware domotics"));
   helper.smartDisplay();
   delay(DELAY_3000);
 
-  if (PRINT_TO_DISPLAY) {
+  #if (DISPLAY_ENABLED) 
     display.clearDisplay();
     display.setTextSize(1);
     display.setCursor(0,0);
-  }
+  #endif
   helper.smartPrintln(F("Connecting to: "));
   helper.smartPrint(qsid); helper.smartPrintln(F("..."));
   helper.smartDisplay();
@@ -139,11 +139,11 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
       if (fastDisconnectionManagement) {
         manageDisconnections();
       }
-      if (PRINT_TO_DISPLAY) {
+      #if (DISPLAY_ENABLED) 
         display.setCursor(0,0);
         display.clearDisplay();
         display.setTextSize(1);
-      }
+      #endif
       helper.smartPrint(F("Wifi attemps= "));
       helper.smartPrintln(wifiReconnectAttemp);
       if (wifiReconnectAttemp >= MAX_RECONNECT) {

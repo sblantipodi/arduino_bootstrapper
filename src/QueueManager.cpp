@@ -44,11 +44,11 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
   // Loop until we're reconnected
   while (!mqttClient.connected() && WiFi.status() == WL_CONNECTED) {
 
-    if (PRINT_TO_DISPLAY) {
+    #if (DISPLAY_ENABLED) 
       display.clearDisplay();
       display.setTextSize(1);
       display.setCursor(0,0);
-    }
+    #endif
     if (mqttReconnectAttemp <= 20) {
       helper.smartPrintln(F("Connecting to"));
       helper.smartPrintln(F("MQTT Broker..."));
