@@ -84,8 +84,11 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
                           helper.getValue(IP_DNS, '.', 1).toInt(),
                           helper.getValue(IP_DNS, '.', 2).toInt(),
                           helper.getValue(IP_DNS, '.', 3).toInt()));
+    Serial.println(F("Using static IP address"));
+    dhcpInUse = false;
   } else {
-    Serial.println("Using DHCP");
+    Serial.println(F("Using DHCP"));
+    dhcpInUse = true;
   }
 #if defined(ESP8266)
   WiFi.hostname(helper.string2char(deviceName));

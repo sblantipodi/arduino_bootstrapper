@@ -42,6 +42,7 @@ extern String haVersion;
 extern String MAC;
 extern String deviceName;
 extern String microcontrollerIP;
+extern bool dhcpInUse;
 extern String qsid;
 extern String qpass;
 extern String OTApass;
