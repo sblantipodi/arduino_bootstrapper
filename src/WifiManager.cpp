@@ -80,10 +80,10 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
                           helper.getValue(IP_GATEWAY, '.', 1).toInt(),
                           helper.getValue(IP_GATEWAY, '.', 2).toInt(),
                           helper.getValue(IP_GATEWAY, '.', 3).toInt()),
-                IPAddress(helper.getValue(IP_DNS, '.', 0).toInt(),
-                          helper.getValue(IP_DNS, '.', 1).toInt(),
-                          helper.getValue(IP_DNS, '.', 2).toInt(),
-                          helper.getValue(IP_DNS, '.', 3).toInt()));
+                IPAddress(helper.getValue(IP_SUBNET, '.', 0).toInt(),
+                          helper.getValue(IP_SUBNET, '.', 1).toInt(),
+                          helper.getValue(IP_SUBNET, '.', 2).toInt(),
+                          helper.getValue(IP_SUBNET, '.', 3).toInt()));
     Serial.println(F("Using static IP address"));
     dhcpInUse = false;
   } else {

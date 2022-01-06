@@ -83,11 +83,11 @@ const double WIFI_POWER = WIFI_SIGNAL_STRENGTH;
 #endif
 const char* const IP_GATEWAY = GATEWAY_IP;
 
-// DNS IP
-#ifndef DNS_IP
-#define DNS_IP "192.168.1.1"
+// SUBNET IP
+#ifndef SUBNET_IP
+#define SUBNET_IP "192.168.1.1"
 #endif
-const char* const IP_DNS = DNS_IP;
+const char* const IP_SUBNET = SUBNET_IP;
 
 // STATIC IP FOR THE MICROCONTROLLER
 #ifndef MICROCONTROLLER_IP
