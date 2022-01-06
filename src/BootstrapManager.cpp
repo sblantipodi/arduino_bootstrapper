@@ -449,7 +449,7 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
         std::unique_ptr<char[]> buf(new char[size]);
 
         configFile.readBytes(buf.get(), size);
-        DeserializationError deserializeError = deserializeJson(jsonDoc, buf.get());
+        DeserializationError deserializeError = deserializeJson(jsonDoc, (const char*)buf.get());
         Serial.println("\nReading " + filename);
         if (filename != "setup.json") serializeJsonPretty(jsonDoc, Serial);
         if (!deserializeError) {
@@ -482,7 +482,7 @@ String BootstrapManager::readValueFromFile(String filename, String paramName) {
         size_t size = configFile.size();
         std::unique_ptr<char[]> buf(new char[size]);
         configFile.readBytes(buf.get(), size);
-        DeserializationError deserializeError = deserializeJson(jsonDoc, buf.get());
+        DeserializationError deserializeError = deserializeJson(jsonDoc, (const char*)buf.get());
         serializeJsonPretty(jsonDoc, Serial);
         if (deserializeError) {
           jsonDoc[VALUE] = ERROR;
