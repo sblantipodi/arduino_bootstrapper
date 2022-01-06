@@ -1,7 +1,7 @@
 /*
   BoostrapManager.cpp - Main file for bootstrapping arduino projects
   
-  Copyright (C) 2020 - 2021  Davide Perini
+  Copyright (C) 2020 - 2022  Davide Perini
   
   Permission is hereby granted, free of charge, to any person obtaining a copy of 
   this software and associated documentation files (the "Software"), to deal
