@@ -327,11 +327,12 @@ void BootstrapManager::writeToSPIFFS(DynamicJsonDocument jsonDoc, String filenam
     File configFile = SPIFFS.open("/" + filename, "w");
     if (!configFile) {
       helper.smartPrintln("Failed to open [" + filename + "] file for writing");
+    } else {
+      serializeJsonPretty(jsonDoc, Serial);
+      serializeJson(jsonDoc, configFile);
+      configFile.close();
+      helper.smartPrintln("[" + filename + "] written correctly");
     }
-    serializeJsonPretty(jsonDoc, Serial);
-    serializeJson(jsonDoc, configFile);
-    configFile.close();
-    helper.smartPrintln("[" + filename + "] written correctly");
   } else {
     helper.smartPrintln(F("Failed to mount FS for write"));
   }
