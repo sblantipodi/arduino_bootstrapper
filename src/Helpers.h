@@ -135,11 +135,12 @@ class Helpers {
     void smartPrint(int msg);
     void smartPrintln(int msg);
     void smartDisplay();
+    void smartDisplay(int delayTime);
     String getValue(String data, char separator, int index);
-	String getValue(String string);
-	char* string2char(const String command);
-	void setDateTime(String timeConst);
-	String isOnOff(StaticJsonDocument<BUFFER_SIZE> json);
+    String getValue(String string);
+    char* string2char(const String command);
+    void setDateTime(String timeConst);
+    String isOnOff(StaticJsonDocument<BUFFER_SIZE> json);
 
 };
 

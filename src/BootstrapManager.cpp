@@ -381,17 +381,14 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
   jsonFile.close();
   if (error) {
     helper.smartPrintln("Failed to parse [" + filename + "] file");
-    helper.smartDisplay();
-    delay(DELAY_2000);
+    helper.smartDisplay(DELAY_2000);
   } else {
     helper.smartPrintln("[" + filename + "]\nJSON parsed");
-    helper.smartDisplay();
-    delay(DELAY_2000);
+    helper.smartDisplay(DELAY_2000);
     return jsonDoc;
   }
 
-  helper.smartDisplay();
-  delay(DELAY_2000);
+  helper.smartDisplay(DELAY_2000);
   return jsonDoc;
 
 }
@@ -467,8 +464,7 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
     jsonDoc[VALUE] = ERROR;
     helper.smartPrintln(F("failed to mount FS"));
   }
-  helper.smartDisplay();
-  delay(DELAY_4000);
+  helper.smartDisplay(DELAY_4000);
   return jsonDoc;
 
 }
