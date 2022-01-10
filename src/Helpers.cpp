@@ -100,18 +100,18 @@ void Helpers::smartPrintln(int msg) {
 
 void Helpers::smartDisplay() {
 
-#if (DISPLAY_ENABLED)
-  display.display();
-#endif
+  #if (DISPLAY_ENABLED)
+    display.display();
+  #endif
 
 }
 
 void Helpers::smartDisplay(int delayTime) {
 
-#if (DISPLAY_ENABLED)
-  display.display();
-  delay(delayTime);
-#endif
+  #if (DISPLAY_ENABLED)
+    display.display();
+    delay(delayTime);
+  #endif
 
 }
 
