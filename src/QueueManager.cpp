@@ -68,7 +68,7 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
     if (mqttSuccess) {
 
       helper.smartPrintln(F(""));
-      helper.smartPrintln(F("CONNECTED"));
+      helper.smartPrintln(F("MQTT CONNECTED"));
       helper.smartPrintln(F(""));
       helper.smartPrintln(F("Reading data from"));
       helper.smartPrintln(F("the network..."));

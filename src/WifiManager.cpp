@@ -101,9 +101,11 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
       Serial.println(F("WiFi connection is lost."));
       WiFi.reconnect();
   });
+
+
 #elif defined(ESP32)
   WiFi.setHostname(helper.string2char(deviceName));
-    btStop();
+  btStop();
 #endif
   // Start wifi connection
   WiFi.begin(qsid.c_str(), qpass.c_str());
@@ -112,11 +114,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 #endif
 
   reconnectToWiFi(manageDisconnections, manageHardwareButton);
-
-  helper.smartPrintln(F("WIFI CONNECTED"));
-  microcontrollerIP = WiFi.localIP().toString();
   MAC = WiFi.macAddress();
-  helper.smartPrintln(microcontrollerIP);
 
   delay(DELAY_1500);
 
@@ -158,6 +156,11 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
       wifiReconnectAttemp = 0;
     }
 
+  }
+  if (wifiReconnectAttemp > 0) {
+    helper.smartPrint(F("\nWIFI CONNECTED\nIP Address: "));
+    microcontrollerIP = WiFi.localIP().toString();
+    helper.smartPrintln(microcontrollerIP);
   }
 
 }
