@@ -25,6 +25,14 @@
 
 extern "C" void esp_schedule();
 extern "C" void esp_yield();
+extern "C" void __esp_suspend();
+
+extern "C" void suspend_or_yield() {
+  Serial.printf("This is the default handler\n");
+  esp_yield();
+}
+
+void __esp_suspend(void) __attribute__((weak, alias("suspend_or_yield")));
 
 PingESP::PingESP() {}
 
@@ -47,7 +55,7 @@ bool PingESP::ping(IPAddress dest) {
   pingOptions.sent_function = NULL;
   if (ping_start(&pingOptions)) {
     // Sleep until the ping is finished
-    esp_yield();
+    __esp_suspend();
   }
   return (pingSuccess > 0);
 }
@@ -72,5 +80,10 @@ void PingESP::receivePingCallback(void *opt, void *resp) {
     esp_schedule();
   }
 }
+
+///**
+// * Weak function, if there is some implementation of esp_suspend() elsewhere, use that implementation,
+// * use this implementation instead.
+// */
 
 #endif
