@@ -27,11 +27,15 @@ extern "C" void esp_schedule();
 extern "C" void esp_yield();
 extern "C" void __esp_suspend();
 
+/**
+ * Newer Arduino SDK than 3.0.2 does esp_schedule() inside esp_yield(), this break ping functions here.
+ * Direct alternative would be to use new esp_suspend().
+ * Continue to use esp_yield() implementation when there is no esp_suspend() function (<= 3.0.2),
+ * use new esp_suspend() instead (> 3.0.2).
+ */
 extern "C" void suspend_or_yield() {
-  Serial.printf("This is the default handler\n");
   esp_yield();
 }
-
 void __esp_suspend(void) __attribute__((weak, alias("suspend_or_yield")));
 
 PingESP::PingESP() {}
@@ -80,10 +84,4 @@ void PingESP::receivePingCallback(void *opt, void *resp) {
     esp_schedule();
   }
 }
-
-///**
-// * Weak function, if there is some implementation of esp_suspend() elsewhere, use that implementation,
-// * use this implementation instead.
-// */
-
 #endif
