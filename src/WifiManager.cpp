@@ -68,7 +68,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 #endif
   WiFi.setAutoConnect(true);
   WiFi.setAutoReconnect(true);
-  if (!microcontrollerIP.equals("DHCP")) { 
+  if (!microcontrollerIP.equals("DHCP")) {
     WiFi.config(IPAddress(helper.getValue(microcontrollerIP, '.', 0).toInt(),
                           helper.getValue(microcontrollerIP, '.', 1).toInt(),
                           helper.getValue(microcontrollerIP, '.', 2).toInt(),
@@ -80,12 +80,11 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
                 IPAddress(helper.getValue(IP_SUBNET, '.', 0).toInt(),
                           helper.getValue(IP_SUBNET, '.', 1).toInt(),
                           helper.getValue(IP_SUBNET, '.', 2).toInt(),
-                          helper.getValue(IP_SUBNET, '.', 3).toInt()));
+                          helper.getValue(IP_SUBNET, '.', 3).toInt()),
                 IPAddress(helper.getValue(IP_DNS, '.', 0).toInt(),
                           helper.getValue(IP_DNS, '.', 1).toInt(),
                           helper.getValue(IP_DNS, '.', 2).toInt(),
                           helper.getValue(IP_DNS, '.', 3).toInt()));
-    
     Serial.println(F("Using static IP address"));
     dhcpInUse = false;
   } else {
@@ -163,6 +162,8 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
     helper.smartPrint(F("\nWIFI CONNECTED\nIP Address: "));
     microcontrollerIP = WiFi.localIP().toString();
     helper.smartPrintln(microcontrollerIP);
+    helper.smartPrint(F("nb of attempts: "));
+    helper.smartPrintln(wifiReconnectAttemp);
   }
 
 }

@@ -79,7 +79,7 @@ const double WIFI_POWER = WIFI_SIGNAL_STRENGTH;
 
 // GATEWAY IP
 #ifndef GATEWAY_IP
-#define GATEWAY_IP "192.168.1.1"   // entre your gateway IP address
+#define GATEWAY_IP "192.168.1.1"   // enter your gateway IP address
 #endif
 const char* const IP_GATEWAY = GATEWAY_IP;
 
