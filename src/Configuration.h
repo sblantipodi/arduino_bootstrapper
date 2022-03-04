@@ -79,19 +79,26 @@ const double WIFI_POWER = WIFI_SIGNAL_STRENGTH;
 
 // GATEWAY IP
 #ifndef GATEWAY_IP
-#define GATEWAY_IP "192.168.1.1"
+#define GATEWAY_IP "192.168.1.1"   // entre your gateway IP address
 #endif
 const char* const IP_GATEWAY = GATEWAY_IP;
 
 // SUBNET IP
 #ifndef SUBNET_IP
-#define SUBNET_IP "192.168.1.1"
+#define SUBNET_IP "255.255.255.0"
 #endif
 const char* const IP_SUBNET = SUBNET_IP;
 
+// DNS IP
+#ifndef DNS_IP
+#define DNS_IP "8.8.8.8"    // enter a DNS server IP if you need domain name access and static IP is selected
+// example: 8.8.8.8 for Google DNS server or use the DNS server provided by your ISP (see your gateway configuration)
+#endif
+const char* const IP_DNS = DNS_IP;
+
 // STATIC IP FOR THE MICROCONTROLLER
 #ifndef MICROCONTROLLER_IP
-#define MICROCONTROLLER_IP "192.168.1.99"
+#define MICROCONTROLLER_IP "192.168.1.99"  // enter a valid IP address for static IP or "DHCP" for dynamic IP
 #endif
 const char* const IP_MICROCONTROLLER = MICROCONTROLLER_IP;
 

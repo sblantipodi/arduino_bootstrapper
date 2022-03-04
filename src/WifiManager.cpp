@@ -48,8 +48,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
     display.drawRoundRect(0, 0, display.width()-1, display.height()-1, display.height()/4, WHITE);
   #endif
   helper.smartPrintln(F("DPsoftware domotics"));
-  helper.smartDisplay();
-  delay(DELAY_3000);
+  helper.smartDisplay(DELAY_3000);
 
   #if (DISPLAY_ENABLED) 
     display.clearDisplay();
@@ -58,9 +57,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   #endif
   helper.smartPrintln(F("Connecting to: "));
   helper.smartPrint(qsid); helper.smartPrintln(F("..."));
-  helper.smartDisplay();
-
-  delay(DELAY_2000);
+  helper.smartDisplay(DELAY_2000);
 
   WiFi.persistent(true);   // Solve possible wifi init errors (re-add at 6.2.1.16 #4044, #4083)
   WiFi.disconnect(true);    // Delete SDK wifi config
@@ -71,7 +68,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 #endif
   WiFi.setAutoConnect(true);
   WiFi.setAutoReconnect(true);
-  if (!microcontrollerIP.equals("DHCP")) {
+  if (!microcontrollerIP.equals("DHCP")) { 
     WiFi.config(IPAddress(helper.getValue(microcontrollerIP, '.', 0).toInt(),
                           helper.getValue(microcontrollerIP, '.', 1).toInt(),
                           helper.getValue(microcontrollerIP, '.', 2).toInt(),
@@ -84,6 +81,11 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
                           helper.getValue(IP_SUBNET, '.', 1).toInt(),
                           helper.getValue(IP_SUBNET, '.', 2).toInt(),
                           helper.getValue(IP_SUBNET, '.', 3).toInt()));
+                IPAddress(helper.getValue(IP_DNS, '.', 0).toInt(),
+                          helper.getValue(IP_DNS, '.', 1).toInt(),
+                          helper.getValue(IP_DNS, '.', 2).toInt(),
+                          helper.getValue(IP_DNS, '.', 3).toInt()));
+    
     Serial.println(F("Using static IP address"));
     dhcpInUse = false;
   } else {
