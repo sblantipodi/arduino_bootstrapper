@@ -394,6 +394,7 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
 }
 
 String BootstrapManager::readValueFromFile(String filename, String paramName) {
+  String returnStr = "";
   if (!LittleFS.begin()) {
     Serial.println("LittleFS mount failed");
   }
@@ -408,13 +409,18 @@ String BootstrapManager::readValueFromFile(String filename, String paramName) {
   DynamicJsonDocument jsonDoc(1024);
   auto error = deserializeJson(jsonDoc, buf.get());
   serializeJsonPretty(jsonDoc, Serial);
+  JsonVariant answer = jsonDoc[paramName];
+  if (answer.is<char*>()) {
+    returnStr = answer.as<String>();
+  } else {
+    auto returnVal = answer.as<int>();
+    returnStr = String(returnVal);
+  }
   jsonFile.close();
   if (error) {
-    return "";
-  } else {
-    return jsonDoc[paramName];
+    returnStr = "";
   }
-  return jsonDoc[paramName];
+  return returnStr;
 }
 #endif
 
@@ -471,6 +477,7 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
 
 String BootstrapManager::readValueFromFile(String filename, String paramName) {
 
+  String returnStr = "";
   if (SPIFFS.begin(true)) {
     if (SPIFFS.exists("/" + filename)) {
       File configFile = SPIFFS.open("/" + filename, "r");
@@ -484,10 +491,17 @@ String BootstrapManager::readValueFromFile(String filename, String paramName) {
           jsonDoc[VALUE] = ERROR;
           helper.smartPrintln(F("Failed to load json file"));
         }
+        JsonVariant answer = jsonDoc[paramName];
+        if (answer.is<char*>()) {
+          returnStr = answer.as<String>();
+        } else {
+          auto returnVal = answer.as<int>();
+          returnStr = String(returnVal);
+        }
       }
     }
   }
-  return jsonDoc[paramName];
+  return returnStr;
 
 }
 #endif
