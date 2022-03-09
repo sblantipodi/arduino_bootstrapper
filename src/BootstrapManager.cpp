@@ -475,10 +475,10 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
 
 }
 
-String BootstrapManager::readValueFromFile(String filename, String paramName) {
+String BootstrapManager::readValueFromFile(String filename, String paramName, bool format) {
 
   String returnStr = "";
-  if (SPIFFS.begin(true)) {
+  if (SPIFFS.begin(format)) {
     if (SPIFFS.exists("/" + filename)) {
       File configFile = SPIFFS.open("/" + filename, "r");
       if (configFile) {
@@ -502,6 +502,12 @@ String BootstrapManager::readValueFromFile(String filename, String paramName) {
     }
   }
   return returnStr;
+
+}
+
+String BootstrapManager::readValueFromFile(String filename, String paramName) {
+
+  return readValueFromFile(filename, paramName, true);
 
 }
 #endif
