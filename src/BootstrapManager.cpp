@@ -430,6 +430,7 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
 
   // Helpers classes
   Helpers helper;
+  DynamicJsonDocument jsonDoc(1024);
 
   #if (DISPLAY_ENABLED) 
     display.clearDisplay();
@@ -455,6 +456,7 @@ DynamicJsonDocument BootstrapManager::readSPIFFS(String filename) {
         DeserializationError deserializeError = deserializeJson(jsonDoc, (const char*)buf.get());
         Serial.println("\nReading " + filename);
         if (filename != "setup.json") serializeJsonPretty(jsonDoc, Serial);
+        configFile.close();
         if (!deserializeError) {
           helper.smartPrintln(F("JSON parsed"));
         } else {
@@ -485,6 +487,7 @@ String BootstrapManager::readValueFromFile(String filename, String paramName, bo
         size_t size = configFile.size();
         std::unique_ptr<char[]> buf(new char[size]);
         configFile.readBytes(buf.get(), size);
+        DynamicJsonDocument jsonDoc(1024);
         DeserializationError deserializeError = deserializeJson(jsonDoc, (const char*)buf.get());
         serializeJsonPretty(jsonDoc, Serial);
         if (deserializeError) {
@@ -499,6 +502,7 @@ String BootstrapManager::readValueFromFile(String filename, String paramName, bo
           returnStr = String(returnVal);
         }
       }
+      configFile.close();
     }
   }
   return returnStr;
