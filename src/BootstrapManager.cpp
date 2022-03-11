@@ -30,7 +30,7 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
   }
 #endif
 
-  if (isWifiConfigured()) {
+  if (isWifiConfigured() && !forceWebServer) {
     isConfigFileOk = true;
     // Initialize Wifi manager
     wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
