@@ -57,6 +57,7 @@ String ERROR = "ERROR";
 int wifiReconnectAttemp = 0;
 int mqttReconnectAttemp = 0;
 bool fastDisconnectionManagement = false;
+bool forceWebServer = false;
 
 void Helpers::smartPrint(String msg) {
 

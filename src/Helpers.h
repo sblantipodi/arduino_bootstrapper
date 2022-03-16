@@ -67,6 +67,7 @@ extern String ERROR;
 extern int wifiReconnectAttemp;
 extern int mqttReconnectAttemp;
 extern bool fastDisconnectionManagement;
+extern bool forceWebServer; // if set to true, forces the use of launchWebServerForOTAConfig - added by Pronoe on 02/03/2022
 
 const int DELAY_10 = 10;
 const int DELAY_50 = 50;
