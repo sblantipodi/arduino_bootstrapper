@@ -19,9 +19,9 @@
   If not, see <https://opensource.org/licenses/MIT/>.
 */
 
-#if defined(ESP8266)
-
 #include "PingESP.h"
+
+#if defined(ESP8266)
 
 extern "C" void esp_schedule();
 extern "C" void esp_yield();
