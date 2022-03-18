@@ -59,11 +59,6 @@
 extern Adafruit_SSD1306 display;
 #endif
 
-// Specify if you want to use PinESP32 library
-#ifndef PIN_ESP32_ENABLED
-#define PIN_ESP32_ENABLED false
-#endif
-
 // SENSORNAME will be used as device network name
 #ifndef WIFI_DEVICE_NAME
 #define WIFI_DEVICE_NAME "ArduinoBootstrapper"

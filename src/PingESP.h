@@ -3,17 +3,10 @@
   some routers aren't able to detect connected devices if there is no traffic over the internet or direct to the gateway.
   This is helpful as a stay alive class, useful for not triggering security features on routers.
   Usage:
-  - add the following declaration in your application header file:
-      #include "PingESP.h"
-      PingESP pingESP;
-  - use `pingESP.ping(WiFi.gatewayIP());` in your application code
-
-  For the ESP32:
-  - you need to install the ESP32Ping library from https://github.com/marian-craciunescu/ESP32Ping
-  - add the following declaration in your application header file:
-      #include "PingESP.h"
-      PingClass pingESP;`
-  - use `pingESP.ping(WiFi.gatewayIP());` in your application code
+    - add the following declaration in your application header file:
+        #include "PingESP.h"
+        PingESP pingESP;
+    - use `pingESP.ping(WiFi.gatewayIP());` in your application code
 
   Copyright (C) 2020 - 2022  Davide Perini
 
@@ -31,27 +24,18 @@
   If not, see <https://opensource.org/licenses/MIT/>.
 */
 
-#if defined(ESP8266) || (ESP32)
+#if defined(ESP8266)
 
 #ifndef PingESP_H
 #define PingESP_H
 
 #include <Arduino.h>
-#if defined(ESP8266)
 #include <ESP8266WiFi.h>
 
 extern "C" {
 #include <ping.h>
 }
-#elif defined(ESP32)
-#if (PIN_ESP32_ENABLED)
-#include <WiFi.h>
-#include <ESP32Ping.h>
-#include <ping.h>
-#endif
-#endif
 
-#if defined(ESP8266)
 class PingESP {
 public:
     PingESP();
@@ -63,8 +47,6 @@ protected:
     static byte pingCount, pingError, pingSuccess;
 };
 
-#endif // ESP8226
-
 #endif // PingESP_H
 
-#endif // ESP8226 or ESP32
+#endif
