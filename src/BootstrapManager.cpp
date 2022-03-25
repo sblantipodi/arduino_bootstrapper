@@ -50,12 +50,20 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 }
 
 /********************************** BOOTSTRAP FUNCTIONS FOR LOOP() *****************************************/
+bool rcpResponseSent = false;
 void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
 
+#if (IMPROV_ENABLED)
+  if (!rcpResponseSent && wifiManager.isConnected()) {
+    rcpResponseSent = true;
+    wifiManager.sendImprovRPCResponse(0x01, true);
+  }
+  if (!temporaryDisableImprove) {
+    wifiManager.handleImprovPacket();
+  }
+#endif
   wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
-
   ArduinoOTA.handle();
-
   if (mqttIP.length() > 0) {
     queueManager.queueLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
   }
@@ -561,6 +569,19 @@ bool BootstrapManager::isWifiConfigured() {
 // if no ssid available, launch web server to get config params via browser
 void BootstrapManager::launchWebServerForOTAConfig() {
 
+#if (IMPROV_ENABLED)
+  unsigned long timeNowStatus = 0;
+  bool switchToWebServer = false;
+  // If WiFi is not configured, handle improv packet for 60 seconds, then switch to settinigs managed by web server
+  WiFi.disconnect();
+  while ((WiFi.status() != WL_CONNECTED && !switchToWebServer) || improvePacketReceived) {
+    if(millis() > timeNowStatus + 60000) {
+      timeNowStatus = millis();
+      switchToWebServer = true;
+    }
+    wifiManager.manageImprovWifi();
+  }
+#endif
   return wifiManager.launchWebServerForOTAConfig();
 
 }

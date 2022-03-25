@@ -39,6 +39,7 @@ extern bool lastPageScrollTriggered;
 extern int yoffset;
 
 extern String haVersion;
+extern String firmwareVersion;
 extern String MAC;
 extern String deviceName;
 extern String microcontrollerIP;
@@ -86,6 +87,9 @@ const String on_CMD = "on";
 const String off_CMD = "off";
 const String VALUE = "value";
 const String EMPTY_STR = "";
+
+extern bool temporaryDisableImprove;
+extern bool improvePacketReceived;
 
 // 'arduino', 45x31px
 const unsigned char ARDUINOLOGO [] PROGMEM = {
@@ -139,6 +143,7 @@ class Helpers {
     void smartDisplay(int delayTime);
     String getValue(String data, char separator, int index);
     String getValue(String string);
+    long versionNumberToNumber(String latestReleaseStr);
     char* string2char(const String command);
     void setDateTime(String timeConst);
     String isOnOff(StaticJsonDocument<BUFFER_SIZE> json);

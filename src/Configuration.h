@@ -59,6 +59,10 @@
 extern Adafruit_SSD1306 display;
 #endif
 
+#ifndef IMPROV_ENABLED
+#define IMPROV_ENABLED false
+#endif
+
 // SENSORNAME will be used as device network name
 #ifndef WIFI_DEVICE_NAME
 #define WIFI_DEVICE_NAME "ArduinoBootstrapper"

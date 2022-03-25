@@ -29,6 +29,7 @@ bool screenSaverTriggered = false;
 bool lastPageScrollTriggered = false;
 int yoffset = 150;
 String haVersion = "";
+String firmwareVersion = "";
 String IP = "";
 String MAC = "";
 String deviceName = "XXX";
@@ -58,6 +59,8 @@ int wifiReconnectAttemp = 0;
 int mqttReconnectAttemp = 0;
 bool fastDisconnectionManagement = false;
 bool forceWebServer = false;
+bool temporaryDisableImprove = false;
+bool improvePacketReceived = false;
 
 void Helpers::smartPrint(String msg) {
 
@@ -170,5 +173,16 @@ char* Helpers::string2char(const String command){
 
   char *p = const_cast<char*>(command.c_str());
   return p;
+
+}
+
+// From version number to Number
+long Helpers::versionNumberToNumber(String latestReleaseStr) {
+
+  long longVersion = 0;
+  longVersion += Helpers::getValue(latestReleaseStr, '.', 0).toInt() + 1000000;
+  longVersion += Helpers::getValue(latestReleaseStr, '.', 1).toInt() + 1000;
+  longVersion += Helpers::getValue(latestReleaseStr, '.', 2).toInt();
+  return longVersion;
 
 }
