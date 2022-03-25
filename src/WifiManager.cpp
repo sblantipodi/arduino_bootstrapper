@@ -740,7 +740,7 @@ void WifiManager::handleImprovPacket() {
 
   uint8_t header[6] = {'I', 'M', 'P', 'R', 'O', 'V'};
   bool timeout = false;
-  uint8_t waitTime = 2500;
+  uint8_t waitTime = 25;
   uint16_t packetByte = 0;
   uint8_t packetLen = 9;
   uint8_t checksum = 0;
