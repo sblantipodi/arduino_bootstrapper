@@ -592,3 +592,9 @@ int BootstrapManager::getWifiQuality() {
   return wifiManager.getQuality();
 
 }
+
+void BootstrapManager::manageImprovWifi() {
+
+  wifiManager.manageImprovWifi();
+
+}
