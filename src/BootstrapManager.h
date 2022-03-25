@@ -74,7 +74,6 @@ class BootstrapManager {
     bool isWifiConfigured(); // check if wifi is correctly configured
     void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
     int getWifiQuality(); // get the wifi quality
-    void manageImprovWifi();
 
 };
 
