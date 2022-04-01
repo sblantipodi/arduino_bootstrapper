@@ -53,7 +53,7 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 bool rcpResponseSent = false;
 void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
 
-#if (IMPROV_ENABLED)
+#if (IMPROV_ENABLED > 0)
   if (!rcpResponseSent && wifiManager.isConnected()) {
     rcpResponseSent = true;
     wifiManager.sendImprovRPCResponse(0x01, true);
@@ -569,13 +569,13 @@ bool BootstrapManager::isWifiConfigured() {
 // if no ssid available, launch web server to get config params via browser
 void BootstrapManager::launchWebServerForOTAConfig() {
 
-#if (IMPROV_ENABLED)
+#if (IMPROV_ENABLED > 0)
   unsigned long timeNowStatus = 0;
   bool switchToWebServer = false;
   // If WiFi is not configured, handle improv packet for 15 seconds, then switch to settinigs managed by web server
   WiFi.disconnect();
   while (((WiFi.localIP()[0] == 0 && WiFi.status() != WL_CONNECTED) && !switchToWebServer) || improvePacketReceived) {
-    if(millis() > timeNowStatus + 30000) {
+    if(millis() > timeNowStatus + IMPROV_ENABLED) {
       timeNowStatus = millis();
       switchToWebServer = true;
     }

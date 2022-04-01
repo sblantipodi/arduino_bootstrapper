@@ -59,8 +59,9 @@
 extern Adafruit_SSD1306 display;
 #endif
 
+// Values greater then 0 enables Improv for that milliseconds period
 #ifndef IMPROV_ENABLED
-#define IMPROV_ENABLED false
+#define IMPROV_ENABLED 0
 #endif
 
 // SENSORNAME will be used as device network name
