@@ -575,7 +575,7 @@ void BootstrapManager::launchWebServerForOTAConfig() {
   // If WiFi is not configured, handle improv packet for 15 seconds, then switch to settinigs managed by web server
   WiFi.disconnect();
   while (((WiFi.localIP()[0] == 0 && WiFi.status() != WL_CONNECTED) && !switchToWebServer) || improvePacketReceived) {
-    if(millis() > timeNowStatus + 15000) {
+    if(millis() > timeNowStatus + 30000) {
       timeNowStatus = millis();
       switchToWebServer = true;
     }
