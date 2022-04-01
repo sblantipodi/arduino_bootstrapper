@@ -672,7 +672,7 @@ void WifiManager::sendImprovInfoResponse() {
 
 }
 
-void WifiManager::parseWiFiCommand(char *rpcData) {
+void WifiManager::parseWiFiCommand(char *rpcData, bool loop) {
 
   uint8_t len = rpcData[0];
   if (!len || len > 126) return;
@@ -690,7 +690,10 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   improvActive = 2;
   DynamicJsonDocument doc(1024);
   String devName = String(random(0, 100000));
-  doc["deviceName"] = "GLOW_WORM_" + devName;
+  if (loop)
+    doc["deviceName"] = "LOOP_" + devName;
+  else
+    doc["deviceName"] = "NOLO_" + devName;
   doc["microcontrollerIP"] = "DHCP";
   doc["qsid"] = clientSSID;
   doc["qpass"] = clientPass;
@@ -735,7 +738,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
 }
 
 //blocking function to parse an Improv Serial packet
-void WifiManager::handleImprovPacket() {
+void WifiManager::handleImprovPacket(bool loop) {
 
   uint8_t header[6] = {'I', 'M', 'P', 'R', 'O', 'V'};
   bool timeout = false;
@@ -782,7 +785,7 @@ void WifiManager::handleImprovPacket() {
           }
           switch (rpcCommandType) {
             case ImprovRPCType::Command_Wifi:
-              parseWiFiCommand(rpcData);
+              parseWiFiCommand(rpcData, loop);
               break;
             case ImprovRPCType::Request_State: {
               uint8_t improvState = 0x02; //authorized

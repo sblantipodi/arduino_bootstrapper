@@ -112,9 +112,9 @@ class WifiManager {
     bool isWifiConfigured(); // check if wifi is correctly configured
     void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
     void manageImprovWifi(); // if no ssid available, launch web server to get config params via browser
-    void handleImprovPacket();
+    void handleImprovPacket(bool loop);
     void sendImprovInfoResponse();
-    void parseWiFiCommand(char *rpcData);
+    void parseWiFiCommand(char *rpcData, bool loop);
     void sendImprovRPCResponse(byte commandId);
     void sendImprovRPCResponse(byte commandId, bool forceConnection);
     void sendImprovStateResponse(uint8_t state, bool error);
