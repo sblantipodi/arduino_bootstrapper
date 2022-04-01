@@ -53,15 +53,15 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 bool rcpResponseSent = false;
 void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
 
-#if (IMPROV_ENABLED > 0)
-  if (!rcpResponseSent && wifiManager.isConnected()) {
-    rcpResponseSent = true;
-    wifiManager.sendImprovRPCResponse(0x01, true);
-  }
-  if (!temporaryDisableImprove) {
-    wifiManager.handleImprovPacket();
-  }
-#endif
+//#if (IMPROV_ENABLED > 0)
+//  if (!rcpResponseSent && wifiManager.isConnected()) {
+//    rcpResponseSent = true;
+//    wifiManager.sendImprovRPCResponse(0x01, true);
+//  }
+//  if (!temporaryDisableImprove) {
+//    wifiManager.handleImprovPacket();
+//  }
+//#endif
   wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
   ArduinoOTA.handle();
   if (mqttIP.length() > 0) {
