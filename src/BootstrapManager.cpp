@@ -582,7 +582,7 @@ void BootstrapManager::launchWebServerForOTAConfig() {
     wifiManager.manageImprovWifi();
   }
 #endif
-  return wifiManager.launchWebServerForOTAConfig();
+//  return wifiManager.launchWebServerForOTAConfig();
 
 }
 
