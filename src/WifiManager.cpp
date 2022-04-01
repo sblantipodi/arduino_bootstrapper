@@ -258,7 +258,7 @@ void WifiManager::launchWebServerForOTAConfig() {
 // Manage improv wifi
 void WifiManager::manageImprovWifi() {
 
-  handleImprovPacket();
+  handleImprovPacket(false);
 
 }
 
