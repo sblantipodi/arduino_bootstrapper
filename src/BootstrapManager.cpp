@@ -53,15 +53,15 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 bool rcpResponseSent = false;
 void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
 
-//#if (IMPROV_ENABLED > 0)
-//  if (!rcpResponseSent && wifiManager.isConnected()) {
-//    rcpResponseSent = true;
-//    wifiManager.sendImprovRPCResponse(0x01, true);
-//  }
-//  if (!temporaryDisableImprove) {
-//    wifiManager.handleImprovPacket();
-//  }
-//#endif
+#if (IMPROV_ENABLED > 0)
+  if (!rcpResponseSent && wifiManager.isConnected()) {
+    rcpResponseSent = true;
+    wifiManager.sendImprovRPCResponse(0x01, true);
+  }
+  if (!temporaryDisableImprove) {
+    wifiManager.handleImprovPacket();
+  }
+#endif
   wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
   ArduinoOTA.handle();
   if (mqttIP.length() > 0) {
@@ -574,15 +574,15 @@ void BootstrapManager::launchWebServerForOTAConfig() {
   bool switchToWebServer = false;
   // If WiFi is not configured, handle improv packet for 15 seconds, then switch to settinigs managed by web server
   WiFi.disconnect();
-  while (((WiFi.localIP()[0] == 0 && WiFi.status() != WL_CONNECTED) && !switchToWebServer) || improvePacketReceived) {
-    if(millis() > timeNowStatus + IMPROV_ENABLED) {
-      timeNowStatus = millis();
-      switchToWebServer = true;
-    }
+//  while (((WiFi.localIP()[0] == 0 && WiFi.status() != WL_CONNECTED) && !switchToWebServer) || improvePacketReceived) {
+//    if(millis() > timeNowStatus + IMPROV_ENABLED) {
+//      timeNowStatus = millis();
+//      switchToWebServer = true;
+//    }
     wifiManager.manageImprovWifi();
-  }
+//  }
 #endif
-  return wifiManager.launchWebServerForOTAConfig();
+//  return wifiManager.launchWebServerForOTAConfig();
 
 }
 
