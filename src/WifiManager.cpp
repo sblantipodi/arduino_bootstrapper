@@ -745,10 +745,17 @@ void WifiManager::handleImprovPacket(bool loop) {
   uint16_t packetByte = 0;
   uint8_t packetLen = 9;
   uint8_t checksum = 0;
+  uint8_t waitTime = 25;
   uint8_t rpcCommandType = 0;
   char rpcData[128];
   rpcData[0] = 0;
-  if (Serial.available()) {
+  while (!timeout) {
+    if (Serial.available() < 1) {
+      delay(1);
+      waitTime--;
+      if (!waitTime) timeout = true;
+      continue;
+    }
     byte next = Serial.read();
     DIMPROV_PRINT("Received improv byte: "); DIMPROV_PRINTF("%x\r\n", next);
     switch (packetByte) {
