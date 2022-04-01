@@ -726,9 +726,8 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   }
   delay(DELAY_200);
 #endif
-  delay(DELAY_2000);
   sendImprovRPCResponse(ImprovRPCType::Request_State);
-  delay(DELAY_2000);
+  delay(DELAY_200);
   sendImprovStateResponse(0x04, false);
   delay(DELAY_200);
   ESP.restart();
@@ -740,7 +739,7 @@ void WifiManager::handleImprovPacket() {
 
   uint8_t header[6] = {'I', 'M', 'P', 'R', 'O', 'V'};
   bool timeout = false;
-  uint8_t waitTime = 25;
+  uint8_t waitTime = 2500;
   uint16_t packetByte = 0;
   uint8_t packetLen = 9;
   uint8_t checksum = 0;
