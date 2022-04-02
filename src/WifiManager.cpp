@@ -635,11 +635,11 @@ void WifiManager::sendImprovInfoResponse() {
   //out[8] = 2; //Length (set below)
   out[9] = ImprovRPCType::Request_Info;
   //out[10] = 0; //Data len (set below)
-  out[11] = 4; //Firmware len ("GLOW")
-  out[12] = 'G';
-  out[13] = 'L';
-  out[14] = 'O';
-  out[15] = 'W';
+  out[11] = 4; //Firmware len ("FIRM")
+  out[12] = 'F';
+  out[13] = 'I';
+  out[14] = 'R';
+  out[15] = 'M';
   uint8_t lengthSum = 17;
   uint8_t vlen = sprintf_P(out + lengthSum, firmwareVersion.c_str());
   out[16] = vlen;
@@ -653,8 +653,8 @@ void WifiManager::sendImprovInfoResponse() {
 #endif
   out[lengthSum] = hlen;
   lengthSum += hlen + 1;
-  //Use serverDescription if it has been changed from the default "GLOW", else mDNS name
-  bool useMdnsName = (strcmp(serverDescription, "GLOW") == 0 && strlen(cmDNS) > 0);
+  //Use serverDescription if it has been changed from the default "FIRM", else mDNS name
+  bool useMdnsName = (strcmp(serverDescription, "FIRM") == 0 && strlen(cmDNS) > 0);
   strcpy(out + lengthSum + 1, useMdnsName ? cmDNS : serverDescription);
   uint8_t nlen = strlen(useMdnsName ? cmDNS : serverDescription);
   out[lengthSum] = nlen;
@@ -690,7 +690,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   improvActive = 2;
   DynamicJsonDocument doc(1024);
   String devName = String(random(0, 90000));
-  doc["deviceName"] = "GLOW_WORM_" + devName;
+  doc["deviceName"] = String(DEVICE_NAME) + "_" + devName;
   doc["microcontrollerIP"] = "DHCP";
   doc["qsid"] = clientSSID;
   doc["qpass"] = clientPass;
