@@ -689,7 +689,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   sendImprovStateResponse(0x03, false); //provisioning
   improvActive = 2;
   DynamicJsonDocument doc(1024);
-  String devName = String(random(0, 100000));
+  String devName = String(random(0, 90000));
   doc["deviceName"] = "GLOW_WORM_" + devName;
   doc["microcontrollerIP"] = "DHCP";
   doc["qsid"] = clientSSID;
