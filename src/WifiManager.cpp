@@ -258,7 +258,9 @@ void WifiManager::launchWebServerForOTAConfig() {
 // Manage improv wifi
 void WifiManager::manageImprovWifi() {
 
-  handleImprovPacket();
+  if (Serial.available() > 0 && Serial.peek() == 'I') {
+    handleImprovPacket();
+  }
 
 }
 
@@ -637,9 +639,9 @@ void WifiManager::sendImprovInfoResponse() {
   //out[10] = 0; //Data len (set below)
   out[11] = 4; //Firmware len ("GLOW")
   out[12] = 'G';
-  out[13] = 'W';
-  out[14] = ' ';
-  out[15] = ' ';
+  out[13] = 'L';
+  out[14] = 'O';
+  out[15] = 'W';
   uint8_t lengthSum = 17;
   uint8_t vlen = sprintf_P(out + lengthSum, firmwareVersion.c_str());
   out[16] = vlen;
@@ -742,7 +744,7 @@ void WifiManager::handleImprovPacket() {
   uint16_t packetByte = 0;
   uint8_t packetLen = 9;
   uint8_t checksum = 0;
-  uint8_t waitTime = 1;
+  uint8_t waitTime = 25;
   uint8_t rpcCommandType = 0;
   char rpcData[128];
   rpcData[0] = 0;
