@@ -258,9 +258,7 @@ void WifiManager::launchWebServerForOTAConfig() {
 // Manage improv wifi
 void WifiManager::manageImprovWifi() {
 
-  if (Serial.available() > 0 && Serial.peek() == 'I') {
-    handleImprovPacket();
-  }
+  handleImprovPacket();
 
 }
 
