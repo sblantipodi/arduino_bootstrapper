@@ -39,6 +39,8 @@ char serverDescription[33] = "Luciferin";
 char cmDNS[33] = "x";
 char clientSSID[33];
 char clientPass[65];
+unsigned long previousMillisEsp32Reconnect = 0;
+unsigned long intervalEsp32Reconnect = 15000;
 
 /********************************** SETUP WIFI *****************************************/
 void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
@@ -154,6 +156,15 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
 #endif
       helper.smartPrint(F("Wifi attemps= "));
       helper.smartPrintln(wifiReconnectAttemp);
+#if defined(ESP32)
+      // Arduino 2.x for ESP32 seems to not support callback, polling to reconnect.
+      unsigned long currentMillisEsp32Reconnect = millis();
+      if (currentMillisEsp32Reconnect - previousMillisEsp32Reconnect >= intervalEsp32Reconnect) {
+        WiFi.disconnect();
+        WiFi.begin(qsid.c_str(), qpass.c_str());
+        previousMillisEsp32Reconnect = currentMillisEsp32Reconnect;
+      }
+#endif
       if (wifiReconnectAttemp >= MAX_RECONNECT) {
         helper.smartPrintln(F("Max retry reached, powering off peripherals."));
         manageDisconnections();
