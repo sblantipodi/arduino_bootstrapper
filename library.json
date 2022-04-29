@@ -6,7 +6,7 @@
         "type": "git",
         "url": "https://github.com/sblantipodi/arduino_bootstrapper.git"
     },
-    "version": "1.12.10",
+    "version": "1.12.11",
     "examples": "examples/*.cpp", 
     "exclude": "tests",
     "frameworks": "arduino",
