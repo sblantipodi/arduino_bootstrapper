@@ -60,10 +60,24 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
 
     // Attempt to connect to MQTT server with QoS = 1 (pubsubclient supports QoS 1 for subscribe only, published msg have QoS 0 this is why I implemented a custom solution)
     boolean mqttSuccess;
+#ifndef MQTT_USE_LAST_WILL
+	Serial.println("USE LAST WILL NOT DEFINED!!!!!");
+#endif
+
+#ifndef IMPROV_ENABLED
+	Serial.println("IMPROV ENABLED NOT DEFINED EITHER");
+#else
+	Serial.print("IMPROV ENABLED:");
+	Serial.println(IMPROV_ENABLED);
+#endif
+	
+	Serial.print("MQTT_WILL_TOPIC in QueueManager::mqttReconnect: ");
+	Serial.println(MQTT_WILL_TOPIC);
+	
     if (mqttuser.isEmpty() || mqttpass.isEmpty()) {
-      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), 0, 1, 0, 0);
+      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), MQTT_WILL_TOPIC, MQTT_WILL_QOS, MQTT_WILL_RETAIN, MQTT_WILL_PAYLOAD);
     } else {
-      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), helper.string2char(mqttuser), helper.string2char(mqttpass), 0, 1, 0, 0, 1);
+      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), helper.string2char(mqttuser), helper.string2char(mqttpass), MQTT_WILL_TOPIC, MQTT_WILL_QOS, MQTT_WILL_RETAIN, MQTT_WILL_PAYLOAD, MQTT_CLEAN_SESSION);
     }
     if (mqttSuccess) {
 
