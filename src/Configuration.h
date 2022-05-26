@@ -148,8 +148,6 @@ const char* const MQTT_PORT = MQTT_SERVER_PORT;
 #ifndef MQTT_USE_LAST_WILL
 #define MQTT_WILL_TOPIC 0
 #define MQTT_WILL_PAYLOAD 0
-// const char* MQTT_WILL_TOPIC = 0;
-// const char* MQTT_WILL_PAYLOAD = 0;
 #endif
 
 #ifndef MQTT_WILL_QOS
