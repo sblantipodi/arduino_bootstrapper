@@ -144,24 +144,6 @@ const char* const MQTT_PORT = MQTT_SERVER_PORT;
 #define MQTT_KEEP_ALIVE 60
 #endif
 
-// MQTT Last Will
-#ifndef MQTT_USE_LAST_WILL
-#define MQTT_WILL_TOPIC 0
-#define MQTT_WILL_PAYLOAD 0
-#endif
-
-#ifndef MQTT_WILL_QOS
-#define MQTT_WILL_QOS 1
-#endif
-
-#ifndef MQTT_WILL_RETAIN
-#define MQTT_WILL_RETAIN 0
-#endif
-
-#ifndef MQTT_CLEAN_SESSION
-#define MQTT_CLEAN_SESSION 1
-#endif
-
 // Additional param that can be used for general purpose use
 #ifndef ADDITIONAL_PARAM_TEXT
 #define ADDITIONAL_PARAM_TEXT "ADDITIONAL PARAM"

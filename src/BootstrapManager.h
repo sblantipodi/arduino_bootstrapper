@@ -51,6 +51,7 @@ class BootstrapManager {
     StaticJsonDocument<BUFFER_SIZE> parseHttpMsg(String payload, unsigned int length); // print the message arriving from HTTP
     void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)); // bootstrap setup()
     void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // bootstrap loop()
+    void setMQTTWill(const char *topic, const char *payload, const int qos, boolean retain, boolean cleanSession); // set the last will parameters for mqtt
     void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
     void publish(const char *topic, JsonObject objectToSend, boolean retained); // send a message on the queue
     void unsubscribe(const char *topic); // unsubscribe to a queue topic

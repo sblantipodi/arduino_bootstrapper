@@ -35,6 +35,15 @@ void QueueManager::setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)) 
 
 }
 
+/********************************** SET LAST WILL PARAMETERS **********************************/
+void QueueManager::setMQTTWill(const char *topic, const char *payload, const int qos, boolean retain, boolean cleanSession){
+  mqttWillTopic = topic;
+  mqttWillPayload = payload;
+  mqttWillQOS = qos;
+  mqttWillRetain = retain;
+  mqttCleanSession = cleanSession;
+}
+
 /********************************** MQTT RECONNECT **********************************/
 void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
 
@@ -60,24 +69,23 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
 
     // Attempt to connect to MQTT server with QoS = 1 (pubsubclient supports QoS 1 for subscribe only, published msg have QoS 0 this is why I implemented a custom solution)
     boolean mqttSuccess;
-#ifndef MQTT_USE_LAST_WILL
-	Serial.println("USE LAST WILL NOT DEFINED!!!!!");
-#endif
 
-#ifndef IMPROV_ENABLED
-	Serial.println("IMPROV ENABLED NOT DEFINED EITHER");
-#else
-	Serial.print("IMPROV ENABLED:");
-	Serial.println(IMPROV_ENABLED);
-#endif
-	
-	Serial.print("MQTT_WILL_TOPIC in QueueManager::mqttReconnect: ");
-	Serial.println(MQTT_WILL_TOPIC);
-	
+    Serial.println("MQTT Last Will Params: ");
+    Serial.print("willTopic: ");
+    Serial.println(mqttWillTopic);
+    Serial.print("willPayload: ");
+    Serial.println(mqttWillPayload);
+    Serial.print("qos: ");
+    Serial.println(mqttWillQOS);
+    Serial.print("retain: ");
+    Serial.println(mqttWillRetain);
+    Serial.print("clean session: ");
+    Serial.println(mqttCleanSession);
+
     if (mqttuser.isEmpty() || mqttpass.isEmpty()) {
-      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), MQTT_WILL_TOPIC, MQTT_WILL_QOS, MQTT_WILL_RETAIN, MQTT_WILL_PAYLOAD);
+      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), helper.string2char(mqttWillTopic), mqttWillQOS, mqttWillRetain, helper.string2char(mqttWillPayload));
     } else {
-      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), helper.string2char(mqttuser), helper.string2char(mqttpass), MQTT_WILL_TOPIC, MQTT_WILL_QOS, MQTT_WILL_RETAIN, MQTT_WILL_PAYLOAD, MQTT_CLEAN_SESSION);
+      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), helper.string2char(mqttuser), helper.string2char(mqttpass), helper.string2char(mqttWillTopic), mqttWillQOS, mqttWillRetain, helper.string2char(mqttWillPayload), mqttCleanSession);
     }
     if (mqttSuccess) {
 
