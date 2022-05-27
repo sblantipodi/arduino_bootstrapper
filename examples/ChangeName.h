@@ -33,6 +33,9 @@ BootstrapManager bootstrapManager;
 /************* MQTT TOPICS **************************/
 const char* CHANGE_ME_TOPIC = "tele/changeme/CHANGEME";
 const char* CHANGE_ME_JSON_TOPIC = "tele/changeme/CHANGEME_JSON";
+static int lastWillQOS = 1;
+boolean lastWillRetain = false;
+boolean cleanSession = false;
 
 
 /********************************** FUNCTION DECLARATION (NEEDED BY PLATFORMIO WHILE COMPILING CPP FILES) *****************************************/

@@ -23,7 +23,8 @@
 void setup() {
 
   Serial.begin(SERIAL_RATE);
-
+  // Optional - setup MQTT last will & testament 
+  bootstrapManager.setMQTTWill("path/for/last/will/message","last will payload",lastWillQOS,lastWillRetain,cleanSession);
   bootstrapManager.bootstrapSetup(manageDisconnections, manageHardwareButton, callback);
   
   // ENTER YOUR CODE HERE
