@@ -42,11 +42,11 @@ String mqttIP = "XXX";
 String mqttPort = "XXX";
 String mqttuser = "XXX";
 String mqttpass = "XXX";
-String mqttWillTopic = "";
-String mqttWillPayload = "";
+String mqttWillTopic = "0";
+String mqttWillPayload = "0";
 int mqttWillQOS = 1;
 bool mqttWillRetain = 0;
-bool mqttCleanSession = 0;
+bool mqttCleanSession = 1;
 String additionalParam = "XXX";
 
 long previousMillis = 0;     
