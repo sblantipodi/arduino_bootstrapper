@@ -31,6 +31,7 @@ class QueueManager {
 
   public:
     void setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)); // setup the queue
+    void setMQTTWill(const char *topic, const char *payload, const int qos, boolean retain, boolean cleanSession); // set the last will parameters for mqtt
     void mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // manage reconnection on the queue
     void queueLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // manage queue loop 
     void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue

@@ -70,6 +70,11 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
 
 }
 
+/********************************** SET LAST WILL PARAMETERS IN THE Q MANAGER **********************************/
+void BootstrapManager::setMQTTWill(const char *topic, const char *payload, const int qos, boolean retain, boolean cleanSession){
+  queueManager.setMQTTWill(topic, payload, qos, retain, cleanSession);
+}
+
 /********************************** SEND A SIMPLE MESSAGE ON THE QUEUE **********************************/
 void BootstrapManager::publish(const char *topic, const char *payload, boolean retained) {
 
