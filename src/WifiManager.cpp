@@ -76,6 +76,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 #endif
   WiFi.setAutoConnect(true);
   WiFi.setAutoReconnect(true);
+  Serial.println(microcontrollerIP);
   if (!microcontrollerIP.equals("DHCP")) {
     WiFi.config(IPAddress(helper.getValue(microcontrollerIP, '.', 0).toInt(),
                           helper.getValue(microcontrollerIP, '.', 1).toInt(),

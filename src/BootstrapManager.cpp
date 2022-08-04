@@ -27,7 +27,7 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
   if (!LittleFS.begin()) {
     LittleFS.format();
 #elif defined(ESP32)
-  if (!LittleFS.begin(true, "data", 10)) {
+  if (!LittleFS.begin(true)) {
 #endif
     Serial.println("LittleFS mount failed");
     return;
