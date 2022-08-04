@@ -539,10 +539,9 @@ void WifiManager::createWebServer() {
         server.send(statusCode, "text/plain", content);
         delay(DELAY_500);
 
-#if defined(ESP8266)
         // Write to LittleFS
         Serial.println(F("Saving setup.json"));
-        File jsonFile = LittleFS.open("/setup.json", "w");
+        File jsonFile = LittleFS.open("/setup.json", FILE_WRITE);
         if (!jsonFile) {
           Serial.println("Failed to open [setup.json] file for writing");
         } else {
@@ -552,23 +551,6 @@ void WifiManager::createWebServer() {
           Serial.println("[setup.json] written correctly");
         }
         delay(DELAY_200);
-#elif defined(ESP32)
-        if (SPIFFS.begin(true)) {
-          delay(DELAY_500);
-          File configFile = SPIFFS.open("/setup.json", "w");
-            if (!configFile) {
-              Serial.println("Failed to open [setup.json] file for writing");
-            } else {
-              serializeJsonPretty(doc, Serial);
-              serializeJson(doc, configFile);
-              configFile.close();
-              Serial.println("[setup.json] written correctly");
-            }
-          } else {
-            Serial.println(F("Failed to mount FS for write"));
-          }
-#endif
-        delay(DELAY_1000);
 #if defined(ESP8266) || defined(ESP32)
         ESP.restart();
 #endif
@@ -711,23 +693,8 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   doc["mqttuser"] = "";
   doc["mqttpass"] = "";
   additionalParam = "2";
-#ifdef ESP32
-  if (SPIFFS.begin(true)) {
-    delay(DELAY_500);
-    File configFile = SPIFFS.open("/setup.json", "w");
-    if (!configFile) {
-      Serial.println("Failed to open [setup.json] file for writing");
-    } else {
-      serializeJsonPretty(doc, Serial);
-      serializeJson(doc, configFile);
-      configFile.close();
-    }
-  } else {
-    Serial.println(F("Failed to mount FS for write"));
-  }
-#else
   Serial.println(F("Saving setup.json"));
-  File jsonFile = LittleFS.open("/setup.json", "w");
+  File jsonFile = LittleFS.open("/setup.json", FILE_WRITE);
   if (!jsonFile) {
     Serial.println("Failed to open [setup.json] file for writing");
   } else {
@@ -736,7 +703,6 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
     jsonFile.close();
   }
   delay(DELAY_200);
-#endif
   sendImprovRPCResponse(ImprovRPCType::Request_State);
   delay(DELAY_200);
   sendImprovStateResponse(0x04, false);

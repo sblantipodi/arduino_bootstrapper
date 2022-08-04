@@ -25,11 +25,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <FS.h>
-#if defined(ESP8266)
-  #include <LittleFS.h>
-#elif defined(ESP32)
-  #include "SPIFFS.h"
-#endif 
+#include <LittleFS.h>
 #include "Configuration.h"
 #include "Helpers.h"
 #include "WifiManager.h"
@@ -63,13 +59,8 @@ class BootstrapManager {
     void drawInfoPage(String softwareVersion, String author); // draw a page with all the microcontroller's info
     void drawScreenSaver(String txt); // useful for OLED displays
     void sendState(const char *topic, JsonObject objectToSend, String version); // send microcontroller's info on the queue 
-    #if defined(ESP8266)
-      void writeToLittleFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
-      DynamicJsonDocument readLittleFS(String filename); // read json file from storage
-    #elif defined(ESP32)
-      void writeToSPIFFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
-      DynamicJsonDocument readSPIFFS(String filename); // read json file from storage
-    #endif
+    void writeToLittleFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
+    DynamicJsonDocument readLittleFS(String filename); // read json file from storage
     String readValueFromFile(String filename, String paramName); // read a param from a json file
     String readValueFromFile(String filename, String paramName, bool format); // read a param from a json file
     bool isWifiConfigured(); // check if wifi is correctly configured
