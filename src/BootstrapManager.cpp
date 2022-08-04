@@ -23,7 +23,12 @@
 /********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
 void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)) {
 
-  if (!LittleFS.begin(true,"data", 10)) {
+#if defined(ESP8266)
+  if (!LittleFS.begin()) {
+    LittleFS.format();
+#elif defined(ESP32)
+  if (!LittleFS.begin(true, "data", 10)) {
+#endif
     Serial.println("LittleFS mount failed");
     return;
   }

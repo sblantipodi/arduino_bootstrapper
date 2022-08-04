@@ -92,6 +92,10 @@ const String on_CMD = "on";
 const String off_CMD = "off";
 const String VALUE = "value";
 const String EMPTY_STR = "";
+#if defined(ESP8266)
+#define FILE_READ       "r"
+#define FILE_WRITE      "w"
+#endif
 
 extern bool temporaryDisableImprove;
 extern bool improvePacketReceived;
