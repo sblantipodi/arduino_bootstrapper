@@ -333,7 +333,7 @@ void BootstrapManager::writeToLittleFS(DynamicJsonDocument jsonDoc, String filen
 }
 
 // read json file from storage
-DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
+StaticJsonDocument<BUFFER_SIZE> BootstrapManager::readLittleFS(String filename) {
 
   // Helpers classes
   Helpers helper;
@@ -354,7 +354,7 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
   }
 
   size_t size = jsonFile.size();
-  if (size > 1024) {
+  if (size > BUFFER_SIZE) {
     helper.smartPrintln("[" + filename + "] file size is too large");
   }
 
@@ -366,7 +366,8 @@ DynamicJsonDocument BootstrapManager::readLittleFS(String filename) {
   // use configFile.readString instead.
   jsonFile.readBytes(buf.get(), size);
 
-  DynamicJsonDocument jsonDoc(1024);
+  StaticJsonDocument<BUFFER_SIZE> jsonDoc;
+
   auto error = deserializeJson(jsonDoc, buf.get());
   if (filename != "setup.json") serializeJsonPretty(jsonDoc, Serial);
   jsonFile.close();
@@ -430,7 +431,7 @@ bool BootstrapManager::isWifiConfigured() {
     additionalParam = PARAM_ADDITIONAL;
     return true;
   } else {
-    DynamicJsonDocument mydoc = readLittleFS("setup.json");
+    StaticJsonDocument<BUFFER_SIZE> mydoc = readLittleFS("setup.json");
     if (mydoc.containsKey("qsid")) {
       Serial.println("Storage OK, restoring WiFi and MQTT config.");
       deviceName = helper.getValue(mydoc["deviceName"]);

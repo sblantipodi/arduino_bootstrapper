@@ -60,7 +60,7 @@ class BootstrapManager {
     void drawScreenSaver(String txt); // useful for OLED displays
     void sendState(const char *topic, JsonObject objectToSend, String version); // send microcontroller's info on the queue 
     void writeToLittleFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
-    DynamicJsonDocument readLittleFS(String filename); // read json file from storage
+    StaticJsonDocument<BUFFER_SIZE> readLittleFS(String filename); // read json file from storage
     String readValueFromFile(String filename, String paramName); // read a param from a json file
     String readValueFromFile(String filename, String paramName, bool format); // read a param from a json file
     bool isWifiConfigured(); // check if wifi is correctly configured
