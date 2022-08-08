@@ -54,7 +54,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   display.setCursor(5,17);
   display.drawRoundRect(0, 0, display.width()-1, display.height()-1, display.height()/4, WHITE);
 #endif
-  helper.smartPrintln(F("DPsoftware domotics"));
+  Helpers::smartPrintln(F("DPsoftware domotics"));
   helper.smartDisplay(DELAY_3000);
 
 #if (DISPLAY_ENABLED)
@@ -62,9 +62,9 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   display.setTextSize(1);
   display.setCursor(0,0);
 #endif
-  helper.smartPrintln(F("Connecting to: "));
-  helper.smartPrint(qsid);
-  helper.smartPrintln(F("..."));
+  Helpers::smartPrintln(F("Connecting to: "));
+  Helpers::smartPrint(qsid);
+  Helpers::smartPrintln(F("..."));
   helper.smartDisplay(DELAY_2000);
 
   WiFi.persistent(true);   // Solve possible wifi init errors (re-add at 6.2.1.16 #4044, #4083)
@@ -78,22 +78,22 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   WiFi.setAutoReconnect(true);
   Serial.println(microcontrollerIP);
   if (!microcontrollerIP.equals("DHCP")) {
-    WiFi.config(IPAddress(helper.getValue(microcontrollerIP, '.', 0).toInt(),
-                          helper.getValue(microcontrollerIP, '.', 1).toInt(),
-                          helper.getValue(microcontrollerIP, '.', 2).toInt(),
-                          helper.getValue(microcontrollerIP, '.', 3).toInt()),
-                IPAddress(helper.getValue(IP_GATEWAY, '.', 0).toInt(),
-                          helper.getValue(IP_GATEWAY, '.', 1).toInt(),
-                          helper.getValue(IP_GATEWAY, '.', 2).toInt(),
-                          helper.getValue(IP_GATEWAY, '.', 3).toInt()),
-                IPAddress(helper.getValue(IP_SUBNET, '.', 0).toInt(),
-                          helper.getValue(IP_SUBNET, '.', 1).toInt(),
-                          helper.getValue(IP_SUBNET, '.', 2).toInt(),
-                          helper.getValue(IP_SUBNET, '.', 3).toInt()),
-                IPAddress(helper.getValue(IP_DNS, '.', 0).toInt(),
-                          helper.getValue(IP_DNS, '.', 1).toInt(),
-                          helper.getValue(IP_DNS, '.', 2).toInt(),
-                          helper.getValue(IP_DNS, '.', 3).toInt()));
+    WiFi.config(IPAddress(Helpers::getValue(microcontrollerIP, '.', 0).toInt(),
+                          Helpers::getValue(microcontrollerIP, '.', 1).toInt(),
+                          Helpers::getValue(microcontrollerIP, '.', 2).toInt(),
+                          Helpers::getValue(microcontrollerIP, '.', 3).toInt()),
+                IPAddress(Helpers::getValue(IP_GATEWAY, '.', 0).toInt(),
+                          Helpers::getValue(IP_GATEWAY, '.', 1).toInt(),
+                          Helpers::getValue(IP_GATEWAY, '.', 2).toInt(),
+                          Helpers::getValue(IP_GATEWAY, '.', 3).toInt()),
+                IPAddress(Helpers::getValue(IP_SUBNET, '.', 0).toInt(),
+                          Helpers::getValue(IP_SUBNET, '.', 1).toInt(),
+                          Helpers::getValue(IP_SUBNET, '.', 2).toInt(),
+                          Helpers::getValue(IP_SUBNET, '.', 3).toInt()),
+                IPAddress(Helpers::getValue(IP_DNS, '.', 0).toInt(),
+                          Helpers::getValue(IP_DNS, '.', 1).toInt(),
+                          Helpers::getValue(IP_DNS, '.', 2).toInt(),
+                          Helpers::getValue(IP_DNS, '.', 3).toInt()));
     Serial.println(F("Using static IP address"));
     dhcpInUse = false;
   } else {
@@ -101,7 +101,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
     dhcpInUse = true;
   }
 #if defined(ESP8266)
-  WiFi.hostname(helper.string2char(deviceName));
+  WiFi.hostname(Helpers::string2char(deviceName));
   // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
   WiFi.setOutputPower(WIFI_POWER);
   if (microcontrollerIP.equals("DHCP")) {
@@ -155,8 +155,8 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
       display.clearDisplay();
       display.setTextSize(1);
 #endif
-      helper.smartPrint(F("Wifi attemps= "));
-      helper.smartPrintln(wifiReconnectAttemp);
+      Helpers::smartPrint(F("Wifi attemps= "));
+      Helpers::smartPrintln(wifiReconnectAttemp);
 #if defined(ESP32)
       // Arduino 2.x for ESP32 seems to not support callback, polling to reconnect.
       unsigned long currentMillisEsp32Reconnect = millis();
@@ -167,7 +167,7 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
       }
 #endif
       if (wifiReconnectAttemp >= MAX_RECONNECT) {
-        helper.smartPrintln(F("Max retry reached, powering off peripherals."));
+        Helpers::smartPrintln(F("Max retry reached, powering off peripherals."));
         manageDisconnections();
       }
       helper.smartDisplay();
@@ -177,11 +177,11 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
 
   }
   if (wifiReconnectAttemp > 0) {
-    helper.smartPrint(F("\nWIFI CONNECTED\nIP Address: "));
+    Helpers::smartPrint(F("\nWIFI CONNECTED\nIP Address: "));
     microcontrollerIP = WiFi.localIP().toString();
-    helper.smartPrintln(microcontrollerIP);
-    helper.smartPrint(F("nb of attempts: "));
-    helper.smartPrintln(wifiReconnectAttemp);
+    Helpers::smartPrintln(microcontrollerIP);
+    Helpers::smartPrint(F("nb of attempts: "));
+    Helpers::smartPrintln(wifiReconnectAttemp);
   }
 
 }
@@ -192,10 +192,10 @@ void WifiManager::setupOTAUpload() {
   //OTA SETUP
   ArduinoOTA.setPort(OTA_PORT);
   // Hostname defaults to esp8266-[ChipID]
-  ArduinoOTA.setHostname(helper.string2char(deviceName));
+  ArduinoOTA.setHostname(Helpers::string2char(deviceName));
 
   // No authentication by default
-  ArduinoOTA.setPassword((const char *) helper.string2char(OTApass));
+  ArduinoOTA.setPassword((const char *) Helpers::string2char(OTApass));
 
   ArduinoOTA.onStart([]() {
       Serial.println(F("Starting"));
@@ -552,10 +552,11 @@ void WifiManager::createWebServer() {
           Serial.println("[setup.json] written correctly");
         }
         delay(DELAY_200);
-#if defined(ESP8266) || defined(ESP32)
+#if defined(ESP32)
         ESP.restart();
+#elif defined(ESP8266)
+        EspClass::restart();
 #endif
-
     });
 
   }
@@ -708,8 +709,11 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   delay(DELAY_200);
   sendImprovStateResponse(0x04, false);
   delay(DELAY_200);
+#if defined(ESP32)
   ESP.restart();
-
+#elif defined(ESP8266)
+  EspClass::restart();
+#endif
 }
 
 //blocking function to parse an Improv Serial packet

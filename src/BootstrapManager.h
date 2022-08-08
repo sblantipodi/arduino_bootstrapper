@@ -47,25 +47,24 @@ class BootstrapManager {
     StaticJsonDocument<BUFFER_SIZE> parseHttpMsg(String payload, unsigned int length); // print the message arriving from HTTP
     void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)); // bootstrap setup()
     void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // bootstrap loop()
-    void setMQTTWill(const char *topic, const char *payload, const int qos, boolean retain, boolean cleanSession); // set the last will parameters for mqtt
-    void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
-    void publish(const char *topic, JsonObject objectToSend, boolean retained); // send a message on the queue
-    void unsubscribe(const char *topic); // unsubscribe to a queue topic
-    void subscribe(const char *topic); // subscribe to a queue topic
-    void subscribe(const char *topic, uint8_t qos); // subscribe to a queue topic with qos 0 or 1
+    static void setMQTTWill(const char *topic, const char *payload, int qos, boolean retain, boolean cleanSession); // set the last will parameters for mqtt
+    static void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
+    static void publish(const char *topic, JsonObject objectToSend, boolean retained); // send a message on the queue
+    static void unsubscribe(const char *topic); // unsubscribe to a queue topic
+    static void subscribe(const char *topic); // subscribe to a queue topic
+    static void subscribe(const char *topic, uint8_t qos); // subscribe to a queue topic with qos 0 or 1
     JsonObject getJsonObject(); // return a new json object instance
-    void nonBlokingBlink(); // blink default LED when sending data to the queue
-    void getMicrocontrollerInfo(); // print or display microcontroller's info
-    void drawInfoPage(String softwareVersion, String author); // draw a page with all the microcontroller's info
-    void drawScreenSaver(String txt); // useful for OLED displays
-    void sendState(const char *topic, JsonObject objectToSend, String version); // send microcontroller's info on the queue 
-    void writeToLittleFS(DynamicJsonDocument jsonDoc, String filename); // write json file to storage
-    StaticJsonDocument<BUFFER_SIZE> readLittleFS(String filename); // read json file from storage
-    String readValueFromFile(String filename, String paramName); // read a param from a json file
-    String readValueFromFile(String filename, String paramName, bool format); // read a param from a json file
-    bool isWifiConfigured(); // check if wifi is correctly configured
+    [[maybe_unused]] static void nonBlokingBlink(); // blink default LED when sending data to the queue
+    [[maybe_unused]] static void getMicrocontrollerInfo(); // print or display microcontroller's info
+    [[maybe_unused]] void drawInfoPage(const String& softwareVersion, const String& author); // draw a page with all the microcontroller's info
+    [[maybe_unused]] void drawScreenSaver(const String& txt); // useful for OLED displays
+    [[maybe_unused]] static void sendState(const char *topic, JsonObject objectToSend, const String& version); // send microcontroller's info on the queue
+    [[maybe_unused]] static void writeToLittleFS(const DynamicJsonDocument& jDoc, const String& filenameToUse); // write json file to storage
+    [[maybe_unused]] static StaticJsonDocument<BUFFER_SIZE> readLittleFS(const String& filenameToUse); // read json file from storage
+    [[maybe_unused]] String readValueFromFile(const String& filenameToUse, const String& paramName); // read a param from a json file
+    static bool isWifiConfigured(); // check if wifi is correctly configured
     void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
-    int getWifiQuality(); // get the wifi quality
+    static int getWifiQuality(); // get the wifi quality
 
 };
 

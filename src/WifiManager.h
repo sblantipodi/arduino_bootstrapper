@@ -66,7 +66,7 @@ extern String htmlString;
 #endif
 #define IMPROV_VERSION 1
 
-void parseWiFiCommand(char *rpcData);
+[[maybe_unused]] void parseWiFiCommand(char *rpcData);
 
 enum ImprovPacketType {
     Current_State = 0x01,
@@ -99,17 +99,17 @@ class WifiManager {
 
   private:    
     Helpers helper;
-    void createWebServer();
-    void setupAP(void);
-    void launchWeb();
+    static void createWebServer();
+    static void setupAP();
+    static void launchWeb();
 
   public:
     void setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
     void reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
-    void setupOTAUpload();
-    int getQuality();
-    bool isWifiConfigured(); // check if wifi is correctly configured
-    void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
+    static void setupOTAUpload();
+    static int getQuality();
+    static bool isWifiConfigured(); // check if wifi is correctly configured
+    static void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
     void manageImprovWifi(); // if no ssid available, launch web server to get config params via browser
     void handleImprovPacket();
     void sendImprovInfoResponse();
@@ -117,7 +117,7 @@ class WifiManager {
     void sendImprovRPCResponse(byte commandId);
     void sendImprovRPCResponse(byte commandId, bool forceConnection);
     void sendImprovStateResponse(uint8_t state, bool error);
-    bool isConnected(); // return true if wifi is connected
+    static bool isConnected(); // return true if wifi is connected
 
 };
 
