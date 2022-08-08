@@ -25,7 +25,6 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 
 #if defined(ESP8266)
   if (!LittleFS.begin()) {
-    LittleFS.format();
 #elif defined(ESP32)
   if (!LittleFS.begin(true)) {
 #endif
@@ -232,7 +231,6 @@ JsonObject BootstrapManager::getJsonObject() {
 // Print or display microcontroller infos
 void BootstrapManager::getMicrocontrollerInfo() {
 
-  Helpers helper;
   Helpers::smartPrint(F("Wifi: ")); Helpers::smartPrint(WifiManager::getQuality()); Helpers::smartPrintln(F("%"));
 #if defined(ESP8266)
   Helpers::smartPrint(F("Heap: ")); Helpers::smartPrint(EspClass::getFreeHeap()/1024); Helpers::smartPrintln(F(" KB"));
