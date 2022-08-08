@@ -50,7 +50,7 @@ bool mqttCleanSession = 1;
 String additionalParam = "XXX";
 
 unsigned long previousMillis = 0;
-const long interval = 200;           
+const unsigned long interval = 200;
 bool ledTriggered = false;
 int blinkCounter = 0;
 const int blinkTimes = 6; 

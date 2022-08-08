@@ -60,7 +60,7 @@ extern String additionalParam;
 
 // Blink LED vars
 extern unsigned long previousMillis;     // will store last time LED was updated
-extern const long interval;           // interval at which to blink (milliseconds)
+extern const unsigned long interval;           // interval at which to blink (milliseconds)
 extern bool ledTriggered;
 extern int blinkCounter;
 extern const int blinkTimes; // 6 equals to 3 blink on and 3 off
