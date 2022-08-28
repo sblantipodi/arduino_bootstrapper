@@ -59,15 +59,15 @@ extern bool mqttCleanSession;
 extern String additionalParam;
 
 // Blink LED vars
-extern long previousMillis;     // will store last time LED was updated
-extern const long interval;           // interval at which to blink (milliseconds)
+extern unsigned long previousMillis;     // will store last time LED was updated
+extern const unsigned long interval;           // interval at which to blink (milliseconds)
 extern bool ledTriggered;
 extern int blinkCounter;
 extern const int blinkTimes; // 6 equals to 3 blink on and 3 off
 
 extern String timedate;
-extern String date;
-extern String currentime;
+[[maybe_unused]] extern String date;
+[[maybe_unused]] extern String currentime;
 extern String ERROR;
 
 extern int wifiReconnectAttemp;
@@ -75,23 +75,27 @@ extern int mqttReconnectAttemp;
 extern bool fastDisconnectionManagement;
 extern bool forceWebServer; // if set to true, forces the use of launchWebServerForOTAConfig - added by Pronoe on 02/03/2022
 
-const int DELAY_10 = 10;
-const int DELAY_50 = 50;
-const int DELAY_200 = 200;
-const int DELAY_500 = 500;
-const int DELAY_1000 = 1000;
-const int DELAY_1500 = 1500;
-const int DELAY_3000 = 3000;
-const int DELAY_2000 = 2000;
-const int DELAY_4000 = 4000;
-const int DELAY_5000 = 5000;
+[[maybe_unused]] const int DELAY_10 = 10;
+[[maybe_unused]] const int DELAY_50 = 50;
+[[maybe_unused]] const int DELAY_200 = 200;
+[[maybe_unused]] const int DELAY_500 = 500;
+[[maybe_unused]] const int DELAY_1000 = 1000;
+[[maybe_unused]] const int DELAY_1500 = 1500;
+[[maybe_unused]] const int DELAY_3000 = 3000;
+[[maybe_unused]] const int DELAY_2000 = 2000;
+[[maybe_unused]] const int DELAY_4000 = 4000;
+[[maybe_unused]] const int DELAY_5000 = 5000;
 
-const String ON_CMD = "ON";
-const String OFF_CMD = "OFF";
-const String on_CMD = "on";
-const String off_CMD = "off";
-const String VALUE = "value";
-const String EMPTY_STR = "";
+[[maybe_unused]] const String ON_CMD = "ON";
+[[maybe_unused]] const String OFF_CMD = "OFF";
+[[maybe_unused]] const String on_CMD = "on";
+[[maybe_unused]] const String off_CMD = "off";
+[[maybe_unused]] const String VALUE = "value";
+[[maybe_unused]] const String EMPTY_STR = "";
+#if defined(ESP8266)
+#define FILE_READ       "r"
+#define FILE_WRITE      "w"
+#endif
 
 extern bool temporaryDisableImprove;
 extern bool improvePacketReceived;
@@ -140,18 +144,18 @@ static const unsigned char HABIGLOGO [] PROGMEM = {
 class Helpers {
 
   public:
-    void smartPrint(String msg);
-    void smartPrintln(String msg);
-    void smartPrint(int msg);
-    void smartPrintln(int msg);
+    static void smartPrint(String msg);
+    static void smartPrintln(String msg);
+    static void smartPrint(int msg);
+    static void smartPrintln(int msg);
     void smartDisplay();
     void smartDisplay(int delayTime);
-    String getValue(String data, char separator, int index);
-    String getValue(String string);
-    long versionNumberToNumber(String latestReleaseStr);
-    char* string2char(const String command);
-    void setDateTime(String timeConst);
-    String isOnOff(StaticJsonDocument<BUFFER_SIZE> json);
+    static String getValue(String data, char separator, int index);
+    static String getValue(String string);
+    [[maybe_unused]] static long versionNumberToNumber(const String& latestReleaseStr);
+    [[maybe_unused]] static char* string2char(String command);
+    [[maybe_unused]] static void setDateTime(String timeConst);
+    [[maybe_unused]] static String isOnOff(StaticJsonDocument<BUFFER_SIZE> json);
 
 };
 

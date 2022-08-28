@@ -25,10 +25,10 @@ PubSubClient mqttClient(espClient);
 /********************************** SETUP MQTT QUEUE **********************************/
 void QueueManager::setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)) {
 
-  mqttClient.setServer(IPAddress(helper.getValue(mqttIP,'.',0).toInt(),
-                                 helper.getValue(mqttIP,'.',1).toInt(),
-                                 helper.getValue(mqttIP,'.',2).toInt(),
-                                 helper.getValue(mqttIP,'.',3).toInt()), mqttPort.toInt());
+  mqttClient.setServer(IPAddress(Helpers::getValue(mqttIP,'.',0).toInt(),
+                                 Helpers::getValue(mqttIP,'.',1).toInt(),
+                                 Helpers::getValue(mqttIP,'.',2).toInt(),
+                                 Helpers::getValue(mqttIP,'.',3).toInt()), mqttPort.toInt());
   mqttClient.setCallback(callback);
   mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
   mqttClient.setKeepAlive(MQTT_KEEP_ALIVE);
@@ -59,8 +59,8 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       display.setCursor(0,0);
     #endif
     if (mqttReconnectAttemp <= 20) {
-      helper.smartPrintln(F("Connecting to"));
-      helper.smartPrintln(F("MQTT Broker..."));
+      Helpers::smartPrintln(F("Connecting to"));
+      Helpers::smartPrintln(F("MQTT Broker..."));
     }
     helper.smartDisplay();
 
@@ -83,17 +83,17 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
     Serial.println(mqttCleanSession);
 
     if (mqttuser.isEmpty() || mqttpass.isEmpty()) {
-      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), helper.string2char(mqttWillTopic), mqttWillQOS, mqttWillRetain, helper.string2char(mqttWillPayload));
+      mqttSuccess = mqttClient.connect(Helpers::string2char(deviceName), Helpers::string2char(mqttWillTopic), mqttWillQOS, mqttWillRetain, Helpers::string2char(mqttWillPayload));
     } else {
-      mqttSuccess = mqttClient.connect(helper.string2char(deviceName), helper.string2char(mqttuser), helper.string2char(mqttpass), helper.string2char(mqttWillTopic), mqttWillQOS, mqttWillRetain, helper.string2char(mqttWillPayload), mqttCleanSession);
+      mqttSuccess = mqttClient.connect(Helpers::string2char(deviceName), Helpers::string2char(mqttuser), Helpers::string2char(mqttpass), Helpers::string2char(mqttWillTopic), mqttWillQOS, mqttWillRetain, Helpers::string2char(mqttWillPayload), mqttCleanSession);
     }
     if (mqttSuccess) {
 
-      helper.smartPrintln(F(""));
-      helper.smartPrintln(F("MQTT CONNECTED"));
-      helper.smartPrintln(F(""));
-      helper.smartPrintln(F("Reading data from"));
-      helper.smartPrintln(F("the network..."));
+      Helpers::smartPrintln(F(""));
+      Helpers::smartPrintln(F("MQTT CONNECTED"));
+      Helpers::smartPrintln(F(""));
+      Helpers::smartPrintln(F("Reading data from"));
+      Helpers::smartPrintln(F("the network..."));
       helper.smartDisplay();
 
       // Subscribe to MQTT topics
@@ -107,8 +107,8 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
 
     } else {
 
-      helper.smartPrintln(F("MQTT attempts="));
-      helper.smartPrintln(mqttReconnectAttemp);
+      Helpers::smartPrintln(F("MQTT attempts="));
+      Helpers::smartPrintln(mqttReconnectAttemp);
       helper.smartDisplay();
 
       if (mqttReconnectAttemp > 15) {
@@ -116,18 +116,18 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
         // example: power off a watering system can't wait MAX_RECONNECT attemps
         if (fastDisconnectionManagement) {
           manageDisconnections();
-          helper.smartPrintln(F("Disconnecting WiFi."));
+          Helpers::smartPrintln(F("Disconnecting WiFi."));
           WiFi.reconnect();
         }
       }
 
       // after MAX_RECONNECT attemps all peripherals are shut down
       if (mqttReconnectAttemp >= MAX_RECONNECT) {
-        helper.smartPrintln(F("Max retry reached, powering off peripherals."));
+        Helpers::smartPrintln(F("Max retry reached, powering off peripherals."));
         helper.smartDisplay();
         // Manage disconnections, powering off peripherals
         manageDisconnections();
-        helper.smartPrintln(F("Disconnecting WiFi."));
+        Helpers::smartPrintln(F("Disconnecting WiFi."));
         WiFi.reconnect();
       } else if (mqttReconnectAttemp > 10000) {
         mqttReconnectAttemp = 0;

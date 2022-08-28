@@ -23,7 +23,7 @@
 
 #include "PingESP.h"
 
-extern "C" void esp_schedule();
+extern "C"
 extern "C" void esp_yield();
 extern "C" void __esp_suspend();
 
@@ -56,7 +56,7 @@ bool PingESP::ping(IPAddress dest) {
   pingOptions.coarse_time = 1;
   pingOptions.ip = dest;
   pingOptions.recv_function = reinterpret_cast<ping_recv_function>(&PingESP::receivePingCallback);
-  pingOptions.sent_function = NULL;
+  pingOptions.sent_function = nullptr;
   if (ping_start(&pingOptions)) {
     // Sleep until the ping is finished
     __esp_suspend();
