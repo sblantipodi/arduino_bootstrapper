@@ -15,25 +15,32 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install platformio
-        python --version         
-    - name: Install submodules 
-      run: |        
+        python --version
+    - name: Install submodules
+      run: |
         pwd
         git submodule update --init
         ls
     - name: Setup template config files
-      run: |                
+      run: |
         mkdir /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include
-        cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/examples/ChangeName.cpp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/src/ChangeName.cpp    
-        cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/examples/ChangeName.h /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/ChangeName.h    
+        cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/examples/ChangeName.cpp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/src/ChangeName.cpp
+        cp /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/examples/ChangeName.h /home/runner/work/arduino_bootstrapper/arduino_bootstrapper/include/ChangeName.h
     # - name: Setup tmate session
     #   uses: mxschmitt/action-tmate@v3
     - name: Static code analysis
-      run: platformio check --verbose --severity=high --skip-packages                     
-    - name: Run PlatformIO
-      run: platformio run -e bootstrapper
+      run: platformio check --verbose --severity=high --skip-packages
+    - name: Run PlatformIO ESP8266
+      run: platformio run -e esp8266
     - name: Creating artifact from BIN file
       uses: actions/upload-artifact@v2
       with:
-        name: firmware_build_artifact_arduino_bootstrapper.bin
-        path: .pio/build/bootstrapper/firmware.bin
+        name: firmware_build_artifact_arduino_esp8266.bin
+        path: .pio/build/esp8266/firmware.bin
+    - name: Run PlatformIO ESP32
+      run: platformio run -e esp32
+    - name: Creating artifact from BIN file
+      uses: actions/upload-artifact@v2
+      with:
+        name: firmware_build_artifact_arduino_esp32.bin
+        path: .pio/build/esp32/firmware.bin
