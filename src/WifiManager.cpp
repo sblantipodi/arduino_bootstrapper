@@ -103,6 +103,8 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   WiFi.hostname(helper.string2char(deviceName));
   // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
   WiFi.setOutputPower(WIFI_POWER);
+  Serial.print("Set WiFi output power to: ");
+  Serial.println(WIFI_POWER);
   if (microcontrollerIP.equals("DHCP")) {
     WiFi.config(0U, 0U, 0U);
   }

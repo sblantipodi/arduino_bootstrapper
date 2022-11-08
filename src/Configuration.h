@@ -78,7 +78,7 @@ const int OTA_PORT = MICROCONTROLLER_OTA_PORT;
 
 // Set wifi power in dbm range 0/0.25, set to 0 to reduce PIR false positive due to wifi power, 0 low, 20.5 max.
 #ifndef WIFI_SIGNAL_STRENGTH
-#define WIFI_SIGNAL_STRENGTH 0
+#define WIFI_SIGNAL_STRENGTH 20.5
 #endif
 const double WIFI_POWER = WIFI_SIGNAL_STRENGTH;
 
