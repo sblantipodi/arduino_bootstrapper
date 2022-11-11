@@ -133,14 +133,22 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 }
 
 void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
+  if(WiFi.status() == WL_CONNECTED){
+    wifiReconnectAttemp = 0;
+  }
 
-  wifiReconnectAttemp = 0;
-
+#if (NON_BLOCKING_RECONNECT)
+  static unsigned int lastReconnectAttempt = 0;
+  if(WiFi.status() != WL_CONNECTED && millis() - lastReconnectAttempt > DELAY_500){
+    manageHardwareButton();
+    lastReconnectAttempt = millis();
+#else
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
-
     manageHardwareButton();
     delay(DELAY_500);
+#endif    
+
     Serial.print(F("."));
     wifiReconnectAttemp++;
     if (wifiReconnectAttemp > 10) {
@@ -175,7 +183,7 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
     }
 
   }
-  if (wifiReconnectAttemp > 0) {
+  if (wifiReconnectAttemp > 0 && WiFi.status() == WL_CONNECTED) {
     helper.smartPrint(F("\nWIFI CONNECTED\nIP Address: "));
     microcontrollerIP = WiFi.localIP().toString();
     helper.smartPrintln(microcontrollerIP);
