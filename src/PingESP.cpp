@@ -44,7 +44,7 @@ byte PingESP::pingError = 0;
 byte PingESP::pingSuccess = 0;
 
 /**
- * Ping gateway to keep the connection alive
+ * Ping another device
  * @param dest gateway to ping
  * @return
  */
@@ -55,6 +55,27 @@ bool PingESP::ping(IPAddress dest) {
   pingOptions.count = 1; // repeat only 1 time
   pingOptions.coarse_time = 1;
   pingOptions.ip = dest;
+  pingOptions.recv_function = reinterpret_cast<ping_recv_function>(&PingESP::receivePingCallback);
+  pingOptions.sent_function = nullptr;
+  if (ping_start(&pingOptions)) {
+    // Sleep until the ping is finished
+    __esp_suspend();
+  }
+  return (pingSuccess > 0);
+}
+
+/**
+ * Ping gateway to keep the connection alive
+ * @param dest gateway to ping
+ * @return
+ */
+bool PingESP::ping() {
+  pingError = 0;
+  pingSuccess = 0;
+  memset(&pingOptions, 0, sizeof(struct ping_option));
+  pingOptions.count = 1; // repeat only 1 time
+  pingOptions.coarse_time = 1;
+  pingOptions.ip = WiFi.gatewayIP();
   pingOptions.recv_function = reinterpret_cast<ping_recv_function>(&PingESP::receivePingCallback);
   pingOptions.sent_function = nullptr;
   if (ping_start(&pingOptions)) {

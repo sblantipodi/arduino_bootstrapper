@@ -40,6 +40,7 @@ class PingESP {
 public:
     PingESP();
     bool ping(IPAddress dest);
+    bool ping();
 
 protected:
     static void receivePingCallback(void *opt, void *pdata);
