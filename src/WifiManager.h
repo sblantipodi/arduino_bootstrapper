@@ -110,6 +110,7 @@ class WifiManager {
     static int getQuality();
     static bool isWifiConfigured(); // check if wifi is correctly configured
     static void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
+    static void launchWebServerCustom(void (*listener)()); // if no ssid available, launch web server to get config params via browser
     void manageImprovWifi(); // if no ssid available, launch web server to get config params via browser
     void handleImprovPacket();
     void sendImprovInfoResponse();

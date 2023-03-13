@@ -255,11 +255,26 @@ bool WifiManager::isWifiConfigured() {
 void WifiManager::launchWebServerForOTAConfig() {
 
   WiFi.disconnect();
-  Serial.println("Turning HotSpot On");
-
+  Serial.println(F("Turning HotSpot On"));
   setupAP();
   launchWeb();
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(10);
+    server.handleClient();
+  }
 
+}
+
+void WifiManager::launchWebServerCustom(void (*listener)()) {
+
+  WiFi.disconnect();
+  Serial.println(F("Turning HotSpot On"));
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  delay(DELAY_200);
+  WiFi.softAP(WIFI_DEVICE_NAME, "");
+  listener();
+  server.begin();
   while (WiFi.status() != WL_CONNECTED) {
     delay(10);
     server.handleClient();
