@@ -50,9 +50,7 @@ public:
     // using JsonDocument = StaticJsonDocument<BUFFER_SIZE>;
     StaticJsonDocument<BUFFER_SIZE> parseQueueMsg(char* topic, byte* payload, unsigned int length); // print the message arriving from the queue
     StaticJsonDocument<BUFFER_SIZE> parseHttpMsg(String payload, unsigned int length); // print the message arriving from HTTP
-    void littleFsInit();
     void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)); // bootstrap setup()
-    void bootstrapSetup(void (*manageDisconnectionFunction)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int), bool waitImprov, void (*listener)()); // bootstrap setup()
     void bootstrapLoop(void (*manageDisconnectionFunction)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // bootstrap loop()
     static void setMQTTWill(const char *topic, const char *payload, int qos, boolean retain, boolean cleanSession); // set the last will parameters for mqtt
     static void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
@@ -71,9 +69,8 @@ public:
     [[maybe_unused]] String readValueFromFile(const String& filenameToUse, const String& paramName); // read a param from a json file
     static bool isWifiConfigured(); // check if wifi is correctly configured
     void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
-    void launchWebServerCustom(bool waitImprov, void (*listener)()); // if no ssid available, launch web server to get config params via browser
     static int getWifiQuality(); // get the wifi quality
-    void manageImprov();
+
 };
 
 #endif
