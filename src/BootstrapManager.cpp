@@ -20,21 +20,18 @@
 #include "BootstrapManager.h"
 
 
-void BootstrapManager::littleFsInit() {
+/********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
+void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)) {
+
 #if defined(ESP8266)
   if (!LittleFS.begin()) {
 #elif defined(ESP32)
-    if (!LittleFS.begin(true)) {
+  if (!LittleFS.begin(true)) {
 #endif
     Serial.println("LittleFS mount failed");
     return;
   }
-}
 
-/********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
-void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)) {
-
-  littleFsInit();
   if (isWifiConfigured() && !forceWebServer) {
     isConfigFileOk = true;
     // Initialize Wifi manager
@@ -50,29 +47,6 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
   } else {
     isConfigFileOk = false;
     launchWebServerForOTAConfig();
-  }
-
-}
-
-/********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
-void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int), bool waitImprov, void (*listener)()) {
-
-  littleFsInit();
-  if (isWifiConfigured() && !forceWebServer) {
-    isConfigFileOk = true;
-    // Initialize Wifi manager
-    wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
-    // Initialize Queue Manager
-    if (mqttIP.length() > 0) {
-      QueueManager::setupMQTTQueue(callback);
-    } else {
-      Serial.println(F("Skip MQTT connection."));
-    }
-    // Initialize OTA manager
-    WifiManager::setupOTAUpload();
-  } else {
-    isConfigFileOk = false;
-    launchWebServerCustom(waitImprov, listener);
   }
 
 }
@@ -470,6 +444,7 @@ bool BootstrapManager::isWifiConfigured() {
     StaticJsonDocument<BUFFER_SIZE> mydoc = readLittleFS("setup.json");
     if (mydoc.containsKey("qsid")) {
       Serial.println("Storage OK, restoring WiFi and MQTT config.");
+      deviceName = Helpers::getValue(mydoc["deviceName"]);
       microcontrollerIP = Helpers::getValue(mydoc["microcontrollerIP"]);
       qsid = Helpers::getValue(mydoc["qsid"]);
       qpass = Helpers::getValue(mydoc["qpass"]);
@@ -479,7 +454,6 @@ bool BootstrapManager::isWifiConfigured() {
       mqttuser = Helpers::getValue(mydoc["mqttuser"]);
       mqttpass = Helpers::getValue(mydoc["mqttpass"]);
       additionalParam = Helpers::getValue(mydoc["additionalParam"]);
-      deviceName = Helpers::getValue(mydoc["deviceName"]);
       return true;
     } else {
       Serial.println("No setup file");
@@ -493,13 +467,6 @@ bool BootstrapManager::isWifiConfigured() {
 void BootstrapManager::launchWebServerForOTAConfig() {
 
 #if (IMPROV_ENABLED > 0)
-  manageImprov();
-#endif
-  return WifiManager::launchWebServerForOTAConfig();
-
-}
-
-void BootstrapManager::manageImprov() {
   unsigned long timeNowStatus = 0;
   bool switchToWebServer = false;
   // If WiFi is not configured, handle improv packet for 15 seconds, then switch to settinigs managed by web server
@@ -511,16 +478,8 @@ void BootstrapManager::manageImprov() {
     }
     wifiManager.manageImprovWifi();
   }
-}
-
-void BootstrapManager::launchWebServerCustom(bool waitImprov, void (*listener)()) {
-
-#if (IMPROV_ENABLED > 0)
-  if (waitImprov) {
-    manageImprov();
-  }
 #endif
-  return WifiManager::launchWebServerCustom(listener);
+  return WifiManager::launchWebServerForOTAConfig();
 
 }
 
