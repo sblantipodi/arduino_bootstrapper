@@ -26,7 +26,7 @@
   #include <ESP8266HTTPClient.h>
   #include <ESP8266WebServer.h>
   #include <WiFiUdp.h>
-#elif defined(ESP32)
+#elif defined(ARDUINO_ARCH_ESP32)
   #include <WiFi.h>
   #include <ESPmDNS.h>
   #include <HTTPClient.h>
@@ -43,7 +43,7 @@
 //Establishing Local server at port 80 whenever required
 #if defined(ESP8266)
   extern ESP8266WebServer server;
-#elif defined(ESP32)
+#elif defined(ARDUINO_ARCH_ESP32)
   extern WebServer server;
 #endif 
 // WiFi Client

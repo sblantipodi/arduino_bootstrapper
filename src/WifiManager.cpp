@@ -22,7 +22,7 @@
 //Establishing Local server at port 80 whenever required
 #if defined(ESP8266)
 ESP8266WebServer server(80);
-#elif defined(ESP32)
+#elif defined(ARDUINO_ARCH_ESP32)
 WebServer server(80);
 #endif
 // WiFiClient
@@ -113,13 +113,13 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   });
 
 
-#elif defined(ESP32)
+#elif defined(ARDUINO_ARCH_ESP32)
   WiFi.setHostname(helper.string2char(deviceName));
   btStop();
 #endif
   // Start wifi connection
   WiFi.begin(qsid.c_str(), qpass.c_str());
-#if defined(ESP32)
+#if defined(ARDUINO_ARCH_ESP32)
   WiFi.setSleep(false);
 #endif
 
@@ -157,7 +157,7 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
 #endif
       Helpers::smartPrint(F("Wifi attemps= "));
       Helpers::smartPrintln(wifiReconnectAttemp);
-#if defined(ESP32)
+#if defined(ARDUINO_ARCH_ESP32)
       // Arduino 2.x for ESP32 seems to not support callback, polling to reconnect.
       unsigned long currentMillisEsp32Reconnect = millis();
       if (currentMillisEsp32Reconnect - previousMillisEsp32Reconnect >= intervalEsp32Reconnect) {
@@ -327,7 +327,7 @@ void WifiManager::setupAP(void) {
       Serial.print(")");
 #if defined(ESP8266)
       Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? " " : "*");
-#elif defined(ESP32)
+#elif defined(ARDUINO_ARCH_ESP32)
       Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*");
 #endif
       delay(10);
@@ -346,7 +346,7 @@ void WifiManager::setupAP(void) {
     htmlString += "<td>";
 #if defined(ESP8266)
     htmlString += ((WiFi.encryptionType(i) == ENC_TYPE_NONE) ? "PUBLIC" : "ENCRYPTED");
-#elif defined(ESP32)
+#elif defined(ARDUINO_ARCH_ESP32)
     htmlString += ((WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? "PUBLIC" : "ENCRYPTED");
 #endif
     htmlString += "</td>";
@@ -567,7 +567,7 @@ void WifiManager::createWebServer() {
           Serial.println("[setup.json] written correctly");
         }
         delay(DELAY_200);
-#if defined(ESP32)
+#if defined(ARDUINO_ARCH_ESP32)
         ESP.restart();
 #elif defined(ESP8266)
         EspClass::restart();
@@ -724,7 +724,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   delay(DELAY_200);
   sendImprovStateResponse(0x04, false);
   delay(DELAY_200);
-#if defined(ESP32)
+#if defined(ARDUINO_ARCH_ESP32)
   ESP.restart();
 #elif defined(ESP8266)
   EspClass::restart();

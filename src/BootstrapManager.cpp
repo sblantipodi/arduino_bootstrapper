@@ -23,7 +23,7 @@
 void BootstrapManager::littleFsInit() {
 #if defined(ESP8266)
   if (!LittleFS.begin()) {
-#elif defined(ESP32)
+#elif defined(ARDUINO_ARCH_ESP32)
     if (!LittleFS.begin(true)) {
 #endif
     Serial.println("LittleFS mount failed");
@@ -265,7 +265,7 @@ void BootstrapManager::getMicrocontrollerInfo() {
   Helpers::smartPrint(F("Flash: ")); Helpers::smartPrint(EspClass::getFlashChipSize()/1024); Helpers::smartPrintln(F(" KB"));
   Helpers::smartPrint(F("Sketch: ")); Helpers::smartPrint(EspClass::getSketchSize()/1024); Helpers::smartPrintln(F(" KB"));
   Helpers::smartPrint(F("SDK: ")); Helpers::smartPrintln(EspClass::getSdkVersion());
-#elif defined(ESP32)
+#elif defined(ARDUINO_ARCH_ESP32)
   Helpers::smartPrint(F("Heap: ")); Helpers::smartPrint(ESP.getFreeHeap()/1024); Helpers::smartPrintln(F(" KB"));
   Helpers::smartPrint(F("Free Flash: ")); Helpers::smartPrint(ESP.getFreeSketchSpace()/1024); Helpers::smartPrintln(F(" KB"));
   Helpers::smartPrint(F("Frequency: ")); Helpers::smartPrint(ESP.getCpuFreqMHz()); Helpers::smartPrintln(F("MHz"));
