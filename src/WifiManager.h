@@ -21,18 +21,21 @@
 #define _DPSOFTWARE_WIFI_MANAGER_H
 
 #if defined(ESP8266)
-  #include <ESP8266WiFi.h>
-  #include <ESP8266mDNS.h>
-  #include <ESP8266HTTPClient.h>
-  #include <ESP8266WebServer.h>
-  #include <WiFiUdp.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
+#include <ESP8266HTTPClient.h>
+#include <ESP8266WebServer.h>
+#include <WiFiUdp.h>
 #elif defined(ARDUINO_ARCH_ESP32)
-  #include <WiFi.h>
-  #include <ESPmDNS.h>
-  #include <HTTPClient.h>
-  #include <WiFiUdp.h>
-  #include <WebServer.h>
+
+#include <WiFi.h>
+#include <ESPmDNS.h>
+#include <HTTPClient.h>
+#include <WiFiUdp.h>
+#include <WebServer.h>
+
 #endif
+
 #include <ArduinoOTA.h>
 #include <FS.h>
 #include <LittleFS.h>
@@ -42,10 +45,10 @@
 
 //Establishing Local server at port 80 whenever required
 #if defined(ESP8266)
-  extern ESP8266WebServer server;
+extern ESP8266WebServer server;
 #elif defined(ARDUINO_ARCH_ESP32)
-  extern WebServer server;
-#endif 
+extern WebServer server;
+#endif
 // WiFi Client
 extern WiFiClient espClient;
 // WebServer content
@@ -56,9 +59,9 @@ extern int statusCode;
 extern String htmlString;
 
 #ifdef WLED_DEBUG_IMPROV
-  #define DIMPROV_PRINT(x) Serial.print(x)
-  #define DIMPROV_PRINTLN(x) Serial.println(x)
-  #define DIMPROV_PRINTF(x...) Serial.printf(x)
+#define DIMPROV_PRINT(x) Serial.print(x)
+#define DIMPROV_PRINTLN(x) Serial.println(x)
+#define DIMPROV_PRINTF(x...) Serial.printf(x)
 #else
 #define DIMPROV_PRINT(x)
 #define DIMPROV_PRINTLN(x)
@@ -97,29 +100,43 @@ extern char clientPass[65];
 
 class WifiManager {
 
-  private:    
+private:
     Helpers helper;
+
     static void createWebServer();
+
     static void setupAP();
+
     static void launchWeb();
 
-  public:
+public:
     void setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
+
     void reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)());
+
     static void setupOTAUpload();
+
     static int getQuality();
+
     static bool isWifiConfigured(); // check if wifi is correctly configured
     static void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
     static void launchWebServerCustom(void (*listener)()); // if no ssid available, launch web server to get config params via browser
     void manageImprovWifi(); // if no ssid available, launch web server to get config params via browser
     void handleImprovPacket();
+
     void sendImprovInfoResponse();
+
     void parseWiFiCommand(char *rpcData);
+
     void sendImprovRPCResponse(byte commandId);
+
     void sendImprovRPCResponse(byte commandId, bool forceConnection);
+
     void sendImprovStateResponse(uint8_t state, bool error);
+
     static bool isConnected(); // return true if wifi is connected
 
+    void setTxPower() const;
 };
 
 #endif

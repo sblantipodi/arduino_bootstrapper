@@ -53,7 +53,7 @@ unsigned long previousMillis = 0;
 const unsigned long interval = 200;
 bool ledTriggered = false;
 int blinkCounter = 0;
-const int blinkTimes = 6; 
+const int blinkTimes = 6;
 
 String timedate = "OFF";
 [[maybe_unused]] String date = "OFF";
@@ -68,60 +68,48 @@ bool temporaryDisableImprove = false;
 bool improvePacketReceived = false;
 
 void Helpers::smartPrint(String msg) {
-
-  #if (DISPLAY_ENABLED) 
-    display.print(msg);
-  #else
-    Serial.print(msg);
-  #endif
-
+#if (DISPLAY_ENABLED)
+  display.print(msg);
+#else
+  Serial.print(msg);
+#endif
 }
 
 void Helpers::smartPrintln(String msg) {
-
-  #if (DISPLAY_ENABLED) 
-    display.println(msg);
-  #else
-    Serial.println(msg);
-  #endif
-
+#if (DISPLAY_ENABLED)
+  display.println(msg);
+#else
+  Serial.println(msg);
+#endif
 }
 
 void Helpers::smartPrint(int msg) {
-
-  #if (DISPLAY_ENABLED) 
-    display.print(msg);
-  #else
-    Serial.print(msg);
-  #endif
-
+#if (DISPLAY_ENABLED)
+  display.print(msg);
+#else
+  Serial.print(msg);
+#endif
 }
 
 void Helpers::smartPrintln(int msg) {
-
-  #if (DISPLAY_ENABLED) 
-    display.println(msg);
-  #else
-    Serial.println(msg);
-  #endif
-
+#if (DISPLAY_ENABLED)
+  display.println(msg);
+#else
+  Serial.println(msg);
+#endif
 }
 
 void Helpers::smartDisplay() {
-
-  #if (DISPLAY_ENABLED)
-    display.display();
-  #endif
-
+#if (DISPLAY_ENABLED)
+  display.display();
+#endif
 }
 
 void Helpers::smartDisplay(int delayTime) {
-
-  #if (DISPLAY_ENABLED)
-    display.display();
-    delay(delayTime);
-  #endif
-
+#if (DISPLAY_ENABLED)
+  display.display();
+  delay(delayTime);
+#endif
 }
 
 /*
@@ -132,62 +120,49 @@ void Helpers::smartDisplay(int delayTime) {
   Should print 'is'. You also can try with index 0 returning 'hi' or safely trying index 5 returning 'test'.
 */
 String Helpers::getValue(String data, char separator, int index) {
-
   int found = 0;
   int strIndex[] = {0, -1};
-  int maxIndex = data.length()-1;
+  int maxIndex = data.length() - 1;
 
-  for(int i=0; i<=maxIndex && found<=index; i++) {
-    if(data.charAt(i)==separator || i==maxIndex) {
+  for (int i = 0; i <= maxIndex && found <= index; i++) {
+    if (data.charAt(i) == separator || i == maxIndex) {
       found++;
-      strIndex[0] = strIndex[1]+1;
-      strIndex[1] = (i == maxIndex) ? i+1 : i;
+      strIndex[0] = strIndex[1] + 1;
+      strIndex[1] = (i == maxIndex) ? i + 1 : i;
     }
   }
-
-  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
-
+  return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
 // Set date and time based on a timestamp
 void Helpers::setDateTime(String timeConst) {
-
   timedate = timeConst;
-  date = timedate.substring(8,10) + "/" + timedate.substring(5,7) + "/" + timedate.substring(0,4);
-  currentime = timedate.substring(11,16);
-
+  date = timedate.substring(8, 10) + "/" + timedate.substring(5, 7) + "/" + timedate.substring(0, 4);
+  currentime = timedate.substring(11, 16);
 }
 
 // Return ON OFF value
 String Helpers::isOnOff(StaticJsonDocument<BUFFER_SIZE> json) {
-
   String str = json[VALUE];
-  return ((str == ON_CMD) || (str == on_CMD)) ? ON_CMD : OFF_CMD ;
-
+  return ((str == ON_CMD) || (str == on_CMD)) ? ON_CMD : OFF_CMD;
 }
 
 // Useful for Arduino Json lib to disambiguate types
 String Helpers::getValue(String string) {
-
   return string;
-
 }
 
 // String to char*
-char* Helpers::string2char(const String command){
-
-  char *p = const_cast<char*>(command.c_str());
+char *Helpers::string2char(const String command) {
+  char *p = const_cast<char *>(command.c_str());
   return p;
-
 }
 
 // From version number to Number
-long Helpers::versionNumberToNumber(const String& latestReleaseStr) {
-
+long Helpers::versionNumberToNumber(const String &latestReleaseStr) {
   long longVersion = 0;
   longVersion += Helpers::getValue(latestReleaseStr, '.', 0).toInt() + 1000000;
   longVersion += Helpers::getValue(latestReleaseStr, '.', 1).toInt() + 1000;
   longVersion += Helpers::getValue(latestReleaseStr, '.', 2).toInt();
   return longVersion;
-
 }

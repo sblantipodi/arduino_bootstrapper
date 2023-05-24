@@ -23,26 +23,26 @@
 #ifndef WIFI_SSID
 #define WIFI_SSID "XXX"
 #endif
-const char* const SSID = WIFI_SSID;
+const char *const SSID = WIFI_SSID;
 
 #ifndef WIFI_PWD
 #define WIFI_PWD "XXX"
 #endif
-const char* const PASSWORD = WIFI_PWD;
+const char *const PASSWORD = WIFI_PWD;
 
 #ifndef MQTT_USER
 #define MQTT_USER "XXX"
 #endif
-const char* const MQTT_USERNAME = MQTT_USER;
+const char *const MQTT_USERNAME = MQTT_USER;
 
 #ifndef MQTT_PWD
 #define MQTT_PWD "XXX"
 #endif
-const char* const MQTT_PASSWORD = MQTT_PWD;
+const char *const MQTT_PASSWORD = MQTT_PWD;
 
 #ifndef OTA_PWD
 #define OTA_PWD "XXX"
 #endif
-const char* const OTAPASSWORD = OTA_PWD; //the password you will need to enter for OTA upload
+const char *const OTAPASSWORD = OTA_PWD; //the password you will need to enter for OTA upload
 
 #endif

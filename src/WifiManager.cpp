@@ -44,9 +44,7 @@ unsigned long intervalEsp32Reconnect = 15000;
 
 /********************************** SETUP WIFI *****************************************/
 void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
-
   wifiReconnectAttemp = 0;
-
   // DPsoftware domotics
 #if (DISPLAY_ENABLED)
   display.clearDisplay();
@@ -56,7 +54,6 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 #endif
   Helpers::smartPrintln(F("DPsoftware domotics"));
   helper.smartDisplay(DELAY_3000);
-
 #if (DISPLAY_ENABLED)
   display.clearDisplay();
   display.setTextSize(1);
@@ -66,7 +63,6 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   Helpers::smartPrint(qsid);
   Helpers::smartPrintln(F("..."));
   helper.smartDisplay(DELAY_2000);
-
   WiFi.persistent(true);   // Solve possible wifi init errors (re-add at 6.2.1.16 #4044, #4083)
   WiFi.disconnect(true);    // Delete SDK wifi config
   delay(DELAY_200);
@@ -111,8 +107,6 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
       Serial.println(F("WiFi connection is lost."));
       WiFi.reconnect();
   });
-
-
 #elif defined(ARDUINO_ARCH_ESP32)
   WiFi.setHostname(helper.string2char(deviceName));
   btStop();
@@ -120,26 +114,55 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   // Start wifi connection
   WiFi.begin(qsid.c_str(), qpass.c_str());
 #if defined(ARDUINO_ARCH_ESP32)
+  setTxPower();
   WiFi.setSleep(false);
 #endif
-
   reconnectToWiFi(manageDisconnections, manageHardwareButton);
   MAC = WiFi.macAddress();
-
   delay(DELAY_1500);
-
   // reset the lastWIFiConnection to off, will be initialized by next time update
   lastWIFiConnection = OFF_CMD;
-
 }
 
+/**
+ * Set the TX power based on dBm values.
+ */
+#if defined(ARDUINO_ARCH_ESP32)
+void WifiManager::setTxPower() const {
+  wifi_power_t val = WIFI_POWER_MINUS_1dBm;
+  if (WIFI_POWER < 0) {
+    val = WIFI_POWER_MINUS_1dBm;
+  } else if (WIFI_POWER < 3.5f) {
+    val = WIFI_POWER_2dBm;
+  } else if (WIFI_POWER < 6) {
+    val = WIFI_POWER_5dBm;
+  } else if (WIFI_POWER < 8) {
+    val = WIFI_POWER_7dBm;
+  } else if (WIFI_POWER < 10) {
+    val = WIFI_POWER_8_5dBm;
+  } else if (WIFI_POWER < 12) {
+    val = WIFI_POWER_11dBm;
+  } else if (WIFI_POWER < 14) {
+    val = WIFI_POWER_13dBm;
+  } else if (WIFI_POWER < 16) {
+    val = WIFI_POWER_15dBm;
+  } else if (WIFI_POWER < 17.75f) {
+    val = WIFI_POWER_17dBm;
+  } else if (WIFI_POWER < 18.75f) {
+    val = WIFI_POWER_18_5dBm;
+  } else if (WIFI_POWER < 19.25f) {
+    val = WIFI_POWER_19dBm;
+  } else {
+    val = WIFI_POWER_19_5dBm;
+  }
+  WiFi.setTxPower(val);
+}
+#endif
+
 void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
-
   wifiReconnectAttemp = 0;
-
   // loop here until connection
   while (WiFi.status() != WL_CONNECTED) {
-
     manageHardwareButton();
     delay(DELAY_500);
     Serial.print(F("."));
@@ -163,6 +186,8 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
       if (currentMillisEsp32Reconnect - previousMillisEsp32Reconnect >= intervalEsp32Reconnect) {
         WiFi.disconnect();
         WiFi.begin(qsid.c_str(), qpass.c_str());
+        setTxPower();
+        WiFi.setSleep(false);
         previousMillisEsp32Reconnect = currentMillisEsp32Reconnect;
       }
 #endif
@@ -174,7 +199,6 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
     } else if (wifiReconnectAttemp > 10000) {
       wifiReconnectAttemp = 0;
     }
-
   }
   if (wifiReconnectAttemp > 0) {
     Helpers::smartPrint(F("\nWIFI CONNECTED\nIP Address: "));
@@ -183,32 +207,25 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
     Helpers::smartPrint(F("nb of attempts: "));
     Helpers::smartPrintln(wifiReconnectAttemp);
   }
-
 }
 
 /********************************** SETUP OTA *****************************************/
 void WifiManager::setupOTAUpload() {
-
   //OTA SETUP
   ArduinoOTA.setPort(OTA_PORT);
   // Hostname defaults to esp8266-[ChipID]
   ArduinoOTA.setHostname(Helpers::string2char(deviceName));
-
   // No authentication by default
   ArduinoOTA.setPassword((const char *) Helpers::string2char(OTApass));
-
   ArduinoOTA.onStart([]() {
       Serial.println(F("Starting"));
   });
-
   ArduinoOTA.onEnd([]() {
       Serial.println(F("End"));
   });
-
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
       Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   });
-
   ArduinoOTA.onError([](ota_error_t error) {
       Serial.printf("Error[%u]: ", error);
       if (error == OTA_AUTH_ERROR) Serial.println(F("Auth Failed"));
@@ -217,9 +234,7 @@ void WifiManager::setupOTAUpload() {
       else if (error == OTA_RECEIVE_ERROR) Serial.println(F("Receive Failed"));
       else if (error == OTA_END_ERROR) Serial.println(F("End Failed"));
   });
-
   ArduinoOTA.begin();
-
 }
 
 /*
@@ -243,17 +258,14 @@ int WifiManager::getQuality() {
 
 // check if wifi is correctly configured
 bool WifiManager::isWifiConfigured() {
-
   if (strcmp(SSID, "XXX") != 0) {
     return true;
   }
   return false;
-
 }
 
 // if no ssid available, launch web server to get config params via browser
 void WifiManager::launchWebServerForOTAConfig() {
-
   WiFi.disconnect();
   Serial.println(F("Turning HotSpot On"));
   setupAP();
@@ -262,11 +274,9 @@ void WifiManager::launchWebServerForOTAConfig() {
     delay(10);
     server.handleClient();
   }
-
 }
 
 void WifiManager::launchWebServerCustom(void (*listener)()) {
-
   WiFi.disconnect();
   Serial.println(F("Turning HotSpot On"));
   WiFi.mode(WIFI_STA);
@@ -279,18 +289,14 @@ void WifiManager::launchWebServerCustom(void (*listener)()) {
     delay(10);
     server.handleClient();
   }
-
 }
 
 // Manage improv wifi
 void WifiManager::manageImprovWifi() {
-
   handleImprovPacket();
-
 }
 
 void WifiManager::launchWeb() {
-
   Serial.println("");
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("WiFi connected");
@@ -302,11 +308,9 @@ void WifiManager::launchWeb() {
   createWebServer();
   server.begin();
   Serial.println("Server started");
-
 }
 
 void WifiManager::setupAP(void) {
-
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   delay(DELAY_200);
@@ -356,7 +360,6 @@ void WifiManager::setupAP(void) {
   delay(100);
   WiFi.softAP(WIFI_DEVICE_NAME, "");
   launchWeb();
-
 }
 
 void WifiManager::createWebServer() {
@@ -573,18 +576,14 @@ void WifiManager::createWebServer() {
         EspClass::restart();
 #endif
     });
-
   }
 }
 
 bool WifiManager::isConnected() {
-
   return (WiFi.localIP()[0] != 0 && WiFi.status() == WL_CONNECTED);
-
 }
 
 void WifiManager::sendImprovStateResponse(uint8_t state, bool error) {
-
   if (!error && improvError > 0 && improvError < 3) sendImprovStateResponse(0x00, true);
   if (error) improvError = state;
   char out[11] = {'I', 'M', 'P', 'R', 'O', 'V'};
@@ -597,17 +596,13 @@ void WifiManager::sendImprovStateResponse(uint8_t state, bool error) {
   out[10] = checksum;
   Serial.write((uint8_t *) out, 11);
   Serial.write('\n');
-
 }
 
 void WifiManager::sendImprovRPCResponse(byte commandId) {
-
   sendImprovRPCResponse(commandId, false);
-
 }
 
 void WifiManager::sendImprovRPCResponse(byte commandId, bool forceConnection) {
-
   if (improvError > 0 && improvError < 3) sendImprovStateResponse(0x00, true);
   uint8_t packetLen = 12;
   char out[64] = {'I', 'M', 'P', 'R', 'O', 'V'};
@@ -632,11 +627,9 @@ void WifiManager::sendImprovRPCResponse(byte commandId, bool forceConnection) {
   Serial.write((uint8_t *) out, packetLen);
   Serial.write('\n');
   improvActive = 1; //no longer provisioning
-
 }
 
 void WifiManager::sendImprovInfoResponse() {
-
   if (improvError > 0 && improvError < 3) sendImprovStateResponse(0x00, true);
   uint8_t packetLen = 12;
   char out[128] = {'I', 'M', 'P', 'R', 'O', 'V'};
@@ -659,7 +652,7 @@ void WifiManager::sendImprovInfoResponse() {
   strcpy(out + lengthSum + 1, "esp8266");
 #else
   hlen = 5;
-  strcpy(out+lengthSum+1,"esp32");
+  strcpy(out + lengthSum + 1, "esp32");
 #endif
   out[lengthSum] = hlen;
   lengthSum += hlen + 1;
@@ -679,11 +672,9 @@ void WifiManager::sendImprovInfoResponse() {
   Serial.write('\n');
   DIMPROV_PRINT("Info checksum");
   DIMPROV_PRINTLN(checksum);
-
 }
 
 void WifiManager::parseWiFiCommand(char *rpcData) {
-
   uint8_t len = rpcData[0];
   if (!len || len > 126) return;
   uint8_t ssidLen = rpcData[1];
@@ -733,7 +724,6 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
 
 //blocking function to parse an Improv Serial packet
 void WifiManager::handleImprovPacket() {
-
   uint8_t header[6] = {'I', 'M', 'P', 'R', 'O', 'V'};
   bool timeout = false;
   uint16_t packetByte = 0;
@@ -820,7 +810,6 @@ void WifiManager::handleImprovPacket() {
     checksum += next;
     packetByte++;
   }
-
 }
 
 

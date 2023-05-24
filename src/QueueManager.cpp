@@ -23,20 +23,19 @@
 PubSubClient mqttClient(espClient);
 
 /********************************** SETUP MQTT QUEUE **********************************/
-void QueueManager::setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)) {
-
-  mqttClient.setServer(IPAddress(Helpers::getValue(mqttIP,'.',0).toInt(),
-                                 Helpers::getValue(mqttIP,'.',1).toInt(),
-                                 Helpers::getValue(mqttIP,'.',2).toInt(),
-                                 Helpers::getValue(mqttIP,'.',3).toInt()), mqttPort.toInt());
+void QueueManager::setupMQTTQueue(void (*callback)(char *, byte *, unsigned int)) {
+  mqttClient.setServer(IPAddress(Helpers::getValue(mqttIP, '.', 0).toInt(),
+                                 Helpers::getValue(mqttIP, '.', 1).toInt(),
+                                 Helpers::getValue(mqttIP, '.', 2).toInt(),
+                                 Helpers::getValue(mqttIP, '.', 3).toInt()), mqttPort.toInt());
   mqttClient.setCallback(callback);
   mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
   mqttClient.setKeepAlive(MQTT_KEEP_ALIVE);
-
 }
 
 /********************************** SET LAST WILL PARAMETERS **********************************/
-void QueueManager::setMQTTWill(const char *topic, const char *payload, const int qos, boolean retain, boolean cleanSession){
+void
+QueueManager::setMQTTWill(const char *topic, const char *payload, const int qos, boolean retain, boolean cleanSession) {
   mqttWillTopic = topic;
   mqttWillPayload = payload;
   mqttWillQOS = qos;
@@ -45,31 +44,26 @@ void QueueManager::setMQTTWill(const char *topic, const char *payload, const int
 }
 
 /********************************** MQTT RECONNECT **********************************/
-void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
-
+void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(),
+                                 void (*manageHardwareButton)()) {
   // how many attemps to MQTT connection
   mqttReconnectAttemp = 0;
-
   // Loop until we're reconnected
   while (!mqttClient.connected() && WiFi.status() == WL_CONNECTED) {
-
-    #if (DISPLAY_ENABLED) 
-      display.clearDisplay();
-      display.setTextSize(1);
-      display.setCursor(0,0);
-    #endif
+#if (DISPLAY_ENABLED)
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setCursor(0,0);
+#endif
     if (mqttReconnectAttemp <= 20) {
       Helpers::smartPrintln(F("Connecting to"));
       Helpers::smartPrintln(F("MQTT Broker..."));
     }
     helper.smartDisplay();
-
     // Manage hardware button if any
     manageHardwareButton();
-
     // Attempt to connect to MQTT server with QoS = 1 (pubsubclient supports QoS 1 for subscribe only, published msg have QoS 0 this is why I implemented a custom solution)
     boolean mqttSuccess;
-
     Serial.println("MQTT Last Will Params: ");
     Serial.print("willTopic: ");
     Serial.println(mqttWillTopic);
@@ -81,32 +75,28 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
     Serial.println(mqttWillRetain);
     Serial.print("clean session: ");
     Serial.println(mqttCleanSession);
-
     if (mqttuser.isEmpty() || mqttpass.isEmpty()) {
-      mqttSuccess = mqttClient.connect(Helpers::string2char(deviceName), Helpers::string2char(mqttWillTopic), mqttWillQOS, mqttWillRetain, Helpers::string2char(mqttWillPayload));
+      mqttSuccess = mqttClient.connect(Helpers::string2char(deviceName), Helpers::string2char(mqttWillTopic),
+                                       mqttWillQOS, mqttWillRetain, Helpers::string2char(mqttWillPayload));
     } else {
-      mqttSuccess = mqttClient.connect(Helpers::string2char(deviceName), Helpers::string2char(mqttuser), Helpers::string2char(mqttpass), Helpers::string2char(mqttWillTopic), mqttWillQOS, mqttWillRetain, Helpers::string2char(mqttWillPayload), mqttCleanSession);
+      mqttSuccess = mqttClient.connect(Helpers::string2char(deviceName), Helpers::string2char(mqttuser),
+                                       Helpers::string2char(mqttpass), Helpers::string2char(mqttWillTopic), mqttWillQOS,
+                                       mqttWillRetain, Helpers::string2char(mqttWillPayload), mqttCleanSession);
     }
     if (mqttSuccess) {
-
       Helpers::smartPrintln(F(""));
       Helpers::smartPrintln(F("MQTT CONNECTED"));
       Helpers::smartPrintln(F(""));
       Helpers::smartPrintln(F("Reading data from"));
       Helpers::smartPrintln(F("the network..."));
       helper.smartDisplay();
-
       // Subscribe to MQTT topics
       manageQueueSubscription();
-
       delay(DELAY_2000);
       mqttReconnectAttemp = 0;
-
       // reset the lastMQTTConnection to off, will be initialized by next time update
       lastMQTTConnection = OFF_CMD;
-
     } else {
-
       Helpers::smartPrintln(F("MQTT attempts="));
       Helpers::smartPrintln(mqttReconnectAttemp);
       helper.smartDisplay();
@@ -122,46 +112,35 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       mqttReconnectAttemp++;
       // Wait 500 millis before retrying
       delay(DELAY_500);
-
     }
   }
-
 }
 
-void QueueManager::queueLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
-
+void QueueManager::queueLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(),
+                             void (*manageHardwareButton)()) {
   if (!mqttClient.connected()) {
     mqttReconnect(manageDisconnections, manageQueueSubscription, manageHardwareButton);
   }
   mqttClient.loop();
-
 }
 
 /********************************** SEND A MESSAGE ON THE QUEUE **********************************/
 void QueueManager::publish(const char *topic, const char *payload, boolean retained) {
-
   mqttClient.publish(topic, payload, retained);
-
 }
 
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
 void QueueManager::unsubscribe(const char *topic) {
-
   mqttClient.unsubscribe(topic);
-
 }
 
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
 void QueueManager::subscribe(const char *topic) {
-
   mqttClient.subscribe(topic);
-
 }
 
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
 void QueueManager::subscribe(const char *topic, uint8_t qos) {
-
   mqttClient.subscribe(topic, qos);
-
 }
 

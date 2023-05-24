@@ -24,7 +24,7 @@ void BootstrapManager::littleFsInit() {
 #if defined(ESP8266)
   if (!LittleFS.begin()) {
 #elif defined(ARDUINO_ARCH_ESP32)
-    if (!LittleFS.begin(true)) {
+  if (!LittleFS.begin(true)) {
 #endif
     Serial.println("LittleFS mount failed");
     return;
@@ -32,8 +32,8 @@ void BootstrapManager::littleFsInit() {
 }
 
 /********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
-void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int)) {
-
+void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(),
+                                      void (*callback)(char *, byte *, unsigned int)) {
   littleFsInit();
   if (isWifiConfigured() && !forceWebServer) {
     isConfigFileOk = true;
@@ -51,12 +51,12 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = false;
     launchWebServerForOTAConfig();
   }
-
 }
 
 /********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
-void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(), void (*callback)(char*, byte*, unsigned int), bool waitImprov, void (*listener)()) {
-
+void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*manageHardwareButton)(),
+                                      void (*callback)(char *, byte *, unsigned int), bool waitImprov,
+                                      void (*listener)()) {
   littleFsInit();
   if (isWifiConfigured() && !forceWebServer) {
     isConfigFileOk = true;
@@ -74,13 +74,13 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = false;
     launchWebServerCustom(waitImprov, listener);
   }
-
 }
 
 /********************************** BOOTSTRAP FUNCTIONS FOR LOOP() *****************************************/
 bool rcpResponseSent = false;
-void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
 
+void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(),
+                                     void (*manageHardwareButton)()) {
 #if (IMPROV_ENABLED > 0)
   if (!rcpResponseSent && WifiManager::isConnected()) {
     rcpResponseSent = true;
@@ -95,88 +95,82 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   if (mqttIP.length() > 0) {
     queueManager.queueLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
   }
-
 }
 
 /********************************** SET LAST WILL PARAMETERS IN THE Q MANAGER **********************************/
-void BootstrapManager::setMQTTWill(const char *topic, const char *payload, const int qos, boolean retain, boolean cleanSession){
+void BootstrapManager::setMQTTWill(const char *topic, const char *payload, const int qos, boolean retain,
+                                   boolean cleanSession) {
   QueueManager::setMQTTWill(topic, payload, qos, retain, cleanSession);
 }
 
 /********************************** SEND A SIMPLE MESSAGE ON THE QUEUE **********************************/
 void BootstrapManager::publish(const char *topic, const char *payload, boolean retained) {
-
   if (DEBUG_QUEUE_MSG) {
-    Serial.print(F("QUEUE MSG SENT [")); Serial.print(topic); Serial.println(F("] "));
+    Serial.print(F("QUEUE MSG SENT ["));
+    Serial.print(topic);
+    Serial.println(F("] "));
     Serial.println(payload);
   }
   QueueManager::publish(topic, payload, retained);
-
 }
 
 /********************************** SEND A JSON MESSAGE ON THE QUEUE **********************************/
 void BootstrapManager::publish(const char *topic, JsonObject objectToSend, boolean retained) {
-
   char buffer[measureJson(objectToSend) + 1];
   serializeJson(objectToSend, buffer, sizeof(buffer));
-
   QueueManager::publish(topic, buffer, retained);
-
   if (DEBUG_QUEUE_MSG) {
-    Serial.print(F("QUEUE MSG SENT [")); Serial.print(topic); Serial.println(F("] "));
-    serializeJsonPretty(objectToSend, Serial); Serial.println();
+    Serial.print(F("QUEUE MSG SENT ["));
+    Serial.print(topic);
+    Serial.println(F("] "));
+    serializeJsonPretty(objectToSend, Serial);
+    Serial.println();
   }
-
 }
 
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
 void BootstrapManager::unsubscribe(const char *topic) {
-
   QueueManager::unsubscribe(topic);
-
   if (DEBUG_QUEUE_MSG) {
-    Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));
+    Serial.print(F("TOPIC SUBSCRIBED ["));
+    Serial.print(topic);
+    Serial.println(F("] "));
   }
-
 }
 
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
 void BootstrapManager::subscribe(const char *topic) {
-
   QueueManager::subscribe(topic);
-
   if (DEBUG_QUEUE_MSG) {
-    Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));
+    Serial.print(F("TOPIC SUBSCRIBED ["));
+    Serial.print(topic);
+    Serial.println(F("] "));
   }
-
 }
 
 /********************************** SUBSCRIBE TO A QUEUE TOPIC **********************************/
 void BootstrapManager::subscribe(const char *topic, uint8_t qos) {
-
   QueueManager::subscribe(topic, qos);
-
   if (DEBUG_QUEUE_MSG) {
-    Serial.print(F("TOPIC SUBSCRIBED [")); Serial.print(topic); Serial.println(F("] "));
+    Serial.print(F("TOPIC SUBSCRIBED ["));
+    Serial.print(topic);
+    Serial.println(F("] "));
   }
-
 }
 
 /********************************** PRINT THE MESSAGE ARRIVING FROM THE QUEUE **********************************/
-StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byte* payload, unsigned int length) {
-
+StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char *topic, byte *payload, unsigned int length) {
   if (DEBUG_QUEUE_MSG) {
-    Serial.print(F("QUEUE MSG ARRIVED [")); Serial.print(topic); Serial.println(F("] "));
+    Serial.print(F("QUEUE MSG ARRIVED ["));
+    Serial.print(topic);
+    Serial.println(F("] "));
   }
-
   char message[length + 1];
   for (unsigned int i = 0; i < length; i++) {
-    message[i] = (char)payload[i];
+    message[i] = (char) payload[i];
   }
   message[length] = '\0';
-
-  DeserializationError error = deserializeJson(jsonDoc, (const byte*) payload, length);
-
+  DeserializationError error = deserializeJson(jsonDoc, (const byte *) payload, length);
   // non json msg
   if (error) {
     JsonObject root = jsonDoc.to<JsonObject>();
@@ -188,24 +182,21 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char* topic, byt
     return jsonDoc;
   } else { // return json doc
     if (DEBUG_QUEUE_MSG) {
-      serializeJsonPretty(jsonDoc, Serial); Serial.println();
+      serializeJsonPretty(jsonDoc, Serial);
+      Serial.println();
     }
     return jsonDoc;
   }
-
 }
 
 /********************************** PRINT THE MESSAGE ARRIVING FROM HTTP **********************************/
 StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseHttpMsg(String payload, unsigned int length) {
-
   char message[length + 1];
   for (unsigned int i = 0; i < length; i++) {
-    message[i] = (char)payload[i];
+    message[i] = (char) payload[i];
   }
   message[length] = '\0';
-
   DeserializationError error = deserializeJson(jsonDoc, payload.c_str(), length);
-
   // non json msg
   if (error) {
     JsonObject root = jsonDoc.to<JsonObject>();
@@ -217,23 +208,20 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseHttpMsg(String payload, u
     return jsonDoc;
   } else { // return json doc
     if (DEBUG_QUEUE_MSG) {
-      serializeJsonPretty(jsonDoc, Serial); Serial.println();
+      serializeJsonPretty(jsonDoc, Serial);
+      Serial.println();
     }
     return jsonDoc;
   }
-
 }
 
 // return a new json object instance
 JsonObject BootstrapManager::getJsonObject() {
-
   return jsonDoc.to<JsonObject>();
-
 }
 
 // Blink LED_BUILTIN without bloking delay
 [[maybe_unused]] void BootstrapManager::nonBlokingBlink() {
-
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval && ledTriggered) {
     // save the last time you blinked the LED
@@ -251,13 +239,13 @@ JsonObject BootstrapManager::getJsonObject() {
 #endif
     }
   }
-
 }
 
 // Print or display microcontroller infos
 void BootstrapManager::getMicrocontrollerInfo() {
-
-  Helpers::smartPrint(F("Wifi: ")); Helpers::smartPrint(WifiManager::getQuality()); Helpers::smartPrintln(F("%"));
+  Helpers::smartPrint(F("Wifi: "));
+  Helpers::smartPrint(WifiManager::getQuality());
+  Helpers::smartPrintln(F("%"));
 #if defined(ESP8266)
   Helpers::smartPrint(F("Heap: ")); Helpers::smartPrint(EspClass::getFreeHeap()/1024); Helpers::smartPrintln(F(" KB"));
   Helpers::smartPrint(F("Free Flash: ")); Helpers::smartPrint(EspClass::getFreeSketchSpace()/1024); Helpers::smartPrintln(F(" KB"));
@@ -266,24 +254,39 @@ void BootstrapManager::getMicrocontrollerInfo() {
   Helpers::smartPrint(F("Sketch: ")); Helpers::smartPrint(EspClass::getSketchSize()/1024); Helpers::smartPrintln(F(" KB"));
   Helpers::smartPrint(F("SDK: ")); Helpers::smartPrintln(EspClass::getSdkVersion());
 #elif defined(ARDUINO_ARCH_ESP32)
-  Helpers::smartPrint(F("Heap: ")); Helpers::smartPrint(ESP.getFreeHeap()/1024); Helpers::smartPrintln(F(" KB"));
-  Helpers::smartPrint(F("Free Flash: ")); Helpers::smartPrint(ESP.getFreeSketchSpace()/1024); Helpers::smartPrintln(F(" KB"));
-  Helpers::smartPrint(F("Frequency: ")); Helpers::smartPrint(ESP.getCpuFreqMHz()); Helpers::smartPrintln(F("MHz"));
-  Helpers::smartPrint(F("Flash: ")); Helpers::smartPrint(ESP.getFlashChipSize()/1024); Helpers::smartPrintln(F(" KB"));
-  Helpers::smartPrint(F("Sketch: ")); Helpers::smartPrint(ESP.getSketchSize()/1024); Helpers::smartPrintln(F(" KB"));
-  Helpers::smartPrint(F("SDK: ")); Helpers::smartPrintln(ESP.getSdkVersion());
+  Helpers::smartPrint(F("Heap: "));
+  Helpers::smartPrint(ESP.getFreeHeap() / 1024);
+  Helpers::smartPrintln(F(" KB"));
+  Helpers::smartPrint(F("Free Flash: "));
+  Helpers::smartPrint(ESP.getFreeSketchSpace() / 1024);
+  Helpers::smartPrintln(F(" KB"));
+  Helpers::smartPrint(F("Frequency: "));
+  Helpers::smartPrint(ESP.getCpuFreqMHz());
+  Helpers::smartPrintln(F("MHz"));
+  Helpers::smartPrint(F("Flash: "));
+  Helpers::smartPrint(ESP.getFlashChipSize() / 1024);
+  Helpers::smartPrintln(F(" KB"));
+  Helpers::smartPrint(F("Sketch: "));
+  Helpers::smartPrint(ESP.getSketchSize() / 1024);
+  Helpers::smartPrintln(F(" KB"));
+  Helpers::smartPrint(F("SDK: "));
+  Helpers::smartPrintln(ESP.getSdkVersion());
 #endif
-  Helpers::smartPrintln(F("MAC: ")); Helpers::smartPrintln(WiFi.macAddress());
-  Helpers::smartPrint(F("IP: ")); Helpers::smartPrintln(microcontrollerIP);
+  Helpers::smartPrintln(F("MAC: "));
+  Helpers::smartPrintln(WiFi.macAddress());
+  Helpers::smartPrint(F("IP: "));
+  Helpers::smartPrintln(microcontrollerIP);
   // helper.smartPrint(F("Arduino Core: ")); helper.smartPrintln(ESP.getCoreVersion());
-  Helpers::smartPrintln(F("Last Boot: ")); Helpers::smartPrintln(lastBoot);
-  Helpers::smartPrintln(F("Last WiFi connection:")); Helpers::smartPrintln(lastWIFiConnection);
-  Helpers::smartPrintln(F("Last MQTT connection:")); Helpers::smartPrintln(lastMQTTConnection);
-
+  Helpers::smartPrintln(F("Last Boot: "));
+  Helpers::smartPrintln(lastBoot);
+  Helpers::smartPrintln(F("Last WiFi connection:"));
+  Helpers::smartPrintln(lastWIFiConnection);
+  Helpers::smartPrintln(F("Last MQTT connection:"));
+  Helpers::smartPrintln(lastMQTTConnection);
 }
 
 // Draw screensaver useful for OLED displays
-[[maybe_unused]] void BootstrapManager::drawScreenSaver(const String& txt) {
+[[maybe_unused]] void BootstrapManager::drawScreenSaver(const String &txt) {
 #if (DISPLAY_ENABLED)
   if (screenSaverTriggered) {
     display.clearDisplay();
@@ -304,7 +307,7 @@ void BootstrapManager::getMicrocontrollerInfo() {
 }
 
 // draw some infos about your controller
-[[maybe_unused]] void BootstrapManager::drawInfoPage(const String& softwareVersion, const String& author) {
+[[maybe_unused]] void BootstrapManager::drawInfoPage(const String &softwareVersion, const String &author) {
 #if (DISPLAY_ENABLED)
   yoffset -= 1;
   // add/remove 8 pixel for every line yoffset <= -209, if you want to add a line yoffset <= -217
@@ -336,8 +339,7 @@ void BootstrapManager::getMicrocontrollerInfo() {
 }
 
 // send the state of your controller to the mqtt queue
-[[maybe_unused]] void BootstrapManager::sendState(const char *topic, JsonObject objectToSend, const String& version) {
-
+[[maybe_unused]] void BootstrapManager::sendState(const char *topic, JsonObject objectToSend, const String &version) {
   objectToSend["Whoami"] = deviceName;
   objectToSend["IP"] = microcontrollerIP;
   objectToSend["MAC"] = MAC;
@@ -350,12 +352,10 @@ void BootstrapManager::getMicrocontrollerInfo() {
     // This topic should be retained, we don't want unknown values on battery voltage or wifi signal
     publish(topic, objectToSend, true);
   }
-
 }
 
 // write json file to storage
-void BootstrapManager::writeToLittleFS(const DynamicJsonDocument& jDoc, const String& filenameToUse) {
-
+void BootstrapManager::writeToLittleFS(const DynamicJsonDocument &jDoc, const String &filenameToUse) {
   File jsonFile = LittleFS.open("/" + filenameToUse, FILE_WRITE);
   if (!jsonFile) {
     Helpers::smartPrintln("Failed to open [" + filenameToUse + "] file for writing");
@@ -365,45 +365,35 @@ void BootstrapManager::writeToLittleFS(const DynamicJsonDocument& jDoc, const St
     jsonFile.close();
     Helpers::smartPrintln("[" + filenameToUse + "] written correctly");
   }
-
 }
 
 // read json file from storage
-StaticJsonDocument<BUFFER_SIZE> BootstrapManager::readLittleFS(const String& filenameToUse) {
-
+StaticJsonDocument<BUFFER_SIZE> BootstrapManager::readLittleFS(const String &filenameToUse) {
   // Helpers classes
   Helpers helper;
-
-  #if (DISPLAY_ENABLED) 
-    display.clearDisplay();
-    display.setCursor(0, 0);
-    display.setTextSize(1);
-  #endif
+#if (DISPLAY_ENABLED)
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.setTextSize(1);
+#endif
   Helpers::smartPrintln(F("Mounting LittleFS..."));
   helper.smartDisplay();
-
   File jsonFile = LittleFS.open("/" + filenameToUse, FILE_READ);
-
   if (!jsonFile) {
     Helpers::smartPrintln("Failed to open [" + filenameToUse + "] file");
     helper.smartDisplay();
   }
-
   size_t size = jsonFile.size();
   if (size > BUFFER_SIZE) {
     Helpers::smartPrintln("[" + filenameToUse + "] file size is too large");
   }
-
   // Allocate a buffer to store contents of the file.
   std::unique_ptr<char[]> buf(new char[size]);
-
   // We don't use String here because ArduinoJson library requires the input
   // buffer to be mutable. If you don't use ArduinoJson, you may as well
   // use configFile.readString instead.
   jsonFile.readBytes(buf.get(), size);
-
   StaticJsonDocument<BUFFER_SIZE> jsonDoc;
-
   auto error = deserializeJson(jsonDoc, buf.get());
   if (filenameToUse != "setup.json") serializeJsonPretty(jsonDoc, Serial);
   jsonFile.close();
@@ -415,13 +405,11 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::readLittleFS(const String& fil
     helper.smartDisplay(DELAY_2000);
     return jsonDoc;
   }
-
   helper.smartDisplay(DELAY_2000);
   return jsonDoc;
-
 }
 
-String BootstrapManager::readValueFromFile(const String& filenameToUse, const String& paramName) {
+String BootstrapManager::readValueFromFile(const String &filenameToUse, const String &paramName) {
   String returnStr = "";
   if (!LittleFS.begin()) {
     Serial.println("LittleFS mount failed");
@@ -438,7 +426,7 @@ String BootstrapManager::readValueFromFile(const String& filenameToUse, const St
   auto error = deserializeJson(jDoc, buf.get());
   serializeJsonPretty(jDoc, Serial);
   JsonVariant answer = jDoc[paramName];
-  if (answer.is<const char*>()) {
+  if (answer.is<const char *>()) {
     returnStr = answer.as<String>();
   } else {
     auto returnVal = answer.as<int>();
@@ -453,7 +441,6 @@ String BootstrapManager::readValueFromFile(const String& filenameToUse, const St
 
 // check if wifi is correctly configured
 bool BootstrapManager::isWifiConfigured() {
-
   if (WifiManager::isWifiConfigured()) {
     deviceName = DEVICE_NAME;
     microcontrollerIP = IP_MICROCONTROLLER;
@@ -486,17 +473,14 @@ bool BootstrapManager::isWifiConfigured() {
     }
   }
   return false;
-
 }
 
 // if no ssid available, launch web server to get config params via browser
 void BootstrapManager::launchWebServerForOTAConfig() {
-
 #if (IMPROV_ENABLED > 0)
   manageImprov();
 #endif
   return WifiManager::launchWebServerForOTAConfig();
-
 }
 
 void BootstrapManager::manageImprov() {
@@ -505,7 +489,7 @@ void BootstrapManager::manageImprov() {
   // If WiFi is not configured, handle improv packet for 15 seconds, then switch to settinigs managed by web server
   WiFi.disconnect();
   while (((WiFi.localIP()[0] == 0 && WiFi.status() != WL_CONNECTED) && !switchToWebServer) || improvePacketReceived) {
-    if(millis() > timeNowStatus + IMPROV_ENABLED) {
+    if (millis() > timeNowStatus + IMPROV_ENABLED) {
       timeNowStatus = millis();
       switchToWebServer = true;
     }
@@ -514,19 +498,15 @@ void BootstrapManager::manageImprov() {
 }
 
 void BootstrapManager::launchWebServerCustom(bool waitImprov, void (*listener)()) {
-
 #if (IMPROV_ENABLED > 0)
   if (waitImprov) {
     manageImprov();
   }
 #endif
   return WifiManager::launchWebServerCustom(listener);
-
 }
 
 // get the wifi quality
 int BootstrapManager::getWifiQuality() {
-
   return WifiManager::getQuality();
-
 }

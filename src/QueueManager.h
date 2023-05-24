@@ -26,19 +26,19 @@
 
 class QueueManager {
 
-  private:
+private:
     Helpers helper;
 
-  public:
-    static void setupMQTTQueue(void (*callback)(char*, byte*, unsigned int)); // setup the queue
+public:
+    static void setupMQTTQueue(void (*callback)(char *, byte *, unsigned int)); // setup the queue
     static void setMQTTWill(const char *topic, const char *payload, int qos, boolean retain, boolean cleanSession); // set the last will parameters for mqtt
     void mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // manage reconnection on the queue
-    void queueLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // manage queue loop 
+    void queueLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // manage queue loop
     static void publish(const char *topic, const char *payload, boolean retained); // send a message on the queue
     static void unsubscribe(const char *topic); // unsubscribe to a queue topic
     static void subscribe(const char *topic); // subscribe to a queue topic
     static void subscribe(const char *topic, uint8_t qos); // subscribe to a queue topic with qos 0 or 1
- 
+
 };
 
 #endif
