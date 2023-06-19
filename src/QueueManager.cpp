@@ -100,25 +100,12 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       Helpers::smartPrintln(F("MQTT attempts="));
       Helpers::smartPrintln(mqttReconnectAttemp);
       helper.smartDisplay();
-
-      if (mqttReconnectAttemp > 15) {
-        // if fastDisconnectionManagement we need to execute the callback immediately, 
-        // example: power off a watering system can't wait MAX_RECONNECT attemps
-        if (fastDisconnectionManagement) {
-          manageDisconnections();
-          Helpers::smartPrintln(F("Disconnecting WiFi."));
-          WiFi.reconnect();
-        }
-      }
-
       // after MAX_RECONNECT attemps all peripherals are shut down
-      if (mqttReconnectAttemp >= MAX_RECONNECT) {
+      if (mqttReconnectAttemp >= MAX_RECONNECT || fastDisconnectionManagement) {
         Helpers::smartPrintln(F("Max retry reached, powering off peripherals."));
         helper.smartDisplay();
         // Manage disconnections, powering off peripherals
         manageDisconnections();
-        Helpers::smartPrintln(F("Disconnecting WiFi."));
-        WiFi.reconnect();
       } else if (mqttReconnectAttemp > 10000) {
         mqttReconnectAttemp = 0;
       }
