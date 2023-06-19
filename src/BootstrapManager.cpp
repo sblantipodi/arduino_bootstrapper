@@ -51,6 +51,13 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = false;
     launchWebServerForOTAConfig();
   }
+#if defined(ARDUINO_ARCH_ESP32)
+  esp_task_wdt_init(3000, true); //enable panic so ESP32 restarts
+  esp_task_wdt_add(NULL); //add current thread to WDT watch
+#endif
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+  Serial.setTxTimeoutMs(0);
+#endif
 }
 
 /********************************** BOOTSTRAP FUNCTIONS FOR SETUP() *****************************************/
@@ -74,13 +81,24 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = false;
     launchWebServerCustom(waitImprov, listener);
   }
+#if defined(ARDUINO_ARCH_ESP32)
+  esp_task_wdt_init(3000, true); //enable panic so ESP32 restarts
+  esp_task_wdt_add(NULL); //add current thread to WDT watch
+#endif
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+  Serial.setTxTimeoutMs(0);
+#endif
 }
 
 /********************************** BOOTSTRAP FUNCTIONS FOR LOOP() *****************************************/
 bool rcpResponseSent = false;
-
-void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(),
-                                     void (*manageHardwareButton)()) {
+void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
+#if defined(ARDUINO_ARCH_ESP32)
+  if (millis() - lastMillisForWdt >= 3000) {
+    lastMillisForWdt = millis();
+    esp_task_wdt_reset();
+  }
+#endif
 #if (IMPROV_ENABLED > 0)
   if (!rcpResponseSent && WifiManager::isConnected()) {
     rcpResponseSent = true;
