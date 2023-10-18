@@ -729,7 +729,7 @@ void WifiManager::handleImprovPacket() {
   uint16_t packetByte = 0;
   uint8_t packetLen = 9;
   uint8_t checksum = 0;
-  uint8_t waitTime = 2500;
+  uint8_t waitTime = 255;
   uint8_t rpcCommandType = 0;
   char rpcData[128];
   rpcData[0] = 0;
