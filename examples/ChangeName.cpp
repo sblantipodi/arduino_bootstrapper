@@ -54,13 +54,13 @@ void manageHardwareButton() {
 void callback(char* topic, byte* payload, unsigned int length) {
 
   // Transform all messages in a JSON format  
-  StaticJsonDocument<BUFFER_SIZE> json = bootstrapManager.parseQueueMsg(topic, payload, length);
+  JsonDocument json = bootstrapManager.parseQueueMsg(topic, payload, length);
 
   if(strcmp(topic, CHANGE_ME_TOPIC) == 0) {
     String simpleMsg = json[VALUE];
     // Serial.println(simpleMsg);    
   } else if(strcmp(topic, CHANGE_ME_JSON_TOPIC) == 0) {
-    String simpleMsg = json["ROOT_EXAMPLE"];
+    String simpleMsg = bootstrapManager.jsonDoc[F("ROOT_EXAMPLE")];
     // Serial.println(simpleMsg);
   }
 
