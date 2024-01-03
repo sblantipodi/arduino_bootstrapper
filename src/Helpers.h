@@ -24,10 +24,6 @@
 #include "Configuration.h"
 
 
-// Maximum JSON Object Size
-const int BUFFER_SIZE = JSON_OBJECT_SIZE(SMALL_JSON_OBJECT_SIZE);
-const int BUFFER_SIZE_MAX_SIZE = JSON_OBJECT_SIZE(MAX_JSON_OBJECT_SIZE);
-
 extern bool isConfigFileOk;
 extern String lastMQTTConnection;
 extern String lastWIFiConnection;
@@ -166,7 +162,7 @@ public:
 
     [[maybe_unused]] static void setDateTime(String timeConst);
 
-    [[maybe_unused]] static String isOnOff(StaticJsonDocument<BUFFER_SIZE> json);
+    [[maybe_unused]] static String isOnOff(JsonDocument json);
 
 };
 

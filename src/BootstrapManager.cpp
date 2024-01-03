@@ -177,7 +177,7 @@ void BootstrapManager::subscribe(const char *topic, uint8_t qos) {
 }
 
 /********************************** PRINT THE MESSAGE ARRIVING FROM THE QUEUE **********************************/
-StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char *topic, byte *payload, unsigned int length) {
+JsonDocument BootstrapManager::parseQueueMsg(char *topic, byte *payload, unsigned int length) {
   if (DEBUG_QUEUE_MSG) {
     Serial.print(F("QUEUE MSG ARRIVED ["));
     Serial.print(topic);
@@ -208,7 +208,7 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseQueueMsg(char *topic, byt
 }
 
 /********************************** PRINT THE MESSAGE ARRIVING FROM HTTP **********************************/
-StaticJsonDocument<BUFFER_SIZE> BootstrapManager::parseHttpMsg(String payload, unsigned int length) {
+JsonDocument BootstrapManager::parseHttpMsg(String payload, unsigned int length) {
   char message[length + 1];
   for (unsigned int i = 0; i < length; i++) {
     message[i] = (char) payload[i];
@@ -373,7 +373,7 @@ void BootstrapManager::getMicrocontrollerInfo() {
 }
 
 // write json file to storage
-void BootstrapManager::writeToLittleFS(const DynamicJsonDocument &jDoc, const String &filenameToUse) {
+void BootstrapManager::writeToLittleFS(const JsonDocument &jDoc, const String &filenameToUse) {
   File jsonFile = LittleFS.open("/" + filenameToUse, FILE_WRITE);
   if (!jsonFile) {
     Helpers::smartPrintln("Failed to open [" + filenameToUse + "] file for writing");
@@ -386,7 +386,7 @@ void BootstrapManager::writeToLittleFS(const DynamicJsonDocument &jDoc, const St
 }
 
 // read json file from storage
-StaticJsonDocument<BUFFER_SIZE> BootstrapManager::readLittleFS(const String &filenameToUse) {
+JsonDocument BootstrapManager::readLittleFS(const String &filenameToUse) {
   // Helpers classes
   Helpers helper;
 #if (DISPLAY_ENABLED)
@@ -402,16 +402,13 @@ StaticJsonDocument<BUFFER_SIZE> BootstrapManager::readLittleFS(const String &fil
     helper.smartDisplay();
   }
   size_t size = jsonFile.size();
-  if (size > BUFFER_SIZE) {
-    Helpers::smartPrintln("[" + filenameToUse + "] file size is too large");
-  }
   // Allocate a buffer to store contents of the file.
   std::unique_ptr<char[]> buf(new char[size]);
   // We don't use String here because ArduinoJson library requires the input
   // buffer to be mutable. If you don't use ArduinoJson, you may as well
   // use configFile.readString instead.
   jsonFile.readBytes(buf.get(), size);
-  StaticJsonDocument<BUFFER_SIZE> jsonDoc;
+  JsonDocument jsonDoc;
   auto error = deserializeJson(jsonDoc, buf.get());
   if (filenameToUse != "setup.json") serializeJsonPretty(jsonDoc, Serial);
   jsonFile.close();
@@ -440,7 +437,7 @@ String BootstrapManager::readValueFromFile(const String &filenameToUse, const St
   size_t size = jsonFile.size();
   std::unique_ptr<char[]> buf(new char[size]);
   jsonFile.readBytes(buf.get(), size);
-  DynamicJsonDocument jDoc(1024);
+  JsonDocument jDoc;
   auto error = deserializeJson(jDoc, buf.get());
   serializeJsonPretty(jDoc, Serial);
   JsonVariant answer = jDoc[paramName];
@@ -472,7 +469,7 @@ bool BootstrapManager::isWifiConfigured() {
     additionalParam = PARAM_ADDITIONAL;
     return true;
   } else {
-    StaticJsonDocument<BUFFER_SIZE> mydoc = readLittleFS("setup.json");
+    JsonDocument mydoc = readLittleFS("setup.json");
     if (mydoc.containsKey("qsid")) {
       Serial.println("Storage OK, restoring WiFi and MQTT config.");
       microcontrollerIP = Helpers::getValue(mydoc["microcontrollerIP"]);
