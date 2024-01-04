@@ -142,7 +142,7 @@ void Helpers::setDateTime(String timeConst) {
 }
 
 // Return ON OFF value
-String Helpers::isOnOff(StaticJsonDocument<BUFFER_SIZE> json) {
+String Helpers::isOnOff(JsonDocument json) {
   String str = json[VALUE];
   return ((str == ON_CMD) || (str == on_CMD)) ? ON_CMD : OFF_CMD;
 }
