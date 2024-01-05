@@ -2,7 +2,7 @@
   ChangeName.cpp - Main Arduino File - Utility classes for bootstrapping arduino projects with Wifi management, 
   OTA upload management, memory management, MQTT and queue management.
 
-  Copyright © 2020 - 2023  Davide Perini
+  Copyright © 2020 - 2024  Davide Perini
   
   Permission is hereby granted, free of charge, to any person obtaining a copy of 
   this software and associated documentation files (the "Software"), to deal
