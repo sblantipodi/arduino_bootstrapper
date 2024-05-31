@@ -19,7 +19,6 @@
 
 #include "BootstrapManager.h"
 
-
 void BootstrapManager::littleFsInit() {
 #if defined(ESP8266)
   if (!LittleFS.begin()) {
@@ -65,7 +64,7 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
                                       void (*callback)(char *, byte *, unsigned int), bool waitImprov,
                                       void (*listener)()) {
   littleFsInit();
-  if (isWifiConfigured() && !forceWebServer) {
+  if (isWifiConfigured() && !forceWebServer && ethd == 0) {
     isConfigFileOk = true;
     // Initialize Wifi manager
     wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
@@ -77,9 +76,16 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     }
     // Initialize OTA manager
     WifiManager::setupOTAUpload();
-  } else {
+  } else if (ethd == 0){
     isConfigFileOk = false;
     launchWebServerCustom(waitImprov, listener);
+  } else {
+#if defined(ARDUINO_ARCH_ESP32)
+    ETH.setHostname(Helpers::string2char(deviceName));
+    ETH.begin(1, 16, 23, 18, ETH_PHY_LAN8720);
+    Serial.println(F("Ethernet connected."));
+    // TODO
+#endif
   }
 #if defined(ARDUINO_ARCH_ESP32)
   esp_task_wdt_init(3000, true); //enable panic so ESP32 restarts
@@ -100,16 +106,20 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   }
 #endif
 #if (IMPROV_ENABLED > 0)
-  if (!rcpResponseSent && WifiManager::isConnected()) {
-    rcpResponseSent = true;
-    wifiManager.sendImprovRPCResponse(0x01, true);
-  }
-  if (!temporaryDisableImprove) {
-    wifiManager.handleImprovPacket();
+  if (ethd == 0) {
+    if (!rcpResponseSent && WifiManager::isConnected()) {
+      rcpResponseSent = true;
+      wifiManager.sendImprovRPCResponse(0x01, true);
+    }
+    if (!temporaryDisableImprove) {
+      wifiManager.handleImprovPacket();
+    }
   }
 #endif
-  wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
-  ArduinoOTA.handle();
+  if (ethd == 0) {
+    wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
+    ArduinoOTA.handle();
+  }
   if (mqttIP.length() > 0) {
     queueManager.queueLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
   }
@@ -291,7 +301,13 @@ void BootstrapManager::getMicrocontrollerInfo() {
   Helpers::smartPrintln(ESP.getSdkVersion());
 #endif
   Helpers::smartPrintln(F("MAC: "));
-  Helpers::smartPrintln(WiFi.macAddress());
+  if (ethd == 0) {
+    Helpers::smartPrintln(WiFi.macAddress());
+  } else {
+#if defined(ARDUINO_ARCH_ESP32)
+    Helpers::smartPrintln(ETH.macAddress());
+#endif
+  }
   Helpers::smartPrint(F("IP: "));
   Helpers::smartPrintln(microcontrollerIP);
   // helper.smartPrint(F("Arduino Core: ")); helper.smartPrintln(ESP.getCoreVersion());
@@ -456,38 +472,40 @@ String BootstrapManager::readValueFromFile(const String &filenameToUse, const St
 
 // check if wifi is correctly configured
 bool BootstrapManager::isWifiConfigured() {
-  if (WifiManager::isWifiConfigured()) {
-    deviceName = DEVICE_NAME;
-    microcontrollerIP = IP_MICROCONTROLLER;
-    qsid = SSID;
-    qpass = PASSWORD;
-    OTApass = OTAPASSWORD;
-    mqttIP = MQTT_SERVER;
-    mqttPort = MQTT_PORT;
-    mqttuser = MQTT_USERNAME;
-    mqttpass = MQTT_PASSWORD;
-    additionalParam = PARAM_ADDITIONAL;
-    return true;
-  } else {
-    JsonDocument mydoc = readLittleFS("setup.json");
-    if (mydoc.containsKey("qsid")) {
-      Serial.println("Storage OK, restoring WiFi and MQTT config.");
-      microcontrollerIP = Helpers::getValue(mydoc["microcontrollerIP"]);
-      qsid = Helpers::getValue(mydoc["qsid"]);
-      qpass = Helpers::getValue(mydoc["qpass"]);
-      OTApass = Helpers::getValue(mydoc["OTApass"]);
-      mqttIP = Helpers::getValue(mydoc["mqttIP"]);
-      mqttPort = Helpers::getValue(mydoc["mqttPort"]);
-      mqttuser = Helpers::getValue(mydoc["mqttuser"]);
-      mqttpass = Helpers::getValue(mydoc["mqttpass"]);
-      additionalParam = Helpers::getValue(mydoc["additionalParam"]);
-      deviceName = Helpers::getValue(mydoc["deviceName"]);
-      return true;
+    if (WifiManager::isWifiConfigured()) {
+        deviceName = DEVICE_NAME;
+        microcontrollerIP = IP_MICROCONTROLLER;
+        qsid = SSID;
+        qpass = PASSWORD;
+        OTApass = OTAPASSWORD;
+        mqttIP = MQTT_SERVER;
+        mqttPort = MQTT_PORT;
+        mqttuser = MQTT_USERNAME;
+        mqttpass = MQTT_PASSWORD;
+        additionalParam = PARAM_ADDITIONAL;
+        ethd = 0;
+        return true;
     } else {
-      Serial.println("No setup file");
+        JsonDocument mydoc = readLittleFS("setup.json");
+        if (mydoc.containsKey("qsid")) {
+            Serial.println("Storage OK, restoring WiFi and MQTT config.");
+            microcontrollerIP = Helpers::getValue(mydoc["microcontrollerIP"]);
+            qsid = Helpers::getValue(mydoc["qsid"]);
+            qpass = Helpers::getValue(mydoc["qpass"]);
+            OTApass = Helpers::getValue(mydoc["OTApass"]);
+            mqttIP = Helpers::getValue(mydoc["mqttIP"]);
+            mqttPort = Helpers::getValue(mydoc["mqttPort"]);
+            mqttuser = Helpers::getValue(mydoc["mqttuser"]);
+            mqttpass = Helpers::getValue(mydoc["mqttpass"]);
+            additionalParam = Helpers::getValue(mydoc["additionalParam"]);
+            deviceName = Helpers::getValue(mydoc["deviceName"]);
+            ethd = mydoc["ethd"].as<int>();
+            return true;
+        } else {
+            Serial.println("No setup file");
+        }
     }
-  }
-  return false;
+    return false;
 }
 
 // if no ssid available, launch web server to get config params via browser

@@ -35,6 +35,7 @@ String MAC = "";
 String deviceName = "XXX";
 String microcontrollerIP = "XXX";
 bool dhcpInUse = true;
+uint8_t ethd = 0;
 String qsid = "XXX";
 String qpass = "XXX";
 String OTApass = "XXX";

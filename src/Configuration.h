@@ -26,12 +26,11 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WebServer.h>
 #elif defined(ARDUINO_ARCH_ESP32)
-
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <HTTPClient.h>
 #include <WebServer.h>
-
+#include <ETH.h>
 #endif
 
 #ifndef AUTHOR
