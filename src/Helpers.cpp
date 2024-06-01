@@ -35,7 +35,11 @@ String MAC = "";
 String deviceName = "XXX";
 String microcontrollerIP = "XXX";
 bool dhcpInUse = true;
-uint8_t ethd = 0;
+#if defined(ARDUINO_ARCH_ESP32)
+int8_t ethd = 0;
+#else
+int8_t ethd = -1;
+#endif
 String qsid = "XXX";
 String qpass = "XXX";
 String OTApass = "XXX";

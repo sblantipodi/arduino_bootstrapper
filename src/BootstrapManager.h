@@ -31,6 +31,7 @@
 #include "WifiManager.h"
 #include "QueueManager.h"
 #if defined(ARDUINO_ARCH_ESP32)
+#include "EthManager.h"
 #include <esp_task_wdt.h>
 #endif
 
@@ -74,6 +75,7 @@ public:
     void launchWebServerCustom(bool waitImprov, void (*listener)()); // if no ssid available, launch web server to get config params via browser
     static int getWifiQuality(); // get the wifi quality
     void manageImprov();
+    static void initMqttOta(void (*callback)(char *, byte *, unsigned int)) ;
 };
 
 #endif

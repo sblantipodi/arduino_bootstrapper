@@ -40,7 +40,7 @@ extern String MAC;
 extern String deviceName;
 extern String microcontrollerIP;
 extern bool dhcpInUse;
-extern uint8_t ethd;
+extern int8_t ethd;
 extern String qsid;
 extern String qpass;
 extern String OTApass;
