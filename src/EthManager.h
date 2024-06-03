@@ -44,6 +44,7 @@ class EthManager {
 
 public:
     static void connectToEthernet(int8_t deviceNumber);
+    static void deallocateEthernetPins(int8_t deviceNumber);
 };
 
 #endif

@@ -60,20 +60,25 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 }
 
 #if defined(ARDUINO_ARCH_ESP32)
-void WT32_ETH01_event(WiFiEvent_t event) {
+void eth_event(WiFiEvent_t event) {
   switch (event) {
     case ARDUINO_EVENT_ETH_START:
+      ethConnected = true;
       break;
     case ARDUINO_EVENT_ETH_CONNECTED:
       MAC = WiFi.macAddress();
+      ethConnected = true;
       break;
     case ARDUINO_EVENT_ETH_GOT_IP:
       MAC = WiFi.macAddress();
       microcontrollerIP = ETH.localIP().toString();
+      ethConnected = true;
       break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
+      ethConnected = false;
       break;
     case ARDUINO_EVENT_ETH_STOP:
+      ethConnected = false;
       break;
     default:
       break;
@@ -98,7 +103,7 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 #if defined(ARDUINO_ARCH_ESP32)
     isConfigFileOk = true;
     ETH.setHostname(Helpers::string2char(deviceName));
-    WiFi.onEvent(WT32_ETH01_event);
+    WiFi.onEvent(eth_event);
     EthManager::connectToEthernet(ethd);
     Serial.println(F("Ethernet connected."));
     initMqttOta(callback);

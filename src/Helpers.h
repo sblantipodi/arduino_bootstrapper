@@ -54,6 +54,7 @@ extern int mqttWillQOS;
 extern bool mqttWillRetain;
 extern bool mqttCleanSession;
 extern String additionalParam;
+extern bool ethConnected;
 
 // Blink LED vars
 extern unsigned long previousMillis;     // will store last time LED was updated

@@ -53,6 +53,7 @@ int mqttWillQOS = 1;
 bool mqttWillRetain = 0;
 bool mqttCleanSession = 1;
 String additionalParam = "XXX";
+bool ethConnected = false;
 
 unsigned long previousMillis = 0;
 const unsigned long interval = 200;
