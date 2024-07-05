@@ -83,6 +83,24 @@ const ethernet_config ethernetDevices[] = {
     17,
     ETH_PHY_LAN8720,
     ETH_CLOCK_GPIO0_IN
+  },
+  // LilyGO-T-POE-Pro
+  {
+    0,
+    5,
+    23,
+    18,
+    ETH_PHY_LAN8720,
+    ETH_CLOCK_GPIO0_OUT
+  },
+  // ESP32-POE-WROVER
+  {
+    0,
+    12,
+    23,
+    18,
+    ETH_PHY_LAN8720,
+    ETH_CLOCK_GPIO0_OUT
   }
 };
 
