@@ -596,6 +596,7 @@ void WifiManager::sendImprovStateResponse(uint8_t state, bool error) {
   out[10] = checksum;
   Serial.write((uint8_t *) out, 11);
   Serial.write('\n');
+  Serial.flush();
 }
 
 void WifiManager::sendImprovRPCResponse(byte commandId) {
@@ -626,6 +627,7 @@ void WifiManager::sendImprovRPCResponse(byte commandId, bool forceConnection) {
   out[packetLen - 1] = checksum;
   Serial.write((uint8_t *) out, packetLen);
   Serial.write('\n');
+  Serial.flush();
   improvActive = 1; //no longer provisioning
 }
 
@@ -670,6 +672,7 @@ void WifiManager::sendImprovInfoResponse() {
   out[packetLen - 1] = checksum;
   Serial.write((uint8_t *) out, packetLen);
   Serial.write('\n');
+  Serial.flush();
   DIMPROV_PRINT("Info checksum");
   DIMPROV_PRINTLN(checksum);
 }
