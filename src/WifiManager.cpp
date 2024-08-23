@@ -70,7 +70,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 #if defined(ESP8266)
   WiFi.setSleepMode(WIFI_NONE_SLEEP);
 #endif
-  WiFi.setAutoConnect(true);
+//  WiFi.setAutoConnect(true);
   WiFi.setAutoReconnect(true);
   Serial.println(microcontrollerIP);
   if (!microcontrollerIP.equals("DHCP")) {

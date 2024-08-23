@@ -27,9 +27,9 @@ const ethernet_config ethernetDevices[] = {
   // No Ethernet
   {
   },
+#if CONFIG_IDF_TARGET_ESP32
   // QuinLed-ESP32-Ethernet
   {
-
     0,
     5,
     23,
@@ -102,6 +102,11 @@ const ethernet_config ethernetDevices[] = {
     ETH_PHY_LAN8720,
     ETH_CLOCK_GPIO0_OUT
   }
+#endif
+#if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32C3) || defined(CONFIG_IDF_TARGET_ESP32S3)
+
+#endif
+
 };
 
 /**
@@ -109,14 +114,24 @@ const ethernet_config ethernetDevices[] = {
  * @param deviceNumber to use
  */
 void EthManager::connectToEthernet(int8_t deviceNumber) {
+#if CONFIG_IDF_TARGET_ESP32
   ETH.begin(
+    ethernetDevices[deviceNumber].type,
     ethernetDevices[deviceNumber].address,
-    ethernetDevices[deviceNumber].power,
     ethernetDevices[deviceNumber].mdc,
     ethernetDevices[deviceNumber].mdio,
-    ethernetDevices[deviceNumber].type,
+    ethernetDevices[deviceNumber].power,
     ethernetDevices[deviceNumber].clk_mode
   );
+#else
+  // TODO fix this
+//  ETH.begin(
+//    ethernetDevices[deviceNumber].address,
+//    ethernetDevices[deviceNumber].mdc,
+//    ethernetDevices[deviceNumber].mdio,
+//    ethernetDevices[deviceNumber].power
+//  );
+#endif
 }
 
 /**
@@ -124,17 +139,14 @@ void EthManager::connectToEthernet(int8_t deviceNumber) {
  * @param deviceNumber to deallocate
  */
 void EthManager::deallocateEthernetPins(int8_t deviceNumber) {
-  const uint32_t MATRIX_DETACH_OUT_SIG = 0x100;
-  gpio_matrix_out(ethernetDevices[deviceNumber].address, MATRIX_DETACH_OUT_SIG, false, false);
-  gpio_matrix_out(ethernetDevices[deviceNumber].power, MATRIX_DETACH_OUT_SIG, false, false);
-  gpio_matrix_out(ethernetDevices[deviceNumber].mdc, MATRIX_DETACH_OUT_SIG, false, false);
-  gpio_matrix_out(ethernetDevices[deviceNumber].mdio, MATRIX_DETACH_OUT_SIG, false, false);
-  gpio_matrix_out(ethernetDevices[deviceNumber].clk_mode, MATRIX_DETACH_OUT_SIG, false, false);
-  pinMode(ethernetDevices[deviceNumber].address, INPUT);
-  pinMode(ethernetDevices[deviceNumber].power, INPUT);
-  pinMode(ethernetDevices[deviceNumber].mdc, INPUT);
-  pinMode(ethernetDevices[deviceNumber].mdio, INPUT);
-  pinMode(ethernetDevices[deviceNumber].clk_mode, INPUT);
+  gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].address);
+  gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].power);
+  gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].mdc);
+  gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].mdio);
+#if CONFIG_IDF_TARGET_ESP32
+  gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].clk_mode);
+#endif
+  delay(1);
 }
 
 #endif
