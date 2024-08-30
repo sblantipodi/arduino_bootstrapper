@@ -33,6 +33,7 @@
 #include <HTTPClient.h>
 #include <WiFiUdp.h>
 #include <WebServer.h>
+#include <esp_task_wdt.h>
 
 #endif
 
