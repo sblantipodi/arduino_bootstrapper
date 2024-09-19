@@ -519,7 +519,7 @@ bool BootstrapManager::isWifiConfigured() {
         return true;
     } else {
         JsonDocument mydoc = readLittleFS(F("setup.json"));
-        if (mydoc.containsKey(F("qsid"))) {
+        if (mydoc[F("qsid")].is<JsonVariant>()) {
             Serial.println(F("Storage OK, restoring WiFi and MQTT config."));
             microcontrollerIP = Helpers::getValue(mydoc["microcontrollerIP"]);
             qsid = Helpers::getValue(mydoc[F("qsid")]);
