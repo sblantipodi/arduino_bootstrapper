@@ -3,7 +3,7 @@
   some routers isn't able to detect connected devices if there is no traffic over the internet or direct to the gateway.
   This is helpful as a stay alive class, useful for not triggering security features on routers.
 
-  Copyright © 2020 - 2024  Davide Perini
+  Copyright © 2020 - 2025  Davide Perini
 
   Permission is hereby granted, free of charge, to any person obtaining a copy of
   this software and associated documentation files (the "Software"), to deal
