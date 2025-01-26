@@ -53,6 +53,8 @@ extern String mqttWillPayload;
 extern int mqttWillQOS;
 extern bool mqttWillRetain;
 extern bool mqttCleanSession;
+extern bool mqttConnected;
+extern bool blockingMqtt;
 extern String additionalParam;
 extern bool ethConnected;
 

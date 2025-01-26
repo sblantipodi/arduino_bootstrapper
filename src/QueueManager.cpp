@@ -113,13 +113,19 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       // Wait 500 millis before retrying
       delay(DELAY_500);
     }
+    if (!blockingMqtt) {
+      break;
+    }
   }
 }
 
 void QueueManager::queueLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(),
                              void (*manageHardwareButton)()) {
   if (!mqttClient.connected()) {
+    mqttConnected = false;
     mqttReconnect(manageDisconnections, manageQueueSubscription, manageHardwareButton);
+  } else {
+    mqttConnected = true;
   }
   mqttClient.loop();
 }

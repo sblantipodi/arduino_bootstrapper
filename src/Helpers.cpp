@@ -50,8 +50,10 @@ String mqttpass = "XXX";
 String mqttWillTopic = "0";
 String mqttWillPayload = "0";
 int mqttWillQOS = 1;
-bool mqttWillRetain = 0;
-bool mqttCleanSession = 1;
+bool mqttWillRetain = false;
+bool mqttCleanSession = true;
+bool blockingMqtt = true;
+bool mqttConnected = false;
 String additionalParam = "XXX";
 bool ethConnected = false;
 
