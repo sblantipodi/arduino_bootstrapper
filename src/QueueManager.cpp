@@ -49,7 +49,7 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
   // how many attemps to MQTT connection
   mqttReconnectAttemp = 0;
   // Loop until we're reconnected
-  while (!mqttClient.connected() && (WiFi.status() == WL_CONNECTED || ethd >= 0)) {
+  while (!mqttClient.connected() && (WiFi.status() == WL_CONNECTED || ethd >= 0) && Serial.peek() == -1) {
 #if (DISPLAY_ENABLED)
     display.clearDisplay();
     display.setTextSize(1);

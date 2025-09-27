@@ -162,7 +162,7 @@ void WifiManager::setTxPower() const {
 void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
   wifiReconnectAttemp = 0;
   // loop here until connection
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED && Serial.peek() == -1) {
     manageHardwareButton();
     delay(DELAY_500);
     Serial.print(F("."));
