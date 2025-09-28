@@ -562,6 +562,7 @@ void BootstrapManager::manageImprov() {
   while (((WiFi.localIP()[0] == 0 && WiFi.status() != WL_CONNECTED) && !switchToWebServer) || improvePacketReceived) {
     if (millis() > timeNowStatus + IMPROV_ENABLED) {
       timeNowStatus = millis();
+      // TODO
       switchToWebServer = true;
     }
     wifiManager.manageImprovWifi();

@@ -713,9 +713,11 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
     serializeJson(doc, jsonFile);
     jsonFile.close();
   }
+#if defined(ARDUINO_ARCH_ESP32)
   WiFi.disconnect();
   WiFi.begin(clientSSID, clientPass);
   while (!isConnected()) {}
+#endif
   delay(DELAY_200);
   sendImprovRPCResponse(ImprovRPCType::Request_State);
   delay(DELAY_200);
