@@ -270,7 +270,7 @@ void WifiManager::launchWebServerForOTAConfig() {
   Serial.println(F("Turning HotSpot On"));
   setupAP();
   launchWeb();
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED && Serial.peek() == -1) {
     delay(10);
     server.handleClient();
   }
@@ -285,7 +285,7 @@ void WifiManager::launchWebServerCustom(void (*listener)()) {
   WiFi.softAP(WIFI_DEVICE_NAME, "");
   listener();
   server.begin();
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED && Serial.peek() == -1) {
     delay(10);
     server.handleClient();
   }

@@ -548,34 +548,28 @@ bool BootstrapManager::isWifiConfigured() {
 
 // if no ssid available, launch web server to get config params via browser
 void BootstrapManager::launchWebServerForOTAConfig() {
+  WifiManager::launchWebServerForOTAConfig();
 #if (IMPROV_ENABLED > 0)
   manageImprov();
 #endif
-  return WifiManager::launchWebServerForOTAConfig();
 }
 
 void BootstrapManager::manageImprov() {
   unsigned long timeNowStatus = 0;
-  bool switchToWebServer = false;
   // If WiFi is not configured, handle improv packet for 15 seconds, then switch to settinigs managed by web server
   WiFi.disconnect();
-  while (((WiFi.localIP()[0] == 0 && WiFi.status() != WL_CONNECTED) && !switchToWebServer) || improvePacketReceived) {
-    if (millis() > timeNowStatus + IMPROV_ENABLED) {
-      timeNowStatus = millis();
-      // TODO
-      switchToWebServer = true;
-    }
+  while ((WiFi.localIP()[0] == 0 && WiFi.status() != WL_CONNECTED) || improvePacketReceived) {
     wifiManager.manageImprovWifi();
   }
 }
 
 void BootstrapManager::launchWebServerCustom(bool waitImprov, void (*listener)()) {
+  WifiManager::launchWebServerCustom(listener);
 #if (IMPROV_ENABLED > 0)
   if (waitImprov) {
     manageImprov();
   }
 #endif
-  return WifiManager::launchWebServerCustom(listener);
 }
 
 // get the wifi quality
