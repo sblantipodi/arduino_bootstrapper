@@ -713,6 +713,9 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
     serializeJson(doc, jsonFile);
     jsonFile.close();
   }
+  WiFi.disconnect();
+  WiFi.begin(clientSSID, clientPass);
+  while (!isConnected()) {}
   delay(DELAY_200);
   sendImprovRPCResponse(ImprovRPCType::Request_State);
   delay(DELAY_200);
