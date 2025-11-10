@@ -34,8 +34,10 @@ typedef struct EthConfig {
     int power;
     int mdc;
     int mdio;
+#if CONFIG_IDF_TARGET_ESP32
     eth_phy_type_t type;
     eth_clock_mode_t clk_mode;
+#endif
 } ethernet_config;
 
 extern const ethernet_config ethernetDevices[];

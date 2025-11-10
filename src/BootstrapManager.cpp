@@ -51,7 +51,11 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     launchWebServerForOTAConfig();
   }
 #if defined(ARDUINO_ARCH_ESP32)
-  esp_task_wdt_init(3000, true); //enable panic so ESP32 restarts
+  esp_task_wdt_config_t twdt_config = {
+    .timeout_ms = 3000, // TODO 3000
+    .trigger_panic = true,
+  };
+  esp_task_wdt_init(&twdt_config); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 #endif
 #if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
@@ -110,7 +114,11 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 #endif
   }
 #if defined(ARDUINO_ARCH_ESP32)
-  esp_task_wdt_init(3000, true); //enable panic so ESP32 restarts
+  esp_task_wdt_config_t twdt_config = {
+    .timeout_ms = 3000, // TODO 3000
+    .trigger_panic = true,
+  };
+  esp_task_wdt_init(&twdt_config); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 #endif
 #if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3

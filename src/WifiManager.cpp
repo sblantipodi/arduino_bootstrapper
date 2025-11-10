@@ -70,7 +70,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 #if defined(ESP8266)
   WiFi.setSleepMode(WIFI_NONE_SLEEP);
 #endif
-  WiFi.setAutoConnect(true);
+//  WiFi.setAutoConnect(true); // TODO
   WiFi.setAutoReconnect(true);
   Serial.println(microcontrollerIP);
   if (!microcontrollerIP.equals("DHCP")) {
@@ -109,7 +109,9 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   });
 #elif defined(ARDUINO_ARCH_ESP32)
   WiFi.setHostname(helper.string2char(deviceName));
+#if !CONFIG_IDF_TARGET_ESP32S2
   btStop();
+#endif
 #endif
   // Start wifi connection
   WiFi.begin(qsid.c_str(), qpass.c_str());
@@ -224,6 +226,9 @@ void WifiManager::setupOTAUpload() {
       Serial.println(F("End"));
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+      esp_task_wdt_reset(); // TODO
+# endif
       Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   });
   ArduinoOTA.onError([](ota_error_t error) {
