@@ -125,12 +125,6 @@ void EthManager::connectToEthernet(int8_t deviceNumber) {
   );
 #else
   // TODO fix this
-//  ETH.begin(
-//    ethernetDevices[deviceNumber].address,
-//    ethernetDevices[deviceNumber].mdc,
-//    ethernetDevices[deviceNumber].mdio,
-//    ethernetDevices[deviceNumber].power
-//  );
 #endif
 }
 
