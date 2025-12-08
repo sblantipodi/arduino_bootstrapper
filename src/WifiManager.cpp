@@ -226,8 +226,8 @@ void WifiManager::setupOTAUpload() {
       Serial.println(F("End"));
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
-      esp_task_wdt_reset(); // TODO
+#if defined(ARDUINO_ARCH_ESP32)
+    esp_task_wdt_reset(); // TODO
 # endif
       Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   });
