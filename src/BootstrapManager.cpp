@@ -52,7 +52,7 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
   }
 #if defined(ARDUINO_ARCH_ESP32)
   esp_task_wdt_config_t twdt_config = {
-    .timeout_ms = 3000, // TODO 3000
+    .timeout_ms = 5000,
     .trigger_panic = true,
   };
   esp_task_wdt_init(&twdt_config); //enable panic so ESP32 restarts

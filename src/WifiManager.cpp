@@ -698,6 +698,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   sendImprovStateResponse(0x03, false); //provisioning
   improvActive = 2;
   JsonDocument doc;
+  bool connected = isConnected();
   String devName = String(random(0, 90000));
   doc["deviceName"] = String(DEVICE_NAME) + "_" + devName;
   doc["microcontrollerIP"] = "DHCP";
@@ -709,7 +710,6 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   doc["mqttuser"] = "";
   doc["mqttpass"] = "";
   additionalParam = "2";
-  Serial.println(F("Saving setup.json"));
   File jsonFile = LittleFS.open("/setup.json", FILE_WRITE);
   if (!jsonFile) {
     Serial.println("Failed to open [setup.json] file for writing");
@@ -717,17 +717,19 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
     serializeJsonPretty(doc, Serial);
     serializeJson(doc, jsonFile);
     jsonFile.close();
+    if (connected) {
+      IPAddress localIP = WiFi.localIP();
+      Serial.printf("IMPROV http://%d.%d.%d.%d\n", localIP[0], localIP[1], localIP[2], localIP[3]);
+    }
   }
 #if defined(ARDUINO_ARCH_ESP32)
   WiFi.disconnect();
   WiFi.begin(clientSSID, clientPass);
   while (!isConnected()) {}
 #endif
-  delay(DELAY_200);
   sendImprovRPCResponse(ImprovRPCType::Request_State);
-  delay(DELAY_200);
   sendImprovStateResponse(0x04, false);
-  delay(DELAY_200);
+  Serial.flush();
 #if defined(ARDUINO_ARCH_ESP32)
   ESP.restart();
 #elif defined(ESP8266)
