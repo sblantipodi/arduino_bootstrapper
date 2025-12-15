@@ -36,7 +36,7 @@ jobs:
     - name: Run PlatformIO
       run: platformio run -e bootstrapper
     - name: Creating artifact from BIN file
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: firmware_build_artifact_arduino_bootstrapper.bin
         path: .pio/build/bootstrapper/firmware.bin
