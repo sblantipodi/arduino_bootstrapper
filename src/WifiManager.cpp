@@ -180,6 +180,11 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
       display.clearDisplay();
       display.setTextSize(1);
 #endif
+#if defined(ESP8266)
+      ESP.wdtFeed();
+#else
+      esp_task_wdt_reset();
+#endif
       Helpers::smartPrint(F("Wifi attemps= "));
       Helpers::smartPrintln(wifiReconnectAttemp);
 #if defined(ARDUINO_ARCH_ESP32)
