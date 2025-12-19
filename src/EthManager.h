@@ -30,23 +30,43 @@
 
 #if defined(ARDUINO_ARCH_ESP32)
 typedef struct EthConfig {
-    uint8_t address;
-    int power;
-    int mdc;
-    int mdio;
+  uint8_t address;
+  int power;
+  int mdc;
+  int mdio;
 #if CONFIG_IDF_TARGET_ESP32
-    eth_phy_type_t type;
-    eth_clock_mode_t clk_mode;
+  eth_phy_type_t type;
+  eth_clock_mode_t clk_mode;
 #endif
 } ethernet_config;
 
 extern const ethernet_config ethernetDevices[];
 
-class EthManager {
+typedef struct EthConfigW5500 {
+  int miso_pin;
+  int mosi_pin;
+  int sclk_sck_pin;
+  int cs_pin;
+  int int_pin;
+  int rst_pin;
+  int addr_nc;
+} ethernet_config_w5500;
 
+extern const ethernet_config_w5500 ethernetDevices_w5500[];
+
+const uint8_t spiStartIdx = 100;
+
+class EthManager {
 public:
-    static void connectToEthernet(int8_t deviceNumber);
-    static void deallocateEthernetPins(int8_t deviceNumber);
+  static void connectToSpi(int8_t &deviceNumber);
+
+  static void initSpiEthernet(int8_t &deviceNumber);
+
+  static void initRmiiEthernet(int8_t deviceNumber);
+
+  static void connectToEthernet(int8_t deviceNumber);
+
+  static void deallocateEthernetPins(int8_t deviceNumber);
 };
 
 #endif
