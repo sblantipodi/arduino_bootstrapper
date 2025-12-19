@@ -190,7 +190,7 @@ void EthManager::initSpiEthernet(int8_t &deviceNumber) {
     ethernetDevices_w5500[deviceNumber].cs_pin,
     ethernetDevices_w5500[deviceNumber].int_pin,
     ethernetDevices_w5500[deviceNumber].rst_pin,
-#if CONFIG_IDF_TARGET_ESP32C3
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6
     SPI2_HOST,
 #else
     SPI3_HOST,
