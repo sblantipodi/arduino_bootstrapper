@@ -104,7 +104,7 @@ const ethernet_config ethernetDevices[] = {
 #endif
 };
 
-const ethernet_config_w5500 ethernetDevices_w5500[] = {
+const ethernet_confi_spi ethernetDevicesSpi[] = {
   // T-ETH ELite ESP32-S3
   {
     47,
@@ -182,23 +182,42 @@ const ethernet_config_w5500 ethernetDevices_w5500[] = {
  * Init SPI ethernet
  * @param deviceNumber to use
  */
-void EthManager::initSpiEthernet(int8_t &deviceNumber) {
-  deviceNumber = 3; // w5500_start_index - deviceNumber;
-  ETH.begin(
-    ETH_PHY_W5500,
-    ethernetDevices_w5500[deviceNumber].addr_nc,
-    ethernetDevices_w5500[deviceNumber].cs_pin,
-    ethernetDevices_w5500[deviceNumber].int_pin,
-    ethernetDevices_w5500[deviceNumber].rst_pin,
+void EthManager::initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs,
+                                 int8_t interrupt, int8_t rst) {
+  if (deviceNumber > spiStartIdx) {
+    deviceNumber = deviceNumber - spiStartIdx - 1;
+    ETH.begin(
+      ETH_PHY_W5500,
+      ethernetDevicesSpi[deviceNumber].addr_nc,
+      ethernetDevicesSpi[deviceNumber].cs_pin,
+      ethernetDevicesSpi[deviceNumber].int_pin,
+      ethernetDevicesSpi[deviceNumber].rst_pin,
 #if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6
-    SPI2_HOST,
+      SPI2_HOST,
 #else
-    SPI3_HOST,
+      SPI3_HOST,
 #endif
-    ethernetDevices_w5500[deviceNumber].sclk_sck_pin,
-    ethernetDevices_w5500[deviceNumber].miso_pin,
-    ethernetDevices_w5500[deviceNumber].mosi_pin
-  );
+      ethernetDevicesSpi[deviceNumber].sclk_sck_pin,
+      ethernetDevicesSpi[deviceNumber].miso_pin,
+      ethernetDevicesSpi[deviceNumber].mosi_pin
+    );
+  } else {
+    ETH.begin(
+      ETH_PHY_W5500,
+      -1,
+      cs,
+      interrupt,
+      rst,
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6
+      SPI2_HOST,
+#else
+      SPI3_HOST,
+#endif
+      sclk,
+      miso,
+      mosi
+    );
+  }
 }
 
 /**
@@ -222,15 +241,16 @@ void EthManager::initRmiiEthernet(int8_t deviceNumber) {
  * Connect to ethernet
  * @param deviceNumber to use
  */
-void EthManager::connectToEthernet(int8_t deviceNumber) {
+void EthManager::connectToEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs,
+                                   int8_t interrupt, int8_t rst) {
 #if CONFIG_IDF_TARGET_ESP32
   if (deviceNumber < spiStartIdx) {
     initRmiiEthernet(deviceNumber);
   } else {
-    initSpiEthernet(deviceNumber);
+    initSpiEthernet(deviceNumber, mosi, miso, sclk, cs, interrupt, rst);
   }
 #else
-  initSpiEthernet(deviceNumber);
+  initSpiEthernet(deviceNumber, mosi, miso, sclk, cs, interrupt, rst);
 #endif
 }
 

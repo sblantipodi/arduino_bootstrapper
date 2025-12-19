@@ -29,6 +29,7 @@
 #define _DPSOFTWARE_ETH_MANAGER_H
 
 #if defined(ARDUINO_ARCH_ESP32)
+
 typedef struct EthConfig {
   uint8_t address;
   int power;
@@ -50,9 +51,9 @@ typedef struct EthConfigW5500 {
   int int_pin;
   int rst_pin;
   int addr_nc;
-} ethernet_config_w5500;
+} ethernet_confi_spi;
 
-extern const ethernet_config_w5500 ethernetDevices_w5500[];
+extern const ethernet_confi_spi ethernetDevicesSpi[];
 
 const uint8_t spiStartIdx = 100;
 
@@ -60,11 +61,11 @@ class EthManager {
 public:
   static void connectToSpi(int8_t &deviceNumber);
 
-  static void initSpiEthernet(int8_t &deviceNumber);
+  static void initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs, int8_t interrupt, int8_t rst);
 
   static void initRmiiEthernet(int8_t deviceNumber);
 
-  static void connectToEthernet(int8_t deviceNumber);
+  static void connectToEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs, int8_t interrupt, int8_t rst);
 
   static void deallocateEthernetPins(int8_t deviceNumber);
 };

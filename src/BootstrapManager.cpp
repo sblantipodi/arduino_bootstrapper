@@ -121,7 +121,7 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = true;
     ETH.setHostname(Helpers::string2char(deviceName));
     WiFi.onEvent(eth_event);
-    EthManager::connectToEthernet(ethd);
+    EthManager::connectToEthernet(ethd, mosi, miso, sclk, cs, interrupt, rst);
     Serial.println(F("Ethernet connected."));
     initMqttOta(callback);
 #endif
@@ -556,6 +556,14 @@ bool BootstrapManager::isWifiConfigured() {
             additionalParam = Helpers::getValue(mydoc[F("additionalParam")]);
             deviceName = Helpers::getValue(mydoc[F("deviceName")]);
             ethd = mydoc[F("ethd")].as<int8_t>();
+            if (ethd == spiStartIdx) {
+              mosi = mydoc[F("mosi")].as<int8_t>();
+              miso = mydoc[F("miso")].as<int8_t>();
+              sclk = mydoc[F("sclk")].as<int8_t>();
+              cs = mydoc[F("cs")].as<int8_t>();
+              interrupt = mydoc[F("interrupt")].as<int8_t>();
+              rst = mydoc[F("rst")].as<int8_t>();
+            }
 #if defined(ESP8266)
             ethd = -1;
 #endif
