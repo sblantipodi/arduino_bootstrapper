@@ -40,8 +40,8 @@ extern String MAC;
 extern String deviceName;
 extern String microcontrollerIP;
 extern bool dhcpInUse;
-#if defined(ARDUINO_ARCH_ESP32)
 extern int8_t ethd;
+#if defined(ARDUINO_ARCH_ESP32)
 extern int8_t mosi;
 extern int8_t miso;
 extern int8_t sclk;
