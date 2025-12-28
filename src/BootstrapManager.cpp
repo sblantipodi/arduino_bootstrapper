@@ -51,10 +51,14 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     launchWebServerForOTAConfig();
   }
 #if defined(ARDUINO_ARCH_ESP32)
-  esp_task_wdt_init(3000, true); //enable panic so ESP32 restarts
+  esp_task_wdt_config_t twdt_config = {
+    .timeout_ms = 5000,
+    .trigger_panic = true,
+  };
+  esp_task_wdt_init(&twdt_config); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 #endif
-#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
   Serial.setTxTimeoutMs(0);
 #endif
 }
@@ -63,21 +67,34 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 void eth_event(WiFiEvent_t event) {
   switch (event) {
     case ARDUINO_EVENT_ETH_START:
-      ethConnected = true;
+      Serial.println("ETH Started");
       break;
     case ARDUINO_EVENT_ETH_CONNECTED:
-      MAC = WiFi.macAddress();
+      Serial.println("ETH Connected");
+      MAC = ETH.macAddress();
       ethConnected = true;
       break;
     case ARDUINO_EVENT_ETH_GOT_IP:
-      MAC = WiFi.macAddress();
+      MAC = ETH.macAddress();
       microcontrollerIP = ETH.localIP().toString();
       ethConnected = true;
+      Serial.print("ETH MAC: ");
+      Serial.print(ETH.macAddress());
+      Serial.print(", IPv4: ");
+      Serial.print(ETH.localIP());
+      if (ETH.fullDuplex()) {
+        Serial.print(", FULL_DUPLEX");
+      }
+      Serial.print(", ");
+      Serial.print(ETH.linkSpeed());
+      Serial.println("Mbps");
       break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
+      Serial.println("ETH Disconnected");
       ethConnected = false;
       break;
     case ARDUINO_EVENT_ETH_STOP:
+      Serial.println("ETH Stopped");
       ethConnected = false;
       break;
     default:
@@ -104,16 +121,20 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     isConfigFileOk = true;
     ETH.setHostname(Helpers::string2char(deviceName));
     WiFi.onEvent(eth_event);
-    EthManager::connectToEthernet(ethd);
+    EthManager::connectToEthernet(ethd, mosi, miso, sclk, cs);
     Serial.println(F("Ethernet connected."));
     initMqttOta(callback);
 #endif
   }
 #if defined(ARDUINO_ARCH_ESP32)
-  esp_task_wdt_init(3000, true); //enable panic so ESP32 restarts
+  esp_task_wdt_config_t twdt_config = {
+    .timeout_ms = 3000, // TODO 3000
+    .trigger_panic = true,
+  };
+  esp_task_wdt_init(&twdt_config); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 #endif
-#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
   Serial.setTxTimeoutMs(0);
 #endif
 }
@@ -535,6 +556,14 @@ bool BootstrapManager::isWifiConfigured() {
             additionalParam = Helpers::getValue(mydoc[F("additionalParam")]);
             deviceName = Helpers::getValue(mydoc[F("deviceName")]);
             ethd = mydoc[F("ethd")].as<int8_t>();
+#if defined(ARDUINO_ARCH_ESP32)
+            if (ethd == spiStartIdx) {
+              mosi = mydoc[F("mosi")].as<int8_t>();
+              miso = mydoc[F("miso")].as<int8_t>();
+              sclk = mydoc[F("sclk")].as<int8_t>();
+              cs = mydoc[F("cs")].as<int8_t>();
+            }
+#endif
 #if defined(ESP8266)
             ethd = -1;
 #endif

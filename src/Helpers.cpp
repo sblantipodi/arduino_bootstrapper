@@ -37,6 +37,12 @@ String microcontrollerIP = "XXX";
 bool dhcpInUse = true;
 #if defined(ARDUINO_ARCH_ESP32)
 int8_t ethd = 0;
+int8_t mosi = 0;
+int8_t miso = 0;
+int8_t sclk = 0;
+int8_t cs = 0;
+int8_t interrupt = 0;
+int8_t rst = 0;
 #else
 int8_t ethd = -1;
 #endif

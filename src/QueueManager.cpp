@@ -98,6 +98,11 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       lastMQTTConnection = OFF_CMD;
     } else {
       Helpers::smartPrintln(F("MQTT attempts="));
+#if defined(ESP8266)
+      ESP.wdtFeed();
+#else
+      esp_task_wdt_reset();
+#endif
       Helpers::smartPrintln(mqttReconnectAttemp);
       helper.smartDisplay();
       // after MAX_RECONNECT attemps all peripherals are shut down

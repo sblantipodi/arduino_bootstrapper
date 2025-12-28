@@ -18,7 +18,6 @@
 */
 #include "EthManager.h"
 
-
 #if defined(ARDUINO_ARCH_ESP32)
 /**
  * Supported ethernet devices
@@ -27,9 +26,9 @@ const ethernet_config ethernetDevices[] = {
   // No Ethernet
   {
   },
+#if CONFIG_IDF_TARGET_ESP32
   // QuinLed-ESP32-Ethernet
   {
-
     0,
     5,
     23,
@@ -102,21 +101,91 @@ const ethernet_config ethernetDevices[] = {
     ETH_PHY_LAN8720,
     ETH_CLOCK_GPIO0_OUT
   }
+#endif
 };
+
+const ethernet_confi_spi ethernetDevicesSpi[] = {
+  // T-ETH ELite ESP32-S3
+  {
+    47,
+    21,
+    48,
+    45
+  },
+  // T-ETH Lite ESP32-S3
+  {
+    11,
+    12,
+    10,
+    9
+  }
+};
+
+
+/**
+ * Init SPI ethernet
+ * @param deviceNumber to use
+ */
+void EthManager::initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs) {
+  if (deviceNumber > spiStartIdx) {
+    deviceNumber = deviceNumber - spiStartIdx - 1;
+    ETH.begin(
+      ETH_PHY_W5500,-1,ethernetDevicesSpi[deviceNumber].cs_pin, -1, -1,
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6
+      SPI2_HOST,
+#else
+      SPI3_HOST,
+#endif
+      ethernetDevicesSpi[deviceNumber].sclk_sck_pin,
+      ethernetDevicesSpi[deviceNumber].miso_pin,
+      ethernetDevicesSpi[deviceNumber].mosi_pin
+    );
+  } else {
+    ETH.begin(
+      ETH_PHY_W5500,-1, cs, -1, -1,
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6
+      SPI2_HOST,
+#else
+      SPI3_HOST,
+#endif
+      sclk,
+      miso,
+      mosi
+    );
+  }
+}
+
+/**
+ * Init RMII ethernet
+ * @param deviceNumber to use
+ */
+void EthManager::initRmiiEthernet(int8_t deviceNumber) {
+#if CONFIG_IDF_TARGET_ESP32
+  ETH.begin(
+    ethernetDevices[deviceNumber].type,
+    ethernetDevices[deviceNumber].address,
+    ethernetDevices[deviceNumber].mdc,
+    ethernetDevices[deviceNumber].mdio,
+    ethernetDevices[deviceNumber].power,
+    ethernetDevices[deviceNumber].clk_mode
+  );
+#endif
+}
 
 /**
  * Connect to ethernet
  * @param deviceNumber to use
  */
-void EthManager::connectToEthernet(int8_t deviceNumber) {
-  ETH.begin(
-    ethernetDevices[deviceNumber].address,
-    ethernetDevices[deviceNumber].power,
-    ethernetDevices[deviceNumber].mdc,
-    ethernetDevices[deviceNumber].mdio,
-    ethernetDevices[deviceNumber].type,
-    ethernetDevices[deviceNumber].clk_mode
-  );
+void EthManager::connectToEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs) {
+#if CONFIG_IDF_TARGET_ESP32
+  if (deviceNumber < spiStartIdx) {
+    initRmiiEthernet(deviceNumber);
+  } else {
+    initSpiEthernet(deviceNumber, mosi, miso, sclk, cs);
+  }
+#else
+  initSpiEthernet(deviceNumber, mosi, miso, sclk, cs);
+#endif
 }
 
 /**
@@ -124,17 +193,16 @@ void EthManager::connectToEthernet(int8_t deviceNumber) {
  * @param deviceNumber to deallocate
  */
 void EthManager::deallocateEthernetPins(int8_t deviceNumber) {
-  const uint32_t MATRIX_DETACH_OUT_SIG = 0x100;
-  gpio_matrix_out(ethernetDevices[deviceNumber].address, MATRIX_DETACH_OUT_SIG, false, false);
-  gpio_matrix_out(ethernetDevices[deviceNumber].power, MATRIX_DETACH_OUT_SIG, false, false);
-  gpio_matrix_out(ethernetDevices[deviceNumber].mdc, MATRIX_DETACH_OUT_SIG, false, false);
-  gpio_matrix_out(ethernetDevices[deviceNumber].mdio, MATRIX_DETACH_OUT_SIG, false, false);
-  gpio_matrix_out(ethernetDevices[deviceNumber].clk_mode, MATRIX_DETACH_OUT_SIG, false, false);
-  pinMode(ethernetDevices[deviceNumber].address, INPUT);
-  pinMode(ethernetDevices[deviceNumber].power, INPUT);
-  pinMode(ethernetDevices[deviceNumber].mdc, INPUT);
-  pinMode(ethernetDevices[deviceNumber].mdio, INPUT);
-  pinMode(ethernetDevices[deviceNumber].clk_mode, INPUT);
+  if (deviceNumber < spiStartIdx) {
+    gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].address);
+    gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].power);
+    gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].mdc);
+    gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].mdio);
+#if CONFIG_IDF_TARGET_ESP32
+    gpio_reset_pin((gpio_num_t) ethernetDevices[deviceNumber].clk_mode);
+#endif
+  }
+  delay(1);
 }
 
 #endif

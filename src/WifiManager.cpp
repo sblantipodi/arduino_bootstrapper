@@ -70,7 +70,7 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
 #if defined(ESP8266)
   WiFi.setSleepMode(WIFI_NONE_SLEEP);
 #endif
-  WiFi.setAutoConnect(true);
+//  WiFi.setAutoConnect(true); // TODO
   WiFi.setAutoReconnect(true);
   Serial.println(microcontrollerIP);
   if (!microcontrollerIP.equals("DHCP")) {
@@ -109,7 +109,9 @@ void WifiManager::setupWiFi(void (*manageDisconnections)(), void (*manageHardwar
   });
 #elif defined(ARDUINO_ARCH_ESP32)
   WiFi.setHostname(helper.string2char(deviceName));
+#if !CONFIG_IDF_TARGET_ESP32S2
   btStop();
+#endif
 #endif
   // Start wifi connection
   WiFi.begin(qsid.c_str(), qpass.c_str());
@@ -178,6 +180,11 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
       display.clearDisplay();
       display.setTextSize(1);
 #endif
+#if defined(ESP8266)
+      ESP.wdtFeed();
+#else
+      esp_task_wdt_reset();
+#endif
       Helpers::smartPrint(F("Wifi attemps= "));
       Helpers::smartPrintln(wifiReconnectAttemp);
 #if defined(ARDUINO_ARCH_ESP32)
@@ -224,6 +231,9 @@ void WifiManager::setupOTAUpload() {
       Serial.println(F("End"));
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+#if defined(ARDUINO_ARCH_ESP32)
+    esp_task_wdt_reset();
+# endif
       Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   });
   ArduinoOTA.onError([](ota_error_t error) {
@@ -693,6 +703,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   sendImprovStateResponse(0x03, false); //provisioning
   improvActive = 2;
   JsonDocument doc;
+  bool connected = isConnected();
   String devName = String(random(0, 90000));
   doc["deviceName"] = String(DEVICE_NAME) + "_" + devName;
   doc["microcontrollerIP"] = "DHCP";
@@ -704,7 +715,6 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   doc["mqttuser"] = "";
   doc["mqttpass"] = "";
   additionalParam = "2";
-  Serial.println(F("Saving setup.json"));
   File jsonFile = LittleFS.open("/setup.json", FILE_WRITE);
   if (!jsonFile) {
     Serial.println("Failed to open [setup.json] file for writing");
@@ -712,17 +722,19 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
     serializeJsonPretty(doc, Serial);
     serializeJson(doc, jsonFile);
     jsonFile.close();
+    if (connected) {
+      IPAddress localIP = WiFi.localIP();
+      Serial.printf("IMPROV http://%d.%d.%d.%d\n", localIP[0], localIP[1], localIP[2], localIP[3]);
+    }
   }
 #if defined(ARDUINO_ARCH_ESP32)
   WiFi.disconnect();
   WiFi.begin(clientSSID, clientPass);
   while (!isConnected()) {}
 #endif
-  delay(DELAY_200);
   sendImprovRPCResponse(ImprovRPCType::Request_State);
-  delay(DELAY_200);
   sendImprovStateResponse(0x04, false);
-  delay(DELAY_200);
+  Serial.flush();
 #if defined(ARDUINO_ARCH_ESP32)
   ESP.restart();
 #elif defined(ESP8266)
