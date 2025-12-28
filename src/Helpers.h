@@ -46,8 +46,6 @@ extern int8_t mosi;
 extern int8_t miso;
 extern int8_t sclk;
 extern int8_t cs;
-extern int8_t interrupt;
-extern int8_t rst;
 #endif
 extern String qsid;
 extern String qpass;

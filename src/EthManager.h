@@ -48,9 +48,6 @@ typedef struct EthConfigW5500 {
   int mosi_pin;
   int sclk_sck_pin;
   int cs_pin;
-  int int_pin;
-  int rst_pin;
-  int addr_nc;
 } ethernet_confi_spi;
 
 extern const ethernet_confi_spi ethernetDevicesSpi[];
@@ -61,11 +58,11 @@ class EthManager {
 public:
   static void connectToSpi(int8_t &deviceNumber);
 
-  static void initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs, int8_t interrupt, int8_t rst);
+  static void initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs);
 
   static void initRmiiEthernet(int8_t deviceNumber);
 
-  static void connectToEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs, int8_t interrupt, int8_t rst);
+  static void connectToEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs);
 
   static void deallocateEthernetPins(int8_t deviceNumber);
 };
