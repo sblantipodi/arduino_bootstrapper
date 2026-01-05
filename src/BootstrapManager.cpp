@@ -503,11 +503,16 @@ String BootstrapManager::readValueFromFile(const String &filenameToUse, const St
   auto error = deserializeJson(jDoc, buf.get());
   serializeJsonPretty(jDoc, Serial);
   JsonVariant answer = jDoc[paramName];
-  if (answer.is<const char *>()) {
-    returnStr = answer.as<String>();
+  if (answer.is<const char*>()) {
+    returnStr = String(answer.as<const char*>());
+  } else if (answer.is<int>()) {
+    returnStr = String(answer.as<int>());
+  } else if (answer.is<long>()) {
+    returnStr = String(answer.as<long>());
+  } else if (answer.is<double>()) {
+    returnStr = String(answer.as<double>());
   } else {
-    auto returnVal = answer.as<int>();
-    returnStr = String(returnVal);
+    returnStr = "";
   }
   jsonFile.close();
   if (error) {
