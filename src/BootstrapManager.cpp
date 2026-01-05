@@ -71,11 +71,9 @@ void eth_event(WiFiEvent_t event) {
       break;
     case ARDUINO_EVENT_ETH_CONNECTED:
       Serial.println("ETH Connected");
-      MAC = ETH.macAddress();
       ethConnected = true;
       break;
     case ARDUINO_EVENT_ETH_GOT_IP:
-      MAC = ETH.macAddress();
       microcontrollerIP = ETH.localIP().toString();
       ethConnected = true;
       Serial.print("ETH MAC: ");
@@ -92,10 +90,14 @@ void eth_event(WiFiEvent_t event) {
     case ARDUINO_EVENT_ETH_DISCONNECTED:
       Serial.println("ETH Disconnected");
       ethConnected = false;
+      microcontrollerIP = F("0.0.0.0");
+      currentWiFiIp = IPAddress(0, 0, 0, 0);
       break;
     case ARDUINO_EVENT_ETH_STOP:
       Serial.println("ETH Stopped");
       ethConnected = false;
+      microcontrollerIP = F("0.0.0.0");
+      currentWiFiIp = IPAddress(0, 0, 0, 0);
       break;
     default:
       break;
@@ -113,18 +115,18 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     // Initialize Wifi manager
     wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
     initMqttOta(callback);
-  } else if ((ethd == 0 || ethd == -1)){
-    isConfigFileOk = false;
-    launchWebServerCustom(waitImprov, listener);
-  } else {
+  } else if (ethd > 0) {
 #if defined(ARDUINO_ARCH_ESP32)
     isConfigFileOk = true;
     ETH.setHostname(Helpers::string2char(deviceName));
     WiFi.onEvent(eth_event);
     EthManager::connectToEthernet(ethd, mosi, miso, sclk, cs);
-    Serial.println(F("Ethernet connected."));
+    wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
     initMqttOta(callback);
 #endif
+  } else {
+    isConfigFileOk = false;
+    launchWebServerCustom(waitImprov, listener);
   }
 #if defined(ARDUINO_ARCH_ESP32)
   esp_task_wdt_config_t twdt_config = {
@@ -160,19 +162,15 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   }
 #endif
 #if (IMPROV_ENABLED > 0)
-  if ((ethd == 0 || ethd == -1)) {
-    if (!rcpResponseSent && WifiManager::isConnected()) {
-      rcpResponseSent = true;
-      wifiManager.sendImprovRPCResponse(0x01, true);
-    }
-    if (!temporaryDisableImprove) {
-      wifiManager.handleImprovPacket();
-    }
+  if (!rcpResponseSent && WifiManager::isConnected()) {
+    rcpResponseSent = true;
+    wifiManager.sendImprovRPCResponse(0x01, true);
+  }
+  if (!temporaryDisableImprove) {
+    wifiManager.handleImprovPacket();
   }
 #endif
-  if (ethd == 0 || ethd == -1) {
-    wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
-  }
+  wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
   ArduinoOTA.handle();
   if (mqttIP.length() > 0) {
     queueManager.queueLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
@@ -355,13 +353,7 @@ void BootstrapManager::getMicrocontrollerInfo() {
   Helpers::smartPrintln(ESP.getSdkVersion());
 #endif
   Helpers::smartPrintln(F("MAC: "));
-  if ((ethd == 0 || ethd == -1)) {
-    Helpers::smartPrintln(WiFi.macAddress());
-  } else {
-#if defined(ARDUINO_ARCH_ESP32)
-    Helpers::smartPrintln(ETH.macAddress());
-#endif
-  }
+  Helpers::smartPrintln(WiFi.macAddress());
   Helpers::smartPrint(F("IP: "));
   Helpers::smartPrintln(microcontrollerIP);
   // helper.smartPrint(F("Arduino Core: ")); helper.smartPrintln(ESP.getCoreVersion());

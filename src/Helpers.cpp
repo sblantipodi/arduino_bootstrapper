@@ -34,6 +34,7 @@ String IP = "";
 String MAC = "";
 String deviceName = "XXX";
 String microcontrollerIP = "XXX";
+IPAddress currentWiFiIp;
 bool dhcpInUse = true;
 #if defined(ARDUINO_ARCH_ESP32)
 int8_t ethd = 0;

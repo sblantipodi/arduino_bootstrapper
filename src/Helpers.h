@@ -39,6 +39,7 @@ extern String firmwareVersion;
 extern String MAC;
 extern String deviceName;
 extern String microcontrollerIP;
+extern IPAddress currentWiFiIp;
 extern bool dhcpInUse;
 extern int8_t ethd;
 #if defined(ARDUINO_ARCH_ESP32)

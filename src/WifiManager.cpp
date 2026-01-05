@@ -164,7 +164,7 @@ void WifiManager::setTxPower() const {
 void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
   wifiReconnectAttemp = 0;
   // loop here until connection
-  while (WiFi.status() != WL_CONNECTED && Serial.peek() == -1) {
+  while ((WiFi.status() != WL_CONNECTED && !ethConnected) && Serial.peek() == -1) {
     manageHardwareButton();
     delay(DELAY_500);
     Serial.print(F("."));
@@ -207,10 +207,13 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
       wifiReconnectAttemp = 0;
     }
   }
-  if (wifiReconnectAttemp > 0) {
+  if (currentWiFiIp != WiFi.localIP()) {
     Helpers::smartPrint(F("\nWIFI CONNECTED\nIP Address: "));
-    microcontrollerIP = WiFi.localIP().toString();
-    Helpers::smartPrintln(microcontrollerIP);
+    if (!ethConnected) {
+      microcontrollerIP = WiFi.localIP().toString();
+    }
+    currentWiFiIp = WiFi.localIP();
+    Helpers::smartPrintln(WiFi.localIP().toString());
     Helpers::smartPrint(F("nb of attempts: "));
     Helpers::smartPrintln(wifiReconnectAttemp);
   }
