@@ -270,12 +270,16 @@ int WifiManager::getQuality() {
 }
 
 // check if wifi is correctly configured
+// bool WifiManager::isWifiConfigured() {
+//   if (strcmp(SSID, "XXX") != 0) {
+//     return true;
+//   }
+//   return false;
+// }
 bool WifiManager::isWifiConfigured() {
-  if (strcmp(SSID, "XXX") != 0) {
-    return true;
-  }
-  return false;
+  return improvActive != 0;
 }
+
 
 // if no ssid available, launch web server to get config params via browser
 void WifiManager::launchWebServerForOTAConfig() {
@@ -592,6 +596,9 @@ bool WifiManager::isConnected() {
   return (WiFi.localIP()[0] != 0 && WiFi.status() == WL_CONNECTED);
 }
 
+
+
+
 void WifiManager::sendImprovStateResponse(uint8_t state, bool error) {
   if (!error && improvError > 0 && improvError < 3) sendImprovStateResponse(0x00, true);
   if (error) improvError = state;
@@ -689,21 +696,29 @@ void WifiManager::sendImprovInfoResponse() {
 void WifiManager::parseWiFiCommand(char *rpcData) {
   uint8_t len = rpcData[0];
   if (!len || len > 126) return;
+
   uint8_t ssidLen = rpcData[1];
   if (ssidLen > len - 1 || ssidLen > 32) return;
-  memset(clientSSID, 0, 32);
+
+  memset(clientSSID, 0, sizeof(clientSSID));
   memcpy(clientSSID, rpcData + 2, ssidLen);
-  memset(clientPass, 0, 64);
+
+  memset(clientPass, 0, sizeof(clientPass));
   if (len > ssidLen + 1) {
     uint8_t passLen = rpcData[2 + ssidLen];
-    memset(clientPass, 0, 64);
-    memcpy(clientPass, rpcData + 3 + ssidLen, passLen);
+    if (passLen <= 64) {
+      memcpy(clientPass, rpcData + 3 + ssidLen, passLen);
+    }
   }
-  sendImprovStateResponse(0x03, false); //provisioning
+
+  // IMPR0V: CONNECTING
   improvActive = 2;
+  sendImprovStateResponse(0x03, false); // CONNECTING
+
+  // SALVATAGGIO CONFIG (riusato)
   JsonDocument doc;
-  bool connected = isConnected();
   String devName = String(random(0, 90000));
+
   doc["deviceName"] = String(DEVICE_NAME) + "_" + devName;
   doc["microcontrollerIP"] = "DHCP";
   doc["qsid"] = clientSSID;
@@ -714,32 +729,26 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   doc["mqttuser"] = "";
   doc["mqttpass"] = "";
   additionalParam = "2";
+
   File jsonFile = LittleFS.open("/setup.json", FILE_WRITE);
-  if (!jsonFile) {
-    Serial.println("Failed to open [setup.json] file for writing");
-  } else {
-    serializeJsonPretty(doc, Serial);
+  if (jsonFile) {
     serializeJson(doc, jsonFile);
     jsonFile.close();
-    if (connected) {
-      IPAddress localIP = WiFi.localIP();
-      Serial.printf("IMPROV http://%d.%d.%d.%d\n", localIP[0], localIP[1], localIP[2], localIP[3]);
-    }
   }
+
+  // AVVIO WIFI (non bloccante)
 #if defined(ARDUINO_ARCH_ESP32)
-  WiFi.disconnect();
+  WiFi.disconnect(true);
+#endif
+  WiFi.mode(WIFI_STA);
   WiFi.begin(clientSSID, clientPass);
-  while (!isConnected()) {}
-#endif
-  sendImprovRPCResponse(ImprovRPCType::Request_State);
-  sendImprovStateResponse(0x04, false);
-  Serial.flush();
-#if defined(ARDUINO_ARCH_ESP32)
-  ESP.restart();
-#elif defined(ESP8266)
-  EspClass::restart();
-#endif
 }
+
+
+
+
+
+
 
 //blocking function to parse an Improv Serial packet
 // void WifiManager::handleImprovPacket() {
@@ -914,15 +923,19 @@ void WifiManager::handleImprovPacket() {
           parseWiFiCommand(improvRpcData);
           break;
 
-        case ImprovRPCType::Request_State: {
-          uint8_t state = 0x02;
-          if (isWifiConfigured()) state = 0x03;
-          if (isConnected()) state = 0x04;
+      case ImprovRPCType::Request_State: {
+          uint8_t state = 0x02; // READY
+          if (improvActive == 2) state = 0x03; // CONNECTING
+          if (isConnected()) state = 0x04;     // CONNECTED
+
           sendImprovStateResponse(state, false);
-          if (state == 0x04)
+
+          if (state == 0x04) {
             sendImprovRPCResponse(ImprovRPCType::Request_State);
+          }
           break;
-        }
+      }
+
 
         case ImprovRPCType::Request_Info:
           sendImprovInfoResponse();
@@ -938,6 +951,30 @@ void WifiManager::handleImprovPacket() {
     improvIndex = 0;
     improvChecksum = 0;
     return;
+  }
+}
+
+void WifiManager::handleImprovWiFi() {
+  static unsigned long connectedAt = 0;
+
+  if (improvActive != 2) {
+    connectedAt = 0;
+    return;
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+    if (connectedAt == 0) {
+      connectedAt = millis();
+      sendImprovStateResponse(0x04, false); // CONNECTED
+      sendImprovRPCResponse(ImprovRPCType::Request_State);
+    }
+
+    if (millis() - connectedAt > 1000) {
+      improvActive = 0;
+#if defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
+      ESP.restart();
+#endif
+    }
   }
 }
 

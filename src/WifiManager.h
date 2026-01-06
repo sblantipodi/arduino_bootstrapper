@@ -143,6 +143,8 @@ public:
 
     void sendImprovStateResponse(uint8_t state, bool error);
 
+    void handleImprovWiFi();
+
     static bool isConnected(); // return true if wifi is connected
 
     void setTxPower() const;

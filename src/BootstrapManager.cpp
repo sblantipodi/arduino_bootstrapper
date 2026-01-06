@@ -168,9 +168,8 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   }
   if (!temporaryDisableImprove) {
     // TODO
-    if (Serial.available()) {
-      wifiManager.handleImprovPacket();
-    }
+    wifiManager.handleImprovPacket();
+    wifiManager.handleImprovWiFi();    // gestisce la connessione WiFi
   }
 #endif
   wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
