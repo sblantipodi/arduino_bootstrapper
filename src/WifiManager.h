@@ -98,14 +98,6 @@ extern char serverDescription[33];
 extern char cmDNS[33];
 extern char clientSSID[33];
 extern char clientPass[65];
-// TODO
-static uint8_t improvIndex = 0;
-static uint8_t improvLength = 0;
-static uint8_t improvChecksum = 0;
-static uint8_t improvPacketType = 0;
-static uint8_t improvRpcType = 0;
-static char improvRpcData[128];
-// TODO
 
 class WifiManager {
 
@@ -142,8 +134,6 @@ public:
     void sendImprovRPCResponse(byte commandId, bool forceConnection);
 
     void sendImprovStateResponse(uint8_t state, bool error);
-
-    void handleImprovWiFi();
 
     static bool isConnected(); // return true if wifi is connected
 

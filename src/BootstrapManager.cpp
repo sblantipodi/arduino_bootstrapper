@@ -167,9 +167,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
     wifiManager.sendImprovRPCResponse(0x01, true);
   }
   if (!temporaryDisableImprove) {
-    // TODO
     wifiManager.handleImprovPacket();
-    wifiManager.handleImprovWiFi();    // gestisce la connessione WiFi
   }
 #endif
   wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
