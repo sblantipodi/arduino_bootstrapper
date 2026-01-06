@@ -732,7 +732,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   while (!isConnected()) {}
 #endif
   sendImprovRPCResponse(ImprovRPCType::Request_State);
-  sendImprovStateResponse(0x04, false);
+  // sendImprovStateResponse(0x04, false);
   Serial.flush();
 #if defined(ARDUINO_ARCH_ESP32)
   ESP.restart();
