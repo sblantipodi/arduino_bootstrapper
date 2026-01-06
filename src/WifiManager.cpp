@@ -734,12 +734,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   sendImprovRPCResponse(ImprovRPCType::Request_State);
   sendImprovStateResponse(0x04, false);
   Serial.flush();
-  // Helpers::safeRestart();
-#if defined(ARDUINO_ARCH_ESP32)
-  ESP.restart();
-#elif defined(ESP8266)
-  EspClass::restart();
-#endif
+  Helpers::safeRestart();
 }
 
 //blocking function to parse an Improv Serial packet
