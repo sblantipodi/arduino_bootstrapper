@@ -699,8 +699,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
     memset(clientPass, 0, 64);
     memcpy(clientPass, rpcData + 3 + ssidLen, passLen);
   }
-  // TODO
-  // sendImprovStateResponse(0x03, false); //provisioning
+  sendImprovStateResponse(0x03, false); //provisioning
   improvActive = 2;
   JsonDocument doc;
   bool connected = isConnected();
@@ -733,8 +732,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   while (!isConnected()) {}
 #endif
   sendImprovRPCResponse(ImprovRPCType::Request_State);
-  // TODO
-  // sendImprovStateResponse(0x04, false);
+  sendImprovStateResponse(0x04, false);
   Serial.flush();
 #if defined(ARDUINO_ARCH_ESP32)
   ESP.restart();
@@ -744,93 +742,204 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
 }
 
 //blocking function to parse an Improv Serial packet
+// void WifiManager::handleImprovPacket() {
+//   uint8_t header[6] = {'I', 'M', 'P', 'R', 'O', 'V'};
+//   bool timeout = false;
+//   uint16_t packetByte = 0;
+//   uint8_t packetLen = 9;
+//   uint8_t checksum = 0;
+//   uint8_t waitTime = 255;
+//   uint8_t rpcCommandType = 0;
+//   char rpcData[128];
+//   rpcData[0] = 0;
+//   while (!timeout) {
+//     if (Serial.available() < 1) {
+//       delay(1);
+//       waitTime--;
+//       if (!waitTime) timeout = true;
+//       continue;
+//     }
+//     byte next = Serial.read();
+//     DIMPROV_PRINT("Received improv byte: "); DIMPROV_PRINTF("%x\r\n", next);
+//     switch (packetByte) {
+//       case ImprovPacketByte::Version: {
+//         if (next != IMPROV_VERSION) {
+//           DIMPROV_PRINTLN(F("Invalid version"));
+//           return;
+//         }
+//         break;
+//       }
+//       case ImprovPacketByte::PacketType: {
+//         if (next != ImprovPacketType::RPC_Command) {
+//           DIMPROV_PRINTF("Non RPC-command improv packet type %i\n", next);
+//           return;
+//         }
+//         if (!improvActive) {
+//           improvActive = 1;
+//           improvePacketReceived = true;
+//         }
+//         break;
+//       }
+//       case ImprovPacketByte::Length:
+//         packetLen = 9 + next;
+//         break;
+//       case ImprovPacketByte::RPC_CommandType:
+//         rpcCommandType = next;
+//         break;
+//       default: {
+//         if (packetByte >= packetLen) { //end of packet, check checksum match
+//           if (checksum != next) {
+//             DIMPROV_PRINTF("Got RPC checksum %i, expected %i", next, checksum);
+//             sendImprovStateResponse(0x01, true);
+//             return;
+//           }
+//           switch (rpcCommandType) {
+//             case ImprovRPCType::Command_Wifi:
+//               parseWiFiCommand(rpcData);
+//               break;
+//             case ImprovRPCType::Request_State: {
+//               uint8_t improvState = 0x02; //authorized
+//               if (isWifiConfigured()) improvState = 0x03; //provisioning
+//               if (WiFi.localIP()[0] != 0 && WiFi.status() == WL_CONNECTED) improvState = 0x04; //provisioned
+//               sendImprovStateResponse(improvState, false);
+//               if (improvState == 0x04) sendImprovRPCResponse(ImprovRPCType::Request_State);
+//               break;
+//             }
+//             case ImprovRPCType::Request_Info:
+//               sendImprovInfoResponse();
+//               break;
+//             default: {
+//               DIMPROV_PRINTF("Unknown RPC command %i\n", next);
+//               sendImprovStateResponse(0x02, true);
+//             }
+//           }
+//           return;
+//         }
+//         if (packetByte < 6) { //check header
+//           if (next != header[packetByte]) {
+//             DIMPROV_PRINTLN(F("Invalid improv header"));
+//             return;
+//           }
+//         } else if (packetByte > 9) { //RPC data
+//           rpcData[packetByte - 10] = next;
+//           if (packetByte > 137) return; //prevent buffer overflow
+//         }
+//       }
+//     }
+//     checksum += next;
+//     packetByte++;
+//   }
+// }
+
 void WifiManager::handleImprovPacket() {
-  uint8_t header[6] = {'I', 'M', 'P', 'R', 'O', 'V'};
-  bool timeout = false;
-  uint16_t packetByte = 0;
-  uint8_t packetLen = 9;
-  uint8_t checksum = 0;
-  uint8_t waitTime = 255;
-  uint8_t rpcCommandType = 0;
-  char rpcData[128];
-  rpcData[0] = 0;
-  while (!timeout) {
-    if (Serial.available() < 1) {
-      delay(1);
-      waitTime--;
-      if (!waitTime) timeout = true;
-      continue;
+  static const uint8_t header[] = {'I','M','P','R','O','V'};
+
+  while (Serial.available()) {
+    uint8_t b = Serial.read();
+
+    // HEADER
+    if (improvIndex < 6) {
+      if (b != header[improvIndex]) {
+        improvIndex = 0;
+        improvChecksum = 0;
+        return;
+      }
+      improvChecksum += b;
+      improvIndex++;
+      return;
     }
-    byte next = Serial.read();
-    DIMPROV_PRINT("Received improv byte: "); DIMPROV_PRINTF("%x\r\n", next);
-    switch (packetByte) {
-      case ImprovPacketByte::Version: {
-        if (next != IMPROV_VERSION) {
-          DIMPROV_PRINTLN(F("Invalid version"));
-          return;
-        }
-        break;
+
+    // VERSION
+    if (improvIndex == 6) {
+      if (b != IMPROV_VERSION) {
+        improvIndex = 0;
+        improvChecksum = 0;
+        return;
       }
-      case ImprovPacketByte::PacketType: {
-        if (next != ImprovPacketType::RPC_Command) {
-          DIMPROV_PRINTF("Non RPC-command improv packet type %i\n", next);
-          return;
-        }
-        if (!improvActive) {
-          improvActive = 1;
-          improvePacketReceived = true;
-        }
-        break;
+      improvChecksum += b;
+      improvIndex++;
+      return;
+    }
+
+    // PACKET TYPE
+    if (improvIndex == 7) {
+      improvPacketType = b;
+      if (b != ImprovPacketType::RPC_Command) {
+        improvIndex = 0;
+        improvChecksum = 0;
+        return;
       }
-      case ImprovPacketByte::Length:
-        packetLen = 9 + next;
-        break;
-      case ImprovPacketByte::RPC_CommandType:
-        rpcCommandType = next;
-        break;
-      default: {
-        if (packetByte >= packetLen) { //end of packet, check checksum match
-          if (checksum != next) {
-            DIMPROV_PRINTF("Got RPC checksum %i, expected %i", next, checksum);
-            sendImprovStateResponse(0x01, true);
-            return;
-          }
-          switch (rpcCommandType) {
-            case ImprovRPCType::Command_Wifi:
-              parseWiFiCommand(rpcData);
-              break;
-            case ImprovRPCType::Request_State: {
-              uint8_t improvState = 0x02; //authorized
-              if (isWifiConfigured()) improvState = 0x03; //provisioning
-              if (WiFi.localIP()[0] != 0 && WiFi.status() == WL_CONNECTED) improvState = 0x04; //provisioned
-              sendImprovStateResponse(improvState, false);
-              if (improvState == 0x04) sendImprovRPCResponse(ImprovRPCType::Request_State);
-              break;
-            }
-            case ImprovRPCType::Request_Info:
-              sendImprovInfoResponse();
-              break;
-            default: {
-              DIMPROV_PRINTF("Unknown RPC command %i\n", next);
-              sendImprovStateResponse(0x02, true);
-            }
-          }
-          return;
+      improvChecksum += b;
+      improvIndex++;
+      improvActive = 1;
+      improvePacketReceived = true;
+      return;
+    }
+
+    // LENGTH
+    if (improvIndex == 8) {
+      improvLength = b;
+      improvChecksum += b;
+      improvIndex++;
+      return;
+    }
+
+    // RPC TYPE
+    if (improvIndex == 9) {
+      improvRpcType = b;
+      improvChecksum += b;
+      improvIndex++;
+      return;
+    }
+
+    // DATA + CHECKSUM
+    uint8_t dataIndex = improvIndex - 10;
+
+    if (dataIndex < improvLength) {
+      if (dataIndex < sizeof(improvRpcData)) {
+        improvRpcData[dataIndex] = b;
+      }
+      improvChecksum += b;
+      improvIndex++;
+      return;
+    }
+
+    // CHECKSUM BYTE
+    if (improvChecksum != b) {
+      sendImprovStateResponse(0x01, true); // checksum error
+    } else {
+      // PROCESS RPC
+      switch (improvRpcType) {
+        case ImprovRPCType::Command_Wifi:
+          parseWiFiCommand(improvRpcData);
+          break;
+
+        case ImprovRPCType::Request_State: {
+          uint8_t state = 0x02;
+          if (isWifiConfigured()) state = 0x03;
+          if (isConnected()) state = 0x04;
+          sendImprovStateResponse(state, false);
+          if (state == 0x04)
+            sendImprovRPCResponse(ImprovRPCType::Request_State);
+          break;
         }
-        if (packetByte < 6) { //check header
-          if (next != header[packetByte]) {
-            DIMPROV_PRINTLN(F("Invalid improv header"));
-            return;
-          }
-        } else if (packetByte > 9) { //RPC data
-          rpcData[packetByte - 10] = next;
-          if (packetByte > 137) return; //prevent buffer overflow
-        }
+
+        case ImprovRPCType::Request_Info:
+          sendImprovInfoResponse();
+          break;
+
+        default:
+          sendImprovStateResponse(0x02, true);
+          break;
       }
     }
-    checksum += next;
-    packetByte++;
+
+    // RESET STATE MACHINE
+    improvIndex = 0;
+    improvChecksum = 0;
+    return;
   }
 }
+
 
 
