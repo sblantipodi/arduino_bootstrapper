@@ -19,6 +19,8 @@
 
 #include "Helpers.h"
 
+unsigned long currentMillisMainLoop = 0;
+
 bool isConfigFileOk = false;
 String lastMQTTConnection = "OFF";
 String lastWIFiConnection = "OFF";
@@ -63,6 +65,8 @@ bool blockingMqtt = true;
 bool mqttConnected = false;
 String additionalParam = "XXX";
 bool ethConnected = false;
+bool restartRequested = false;
+unsigned long restartAt = 0;
 
 unsigned long previousMillis = 0;
 const unsigned long interval = 200;
@@ -181,3 +185,20 @@ long Helpers::versionNumberToNumber(const String &latestReleaseStr) {
   longVersion += Helpers::getValue(latestReleaseStr, '.', 2).toInt();
   return longVersion;
 }
+
+void Helpers::safeRestartGuard() {
+  if (restartRequested && currentMillisMainLoop - restartAt > DELAY_1000) {
+#if defined(ARDUINO_ARCH_ESP32)
+    ESP.restart();
+#elif defined(ESP8266)
+    EspClass::restart();
+#endif
+  }
+}
+
+void Helpers::safeRestart() {
+  restartRequested = true;
+  restartAt = millis();
+}
+
+

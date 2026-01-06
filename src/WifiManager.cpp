@@ -566,10 +566,10 @@ void WifiManager::createWebServer() {
           statusCode = 404;
           Serial.println("Sending 404");
         }
-        delay(DELAY_500);
+        delay(DELAY_200);
         server.sendHeader("Access-Control-Allow-Origin", "*");
         server.send(statusCode, "text/plain", content);
-        delay(DELAY_500);
+        delay(DELAY_200);
 
         // Write to LittleFS
         Serial.println(F("Saving setup.json"));
@@ -583,11 +583,7 @@ void WifiManager::createWebServer() {
           Serial.println("[setup.json] written correctly");
         }
         delay(DELAY_200);
-#if defined(ARDUINO_ARCH_ESP32)
-        ESP.restart();
-#elif defined(ESP8266)
-        EspClass::restart();
-#endif
+        Helpers::safeRestart();
     });
   }
 }
@@ -738,11 +734,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   sendImprovRPCResponse(ImprovRPCType::Request_State);
   sendImprovStateResponse(0x04, false);
   Serial.flush();
-#if defined(ARDUINO_ARCH_ESP32)
-  ESP.restart();
-#elif defined(ESP8266)
-  EspClass::restart();
-#endif
+  Helpers::safeRestart();
 }
 
 //blocking function to parse an Improv Serial packet

@@ -23,6 +23,7 @@
 #include <ArduinoJson.h>
 #include "Configuration.h"
 
+extern unsigned long currentMillisMainLoop;
 
 extern bool isConfigFileOk;
 extern String lastMQTTConnection;
@@ -64,6 +65,8 @@ extern bool mqttConnected;
 extern bool blockingMqtt;
 extern String additionalParam;
 extern bool ethConnected;
+extern bool restartRequested;
+extern unsigned long restartAt;
 
 // Blink LED vars
 extern unsigned long previousMillis;     // will store last time LED was updated
@@ -175,6 +178,9 @@ public:
 
     [[maybe_unused]] static String isOnOff(JsonDocument json);
 
+    [[maybe_unused]] static void safeRestartGuard();
+
+    [[maybe_unused]] static void safeRestart();
 };
 
 #endif
