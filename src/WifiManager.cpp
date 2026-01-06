@@ -699,7 +699,8 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
     memset(clientPass, 0, 64);
     memcpy(clientPass, rpcData + 3 + ssidLen, passLen);
   }
-  sendImprovStateResponse(0x03, false); //provisioning
+  // TODO
+  // sendImprovStateResponse(0x03, false); //provisioning
   improvActive = 2;
   JsonDocument doc;
   bool connected = isConnected();
@@ -732,6 +733,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   while (!isConnected()) {}
 #endif
   sendImprovRPCResponse(ImprovRPCType::Request_State);
+  // TODO
   // sendImprovStateResponse(0x04, false);
   Serial.flush();
 #if defined(ARDUINO_ARCH_ESP32)
