@@ -164,7 +164,7 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
 #if (IMPROV_ENABLED > 0)
   if (!rcpResponseSent && WifiManager::isConnected()) {
     rcpResponseSent = true;
-    wifiManager.sendImprovRPCResponse(0x01, true);
+    wifiManager.sendImprovRPCResponse(0x01, false);
   }
   if (!temporaryDisableImprove) {
     wifiManager.handleImprovPacket();
