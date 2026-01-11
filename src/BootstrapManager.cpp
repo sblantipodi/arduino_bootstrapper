@@ -463,15 +463,8 @@ JsonDocument BootstrapManager::readLittleFS(const String &filenameToUse) {
     Helpers::smartPrintln("Failed to open [" + filenameToUse + "] file");
     helper.smartDisplay();
   }
-  size_t size = jsonFile.size();
-  // Allocate a buffer to store contents of the file.
-  std::unique_ptr<char[]> buf(new char[size]);
-  // We don't use String here because ArduinoJson library requires the input
-  // buffer to be mutable. If you don't use ArduinoJson, you may as well
-  // use configFile.readString instead.
-  jsonFile.readBytes(buf.get(), size);
   JsonDocument jsonDoc;
-  auto error = deserializeJson(jsonDoc, buf.get());
+  auto error = deserializeJson(jsonDoc, jsonFile);
   if (filenameToUse != "setup.json") serializeJsonPretty(jsonDoc, Serial);
   jsonFile.close();
   if (error) {
@@ -496,11 +489,8 @@ String BootstrapManager::readValueFromFile(const String &filenameToUse, const St
     Helpers::smartPrintln("Failed to open [" + filenameToUse + "] file");
     helper.smartDisplay();
   }
-  size_t size = jsonFile.size();
-  std::unique_ptr<char[]> buf(new char[size]);
-  jsonFile.readBytes(buf.get(), size);
   JsonDocument jDoc;
-  auto error = deserializeJson(jDoc, buf.get());
+  auto error = deserializeJson(jDoc, jsonFile);
   serializeJsonPretty(jDoc, Serial);
   JsonVariant answer = jDoc[paramName];
   if (answer.is<const char*>()) {
