@@ -501,6 +501,8 @@ String BootstrapManager::readValueFromFile(const String &filenameToUse, const St
     returnStr = String(answer.as<long>());
   } else if (answer.is<double>()) {
     returnStr = String(answer.as<double>());
+  } else if (answer.is<bool>()) {
+    returnStr = answer.as<bool>() ? "true" : "false";
   } else {
     returnStr = "";
   }
