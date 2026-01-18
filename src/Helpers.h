@@ -1,7 +1,7 @@
 /*
   Helpers.h - Helper classes
   
-  Copyright © 2020 - 2025  Davide Perini
+  Copyright © 2020 - 2026  Davide Perini
   
   Permission is hereby granted, free of charge, to any person obtaining a copy of 
   this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 #include <ArduinoJson.h>
 #include "Configuration.h"
 
+extern unsigned long currentMillisMainLoop;
 
 extern bool isConfigFileOk;
 extern String lastMQTTConnection;
@@ -39,8 +40,15 @@ extern String firmwareVersion;
 extern String MAC;
 extern String deviceName;
 extern String microcontrollerIP;
+extern IPAddress currentWiFiIp;
 extern bool dhcpInUse;
 extern int8_t ethd;
+#if defined(ARDUINO_ARCH_ESP32)
+extern int8_t mosi;
+extern int8_t miso;
+extern int8_t sclk;
+extern int8_t cs;
+#endif
 extern String qsid;
 extern String qpass;
 extern String OTApass;
@@ -57,6 +65,8 @@ extern bool mqttConnected;
 extern bool blockingMqtt;
 extern String additionalParam;
 extern bool ethConnected;
+extern bool restartRequested;
+extern unsigned long restartAt;
 
 // Blink LED vars
 extern unsigned long previousMillis;     // will store last time LED was updated
@@ -168,6 +178,9 @@ public:
 
     [[maybe_unused]] static String isOnOff(JsonDocument json);
 
+    [[maybe_unused]] static void safeRestartGuard();
+
+    [[maybe_unused]] static void safeRestart();
 };
 
 #endif
