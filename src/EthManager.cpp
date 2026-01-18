@@ -137,7 +137,7 @@ void EthManager::initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, 
   }
   ETH.begin(
     ETH_PHY_W5500, -1, cs, -1, -1,
-#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6 || CONFIG_IDF_TARGET_ESP32C5
     SPI2_HOST,
 #else
     SPI3_HOST,
