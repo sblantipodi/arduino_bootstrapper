@@ -121,13 +121,11 @@ const ethernet_confi_spi ethernetDevicesSpi[] = {
   }
 };
 
-
 /**
  * Init SPI ethernet
  * @param deviceNumber to use
  */
-void EthManager::initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs)
-{
+void EthManager::initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs) {
   if (deviceNumber > spiStartIdx) {
     deviceNumber = deviceNumber - spiStartIdx - 1;
     cs = ethernetDevicesSpi[deviceNumber].cs_pin;
@@ -136,12 +134,12 @@ void EthManager::initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, 
     mosi = ethernetDevicesSpi[deviceNumber].mosi_pin;
   }
   ETH.begin(
-    ETH_PHY_W5500, -1, cs, -1, -1,
-#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6 || CONFIG_IDF_TARGET_ESP32C5
+    ETH_PHY_W5500,
+    -1,
+    cs,
+    -1,
+    -1,
     SPI2_HOST,
-#else
-    SPI3_HOST,
-#endif
     sclk,
     miso,
     mosi
