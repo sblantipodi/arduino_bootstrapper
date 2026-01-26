@@ -1,7 +1,7 @@
 /*
   Helpers.cpp - Helper classes
   
-  Copyright © 2020 - 2025  Davide Perini
+  Copyright © 2020 - 2026  Davide Perini
   
   Permission is hereby granted, free of charge, to any person obtaining a copy of 
   this software and associated documentation files (the "Software"), to deal
@@ -19,6 +19,8 @@
 
 #include "Helpers.h"
 
+unsigned long currentMillisMainLoop = 0;
+
 bool isConfigFileOk = false;
 String lastMQTTConnection = "OFF";
 String lastWIFiConnection = "OFF";
@@ -34,9 +36,16 @@ String IP = "";
 String MAC = "";
 String deviceName = "XXX";
 String microcontrollerIP = "XXX";
+IPAddress currentWiFiIp;
 bool dhcpInUse = true;
 #if defined(ARDUINO_ARCH_ESP32)
 int8_t ethd = 0;
+int8_t mosi = 0;
+int8_t miso = 0;
+int8_t sclk = 0;
+int8_t cs = 0;
+int8_t interrupt = 0;
+int8_t rst = 0;
 #else
 int8_t ethd = -1;
 #endif
@@ -56,6 +65,8 @@ bool blockingMqtt = true;
 bool mqttConnected = false;
 String additionalParam = "XXX";
 bool ethConnected = false;
+bool restartRequested = false;
+unsigned long restartAt = 0;
 
 unsigned long previousMillis = 0;
 const unsigned long interval = 200;
@@ -174,3 +185,20 @@ long Helpers::versionNumberToNumber(const String &latestReleaseStr) {
   longVersion += Helpers::getValue(latestReleaseStr, '.', 2).toInt();
   return longVersion;
 }
+
+void Helpers::safeRestartGuard() {
+  if (restartRequested && currentMillisMainLoop - restartAt > DELAY_1000) {
+#if defined(ARDUINO_ARCH_ESP32)
+    ESP.restart();
+#elif defined(ESP8266)
+    EspClass::restart();
+#endif
+  }
+}
+
+void Helpers::safeRestart() {
+  restartRequested = true;
+  restartAt = millis();
+}
+
+
