@@ -753,6 +753,8 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
 //blocking function to parse an Improv Serial packet
 void WifiManager::handleImprovPacket() {
   uint8_t header[6] = {'I', 'M', 'P', 'R', 'O', 'V'};
+  uint8_t headerEth[6] = {'D', 'P', 'S', 'E', 'T', 'H'};
+
   bool timeout = false;
   uint16_t packetByte = 0;
   uint8_t packetLen = 9;
@@ -825,9 +827,52 @@ void WifiManager::handleImprovPacket() {
           return;
         }
         if (packetByte < 6) { //check header
-          if (next != header[packetByte]) {
+          if (next != header[packetByte] && next != headerEth[packetByte]) {
             DIMPROV_PRINTLN(F("Invalid improv header"));
             return;
+          }
+          // This is a custom dpsoftware improv protocol
+          if (next == headerEth[5]) {
+            char buffer[65];
+            JsonDocument doc;
+            for (int i = 0; i < 15; i++) {
+              size_t len = Serial.readBytesUntil('\n', buffer, 64);
+              buffer[len] = '\0';
+              switch (i) {
+                case 1: doc["deviceName"] = buffer; break;
+                case 2: doc["microcontrollerIP"] = buffer; break;
+                case 3: doc["qsid"] = buffer; break;
+                case 4: doc["qpass"] = buffer; break;
+                case 5: doc["OTApass"] = buffer; break;
+                case 6: doc["mqttIP"] = buffer; break;
+                case 7: doc["mqttPort"] = buffer; break;
+                case 8: doc["mqttuser"] = buffer; break;
+                case 9: doc["mqttpass"] = buffer; break;
+                case 10: doc["ethd"] = buffer; break;
+                case 11: doc["miso"] = buffer; break;
+                case 12: doc["mosi"] = buffer; break;
+                case 13: doc["sclk"] = buffer; break;
+                case 14: doc["cs"] = buffer; break;
+                default: break;
+              }
+            }
+            File jsonFile = LittleFS.open("/setup.json", FILE_WRITE);
+            if (!jsonFile) {
+              Serial.println("Failed to open [setup.json] file for writing");
+            } else {
+              serializeJsonPretty(doc, Serial);
+              serializeJson(doc, jsonFile);
+              jsonFile.close();
+#if CONFIG_IDF_TARGET_ESP32 || defined(ESP8266)
+              Serial.flush();
+#endif
+              delay(200);
+#if defined(ARDUINO_ARCH_ESP32)
+              ESP.restart();
+#elif defined(ESP8266)
+              EspClass::restart();
+#endif
+            }
           }
         } else if (packetByte > 9) { //RPC data
           rpcData[packetByte - 10] = next;
