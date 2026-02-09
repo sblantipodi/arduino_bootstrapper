@@ -47,7 +47,7 @@ QueueManager::setMQTTWill(const char *topic, const char *payload, const int qos,
 void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(),
                                  void (*manageHardwareButton)()) {
   // Loop until we're reconnected
-  while ((WiFi.status() == WL_CONNECTED || (ethd >= 0 && ethConnected)) && !mqttClient.connected() && Serial.peek() == -1) {
+  while (WiFi.status() == WL_CONNECTED && ((ethd > 0 && ethConnected) || ethd == 0) && !mqttClient.connected() && Serial.peek() == -1) {
 #if (DISPLAY_ENABLED)
     display.clearDisplay();
     display.setTextSize(1);
