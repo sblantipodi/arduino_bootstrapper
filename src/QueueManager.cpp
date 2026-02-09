@@ -46,8 +46,6 @@ QueueManager::setMQTTWill(const char *topic, const char *payload, const int qos,
 /********************************** MQTT RECONNECT **********************************/
 void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(),
                                  void (*manageHardwareButton)()) {
-  // how many attemps to MQTT connection
-  mqttReconnectAttemp = 0;
   // Loop until we're reconnected
   while (!mqttClient.connected() && (WiFi.status() == WL_CONNECTED || ethd >= 0) && Serial.peek() == -1) {
 #if (DISPLAY_ENABLED)
