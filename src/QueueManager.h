@@ -30,6 +30,7 @@ private:
     Helpers helper;
 
 public:
+    static PubSubClient& getMqttClient();
     static void setupMQTTQueue(void (*callback)(char *, byte *, unsigned int)); // setup the queue
     static void setMQTTWill(const char *topic, const char *payload, int qos, boolean retain, boolean cleanSession); // set the last will parameters for mqtt
     void mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()); // manage reconnection on the queue

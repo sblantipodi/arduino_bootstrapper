@@ -153,3 +153,6 @@ void QueueManager::subscribe(const char *topic, uint8_t qos) {
   mqttClient.subscribe(topic, qos);
 }
 
+PubSubClient& QueueManager::getMqttClient() {
+  return mqttClient;
+}

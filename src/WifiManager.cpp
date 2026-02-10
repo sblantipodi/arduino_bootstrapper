@@ -162,7 +162,6 @@ void WifiManager::setTxPower() const {
 #endif
 
 void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageHardwareButton)()) {
-  wifiReconnectAttemp = 0;
   // loop here until connection
   while ((WiFi.status() != WL_CONNECTED && !ethConnected) && Serial.peek() == -1) {
     manageHardwareButton();
@@ -206,6 +205,9 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
     } else if (wifiReconnectAttemp > 10000) {
       wifiReconnectAttemp = 0;
     }
+    if (!blockingMqtt) {
+      break;
+    }
   }
   if (currentWiFiIp != WiFi.localIP()) {
     Helpers::smartPrint(F("\nWIFI CONNECTED\nIP Address: "));
@@ -216,6 +218,9 @@ void WifiManager::reconnectToWiFi(void (*manageDisconnections)(), void (*manageH
     Helpers::smartPrintln(WiFi.localIP().toString());
     Helpers::smartPrint(F("nb of attempts: "));
     Helpers::smartPrintln(wifiReconnectAttemp);
+  }
+  if (WiFi.status() == WL_CONNECTED || ethConnected) {
+    wifiReconnectAttemp = 0;
   }
 }
 
