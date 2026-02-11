@@ -120,6 +120,9 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       break;
     }
   }
+  if (mqttClient.connected()) {
+    mqttReconnectAttemp = 0;
+  }
 }
 
 void QueueManager::queueLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(),

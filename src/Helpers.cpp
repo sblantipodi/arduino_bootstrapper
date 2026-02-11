@@ -83,6 +83,7 @@ int wifiReconnectAttemp = 0;
 int mqttReconnectAttemp = 0;
 bool fastDisconnectionManagement = false;
 bool forceWebServer = false;
+byte apState;
 bool temporaryDisableImprove = false;
 bool improvePacketReceived = false;
 

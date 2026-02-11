@@ -84,6 +84,7 @@ extern int wifiReconnectAttemp;
 extern int mqttReconnectAttemp;
 extern bool fastDisconnectionManagement;
 extern bool forceWebServer; // if set to true, forces the use of launchWebServerForOTAConfig - added by Pronoe on 02/03/2022
+extern byte apState;
 
 [[maybe_unused]] const int DELAY_10 = 10;
 [[maybe_unused]] const int DELAY_50 = 50;
