@@ -100,6 +100,15 @@ const ethernet_config ethernetDevices[] = {
     18,
     ETH_PHY_LAN8720,
     ETH_CLOCK_GPIO0_OUT
+  },
+  // Gledopto with ethernet
+  {
+    1,
+    5,
+    23,
+    33,
+    ETH_PHY_LAN8720,
+    ETH_CLOCK_GPIO0_IN
   }
 #endif
 };
@@ -133,17 +142,8 @@ void EthManager::initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, 
     miso = ethernetDevicesSpi[deviceNumber].miso_pin;
     mosi = ethernetDevicesSpi[deviceNumber].mosi_pin;
   }
-  ETH.begin(
-    ETH_PHY_W5500,
-    -1,
-    cs,
-    -1,
-    -1,
-    SPI2_HOST,
-    sclk,
-    miso,
-    mosi
-  );
+  SPI.begin(sclk, miso, mosi);
+  ETH.begin(ETH_PHY_W5500, -1, cs, -1, -1, SPI);
 }
 
 /**
