@@ -1,7 +1,7 @@
 /*
   EthManager.h - Managing Wifi and OTA
   
-  Copyright © 2020 - 2025  Davide Perini
+  Copyright © 2020 - 2026  Davide Perini
   
   Permission is hereby granted, free of charge, to any person obtaining a copy of 
   this software and associated documentation files (the "Software"), to deal
@@ -29,22 +29,42 @@
 #define _DPSOFTWARE_ETH_MANAGER_H
 
 #if defined(ARDUINO_ARCH_ESP32)
+
 typedef struct EthConfig {
-    uint8_t address;
-    int power;
-    int mdc;
-    int mdio;
-    eth_phy_type_t type;
-    eth_clock_mode_t clk_mode;
+  uint8_t address;
+  int power;
+  int mdc;
+  int mdio;
+#if CONFIG_IDF_TARGET_ESP32
+  eth_phy_type_t type;
+  eth_clock_mode_t clk_mode;
+#endif
 } ethernet_config;
 
 extern const ethernet_config ethernetDevices[];
 
-class EthManager {
+typedef struct EthConfigW5500 {
+  int miso_pin;
+  int mosi_pin;
+  int sclk_sck_pin;
+  int cs_pin;
+} ethernet_confi_spi;
 
+extern const ethernet_confi_spi ethernetDevicesSpi[];
+
+const uint8_t spiStartIdx = 100;
+
+class EthManager {
 public:
-    static void connectToEthernet(int8_t deviceNumber);
-    static void deallocateEthernetPins(int8_t deviceNumber);
+  static void connectToSpi(int8_t &deviceNumber);
+
+  static void initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs);
+
+  static void initRmiiEthernet(int8_t deviceNumber);
+
+  static void connectToEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, int8_t sclk, int8_t cs);
+
+  static void deallocateEthernetPins(int8_t deviceNumber);
 };
 
 #endif

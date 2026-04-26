@@ -1,7 +1,7 @@
 /*
   BoostrapManager.cpp - Main file for bootstrapping arduino projects
   
-  Copyright © 2020 - 2025  Davide Perini
+  Copyright © 2020 - 2026  Davide Perini
   
   Permission is hereby granted, free of charge, to any person obtaining a copy of 
   this software and associated documentation files (the "Software"), to deal
@@ -51,10 +51,14 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     launchWebServerForOTAConfig();
   }
 #if defined(ARDUINO_ARCH_ESP32)
-  esp_task_wdt_init(3000, true); //enable panic so ESP32 restarts
+  esp_task_wdt_config_t twdt_config = {
+    .timeout_ms = 5000,
+    .trigger_panic = true,
+  };
+  esp_task_wdt_init(&twdt_config); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 #endif
-#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6 || CONFIG_IDF_TARGET_ESP32C5 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
   Serial.setTxTimeoutMs(0);
 #endif
 }
@@ -63,22 +67,37 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
 void eth_event(WiFiEvent_t event) {
   switch (event) {
     case ARDUINO_EVENT_ETH_START:
-      ethConnected = true;
+      Serial.println("ETH Started");
       break;
     case ARDUINO_EVENT_ETH_CONNECTED:
-      MAC = WiFi.macAddress();
+      Serial.println("ETH Connected");
       ethConnected = true;
       break;
     case ARDUINO_EVENT_ETH_GOT_IP:
-      MAC = WiFi.macAddress();
       microcontrollerIP = ETH.localIP().toString();
       ethConnected = true;
+      Serial.print("ETH MAC: ");
+      Serial.print(ETH.macAddress());
+      Serial.print(", IPv4: ");
+      Serial.print(ETH.localIP());
+      if (ETH.fullDuplex()) {
+        Serial.print(", FULL_DUPLEX");
+      }
+      Serial.print(", ");
+      Serial.print(ETH.linkSpeed());
+      Serial.println("Mbps");
       break;
     case ARDUINO_EVENT_ETH_DISCONNECTED:
+      Serial.println("ETH Disconnected");
       ethConnected = false;
+      microcontrollerIP = F("0.0.0.0");
+      currentWiFiIp = IPAddress(0, 0, 0, 0);
       break;
     case ARDUINO_EVENT_ETH_STOP:
+      Serial.println("ETH Stopped");
       ethConnected = false;
+      microcontrollerIP = F("0.0.0.0");
+      currentWiFiIp = IPAddress(0, 0, 0, 0);
       break;
     default:
       break;
@@ -96,24 +115,28 @@ void BootstrapManager::bootstrapSetup(void (*manageDisconnections)(), void (*man
     // Initialize Wifi manager
     wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
     initMqttOta(callback);
-  } else if ((ethd == 0 || ethd == -1)){
-    isConfigFileOk = false;
-    launchWebServerCustom(waitImprov, listener);
-  } else {
+  } else if (ethd > 0) {
 #if defined(ARDUINO_ARCH_ESP32)
     isConfigFileOk = true;
     ETH.setHostname(Helpers::string2char(deviceName));
     WiFi.onEvent(eth_event);
-    EthManager::connectToEthernet(ethd);
-    Serial.println(F("Ethernet connected."));
+    EthManager::connectToEthernet(ethd, mosi, miso, sclk, cs);
+    wifiManager.setupWiFi(manageDisconnections, manageHardwareButton);
     initMqttOta(callback);
 #endif
+  } else {
+    isConfigFileOk = false;
+    launchWebServerCustom(waitImprov, listener);
   }
 #if defined(ARDUINO_ARCH_ESP32)
-  esp_task_wdt_init(3000, true); //enable panic so ESP32 restarts
+  esp_task_wdt_config_t twdt_config = {
+    .timeout_ms = 3000, // TODO 3000
+    .trigger_panic = true,
+  };
+  esp_task_wdt_init(&twdt_config); //enable panic so ESP32 restarts
   esp_task_wdt_add(NULL); //add current thread to WDT watch
 #endif
-#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+#if CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32C6 || CONFIG_IDF_TARGET_ESP32C5 || CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
   Serial.setTxTimeoutMs(0);
 #endif
 }
@@ -139,19 +162,15 @@ void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*mana
   }
 #endif
 #if (IMPROV_ENABLED > 0)
-  if ((ethd == 0 || ethd == -1)) {
-    if (!rcpResponseSent && WifiManager::isConnected()) {
-      rcpResponseSent = true;
-      wifiManager.sendImprovRPCResponse(0x01, true);
-    }
-    if (!temporaryDisableImprove) {
-      wifiManager.handleImprovPacket();
-    }
+  if (!rcpResponseSent && WifiManager::isConnected()) {
+    rcpResponseSent = true;
+    wifiManager.sendImprovRPCResponse(0x01, false);
+  }
+  if (!temporaryDisableImprove) {
+    wifiManager.handleImprovPacket();
   }
 #endif
-  if (ethd == 0 || ethd == -1) {
-    wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
-  }
+  wifiManager.reconnectToWiFi(manageDisconnections, manageHardwareButton);
   ArduinoOTA.handle();
   if (mqttIP.length() > 0) {
     queueManager.queueLoop(manageDisconnections, manageQueueSubscription, manageHardwareButton);
@@ -334,13 +353,7 @@ void BootstrapManager::getMicrocontrollerInfo() {
   Helpers::smartPrintln(ESP.getSdkVersion());
 #endif
   Helpers::smartPrintln(F("MAC: "));
-  if ((ethd == 0 || ethd == -1)) {
-    Helpers::smartPrintln(WiFi.macAddress());
-  } else {
-#if defined(ARDUINO_ARCH_ESP32)
-    Helpers::smartPrintln(ETH.macAddress());
-#endif
-  }
+  Helpers::smartPrintln(WiFi.macAddress());
   Helpers::smartPrint(F("IP: "));
   Helpers::smartPrintln(microcontrollerIP);
   // helper.smartPrint(F("Arduino Core: ")); helper.smartPrintln(ESP.getCoreVersion());
@@ -450,15 +463,8 @@ JsonDocument BootstrapManager::readLittleFS(const String &filenameToUse) {
     Helpers::smartPrintln("Failed to open [" + filenameToUse + "] file");
     helper.smartDisplay();
   }
-  size_t size = jsonFile.size();
-  // Allocate a buffer to store contents of the file.
-  std::unique_ptr<char[]> buf(new char[size]);
-  // We don't use String here because ArduinoJson library requires the input
-  // buffer to be mutable. If you don't use ArduinoJson, you may as well
-  // use configFile.readString instead.
-  jsonFile.readBytes(buf.get(), size);
   JsonDocument jsonDoc;
-  auto error = deserializeJson(jsonDoc, buf.get());
+  auto error = deserializeJson(jsonDoc, jsonFile);
   if (filenameToUse != "setup.json") serializeJsonPretty(jsonDoc, Serial);
   jsonFile.close();
   if (error) {
@@ -483,18 +489,22 @@ String BootstrapManager::readValueFromFile(const String &filenameToUse, const St
     Helpers::smartPrintln("Failed to open [" + filenameToUse + "] file");
     helper.smartDisplay();
   }
-  size_t size = jsonFile.size();
-  std::unique_ptr<char[]> buf(new char[size]);
-  jsonFile.readBytes(buf.get(), size);
   JsonDocument jDoc;
-  auto error = deserializeJson(jDoc, buf.get());
+  auto error = deserializeJson(jDoc, jsonFile);
   serializeJsonPretty(jDoc, Serial);
   JsonVariant answer = jDoc[paramName];
-  if (answer.is<const char *>()) {
-    returnStr = answer.as<String>();
+  if (answer.is<const char*>()) {
+    returnStr = String(answer.as<const char*>());
+  } else if (answer.is<int>()) {
+    returnStr = String(answer.as<int>());
+  } else if (answer.is<long>()) {
+    returnStr = String(answer.as<long>());
+  } else if (answer.is<double>()) {
+    returnStr = String(answer.as<double>());
+  } else if (answer.is<bool>()) {
+    returnStr = answer.as<bool>() ? "true" : "false";
   } else {
-    auto returnVal = answer.as<int>();
-    returnStr = String(returnVal);
+    returnStr = "";
   }
   jsonFile.close();
   if (error) {
@@ -535,6 +545,14 @@ bool BootstrapManager::isWifiConfigured() {
             additionalParam = Helpers::getValue(mydoc[F("additionalParam")]);
             deviceName = Helpers::getValue(mydoc[F("deviceName")]);
             ethd = mydoc[F("ethd")].as<int8_t>();
+#if defined(ARDUINO_ARCH_ESP32)
+            if (ethd == spiStartIdx) {
+              mosi = mydoc[F("mosi")].as<int8_t>();
+              miso = mydoc[F("miso")].as<int8_t>();
+              sclk = mydoc[F("sclk")].as<int8_t>();
+              cs = mydoc[F("cs")].as<int8_t>();
+            }
+#endif
 #if defined(ESP8266)
             ethd = -1;
 #endif

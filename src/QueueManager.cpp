@@ -1,7 +1,7 @@
 /*
   QueueManager.cpp - Managing MQTT queue
   
-  Copyright © 2020 - 2025  Davide Perini
+  Copyright © 2020 - 2026  Davide Perini
   
   Permission is hereby granted, free of charge, to any person obtaining a copy of 
   this software and associated documentation files (the "Software"), to deal
@@ -46,10 +46,8 @@ QueueManager::setMQTTWill(const char *topic, const char *payload, const int qos,
 /********************************** MQTT RECONNECT **********************************/
 void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQueueSubscription)(),
                                  void (*manageHardwareButton)()) {
-  // how many attemps to MQTT connection
-  mqttReconnectAttemp = 0;
   // Loop until we're reconnected
-  while (!mqttClient.connected() && (WiFi.status() == WL_CONNECTED || ethd >= 0) && Serial.peek() == -1) {
+  while ((WiFi.status() == WL_CONNECTED || (ethd >= 0 && ethConnected)) && !mqttClient.connected() && Serial.peek() == -1) {
 #if (DISPLAY_ENABLED)
     display.clearDisplay();
     display.setTextSize(1);
@@ -76,12 +74,12 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
     Serial.print("clean session: ");
     Serial.println(mqttCleanSession);
     if (mqttuser.isEmpty() || mqttpass.isEmpty()) {
-      mqttSuccess = mqttClient.connect(Helpers::string2char(deviceName), Helpers::string2char(mqttWillTopic),
-                                       mqttWillQOS, mqttWillRetain, Helpers::string2char(mqttWillPayload));
+      mqttSuccess = mqttClient.connect(deviceName.c_str(), mqttWillTopic.c_str(),
+                                       mqttWillQOS, mqttWillRetain, mqttWillPayload.c_str());
     } else {
-      mqttSuccess = mqttClient.connect(Helpers::string2char(deviceName), Helpers::string2char(mqttuser),
-                                       Helpers::string2char(mqttpass), Helpers::string2char(mqttWillTopic), mqttWillQOS,
-                                       mqttWillRetain, Helpers::string2char(mqttWillPayload), mqttCleanSession);
+      mqttSuccess = mqttClient.connect(deviceName.c_str(), mqttuser.c_str(),
+                                       mqttpass.c_str(), mqttWillTopic.c_str(), mqttWillQOS,
+                                       mqttWillRetain, mqttWillPayload.c_str(), mqttCleanSession);
     }
     if (mqttSuccess) {
       Helpers::smartPrintln(F(""));
@@ -98,6 +96,11 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       lastMQTTConnection = OFF_CMD;
     } else {
       Helpers::smartPrintln(F("MQTT attempts="));
+#if defined(ESP8266)
+      ESP.wdtFeed();
+#else
+      esp_task_wdt_reset();
+#endif
       Helpers::smartPrintln(mqttReconnectAttemp);
       helper.smartDisplay();
       // after MAX_RECONNECT attemps all peripherals are shut down
@@ -116,6 +119,9 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
     if (!blockingMqtt) {
       break;
     }
+  }
+  if (mqttClient.connected()) {
+    mqttReconnectAttemp = 0;
   }
 }
 
@@ -150,3 +156,6 @@ void QueueManager::subscribe(const char *topic, uint8_t qos) {
   mqttClient.subscribe(topic, qos);
 }
 
+PubSubClient& QueueManager::getMqttClient() {
+  return mqttClient;
+}
