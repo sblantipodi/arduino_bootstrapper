@@ -89,7 +89,8 @@ enum ImprovPacketByte {
 enum ImprovRPCType {
     Command_Wifi = 0x01,
     Request_State = 0x02,
-    Request_Info = 0x03
+    Request_Info = 0x03,
+    Request_Scan = 0x04
 };
 
 extern byte improvActive; //0: no improv packet received, 1: improv active, 2: provisioning
@@ -98,6 +99,7 @@ extern char serverDescription[33];
 extern char cmDNS[33];
 extern char clientSSID[33];
 extern char clientPass[65];
+static bool improvWifiScanRunning = false;
 
 class WifiManager {
 
@@ -123,7 +125,12 @@ public:
     static void launchWebServerForOTAConfig(); // if no ssid available, launch web server to get config params via browser
     static void launchWebServerCustom(void (*listener)()); // if no ssid available, launch web server to get config params via browser
     void manageImprovWifi(); // if no ssid available, launch web server to get config params via browser
+
     void handleImprovPacket();
+
+    void handleImprovWifiScan();
+
+    void sendImprovRPCResult(ImprovRPCType type, uint8_t n_strings = 0, const char **strings = nullptr);
 
     void sendImprovInfoResponse();
 
@@ -138,6 +145,9 @@ public:
     static bool isConnected(); // return true if wifi is connected
 
     void setTxPower() const;
+
+    void startImprovWifiScan();
+
 };
 
 #endif

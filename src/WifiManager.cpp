@@ -824,6 +824,9 @@ void WifiManager::handleImprovPacket() {
             case ImprovRPCType::Request_Info:
               sendImprovInfoResponse();
               break;
+            case ImprovRPCType::Request_Scan:
+              startImprovWifiScan();
+              break;
             default: {
               DIMPROV_PRINTF("Unknown RPC command %i\n", next);
               sendImprovStateResponse(0x02, true);
@@ -888,6 +891,86 @@ void WifiManager::handleImprovPacket() {
     checksum += next;
     packetByte++;
   }
+}
+
+void WifiManager::startImprovWifiScan() {
+  if (improvWifiScanRunning) return;
+  WiFi.scanNetworks(true);
+  improvWifiScanRunning = true;
+}
+
+void sendImprovStateResponse(uint8_t state, bool error) {
+  if (!error && improvError > 0 && improvError < 3) sendImprovStateResponse(0x00, true);
+  if (error) improvError = state;
+  char out[11] = {'I','M','P','R','O','V'};
+  out[6] = IMPROV_VERSION;
+  out[7] = error? ImprovPacketType::Error_State : ImprovPacketType::Current_State;
+  out[8] = 1;
+  out[9] = state;
+
+  unsigned checksum = 0;
+  for (unsigned i = 0; i < 10; i++) checksum += out[i];
+  out[10] = checksum;
+  Serial.write((uint8_t*)out, 11);
+  Serial.write('\n');
+}
+
+void WifiManager::sendImprovRPCResult(ImprovRPCType type, uint8_t n_strings, const char **strings) {
+  if (improvError > 0 && improvError < 3) sendImprovStateResponse(0x00, true);
+  unsigned packetLen = 12;
+  char out[256] = {'I','M','P','R','O','V'};
+  out[6] = IMPROV_VERSION;
+  out[7] = ImprovPacketType::RPC_Response;
+  //out[8] = 2; //Length (set below)
+  out[9] = type;
+  //out[10] = 0; //Data len (set below)
+  unsigned pos = 11;
+
+  for (unsigned s = 0; s < n_strings; s++) {
+    size_t len = strlen(strings[s]);
+    if (pos + len > 254) continue; // simple buffer overflow guard
+    out[pos++] = len;
+    strcpy(out + pos, strings[s]);
+    pos += len;
+  }
+
+  packetLen = pos  +1;
+  out[8]    = pos  -9; // Length of packet (excluding first 9 header bytes and final checksum byte)
+  out[10]   = pos -11; // Data len
+
+  unsigned checksum = 0;
+  for (unsigned i = 0; i < packetLen -1; i++) checksum += out[i];
+  out[packetLen -1] = checksum;
+  Serial.write((uint8_t*)out, packetLen);
+  Serial.write('\n');
+  DIMPROV_PRINT("RPC result checksum");
+  DIMPROV_PRINTLN(checksum);
+}
+
+void WifiManager::handleImprovWifiScan() {
+  if (!improvWifiScanRunning) return;
+  int16_t status = WiFi.scanComplete();
+  if (status == WIFI_SCAN_RUNNING) return;
+  // here scan completed or failed (-2)
+  improvWifiScanRunning = false;
+
+  for (int i = 0; i < status; i++) {
+    char rssiStr[8];
+    sprintf(rssiStr, "%d", WiFi.RSSI(i));
+#ifdef ESP8266
+    bool isOpen = WiFi.encryptionType(i) == ENC_TYPE_NONE;
+#else
+    bool isOpen = WiFi.encryptionType(i) == WIFI_AUTH_OPEN;
+#endif
+
+    char ssidStr[33];
+    strcpy(ssidStr, WiFi.SSID(i).c_str());
+    const char *str[3] = {ssidStr, rssiStr, isOpen ? "NO":"YES"};
+    sendImprovRPCResult(Request_Scan, 3, str);
+  }
+  sendImprovRPCResult(ImprovRPCType::Request_Scan, 0);
+
+  WiFi.scanDelete();
 }
 
 
