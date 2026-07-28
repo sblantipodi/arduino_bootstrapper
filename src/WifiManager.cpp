@@ -312,6 +312,7 @@ void WifiManager::launchWebServerCustom(void (*listener)()) {
 // Manage improv wifi
 void WifiManager::manageImprovWifi() {
   handleImprovPacket();
+  handleImprovWifiScan();
 }
 
 void WifiManager::launchWeb() {
