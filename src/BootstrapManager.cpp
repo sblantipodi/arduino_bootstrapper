@@ -544,7 +544,7 @@ bool BootstrapManager::isWifiConfigured() {
             mqttuser = Helpers::getValue(mydoc[F("mqttuser")]);
             mqttpass = Helpers::getValue(mydoc[F("mqttpass")]);
             additionalParam = Helpers::getValue(mydoc[F("additionalParam")]);
-            deviceName = Helpers::getValue(mydoc[F("deviceName")]);
+            deviceName = Helpers::getValue(mydoc[F("deviceName")]).substring(0, DEVICE_NAME_MAX_LEN);
             ethd = mydoc[F("ethd")].as<int8_t>();
 #if defined(ARDUINO_ARCH_ESP32)
             if (ethd == spiStartIdx) {

@@ -548,7 +548,7 @@ void WifiManager::createWebServer() {
           Serial.println("additionalParam");
           Serial.println(additionalParam);
 
-          doc["deviceName"] = deviceName;
+          doc["deviceName"] = deviceName.substring(0, DEVICE_NAME_MAX_LEN);
           doc["microcontrollerIP"] = microcontrollerIP;
           doc["qsid"] = qsid;
           doc["qpass"] = qpass;

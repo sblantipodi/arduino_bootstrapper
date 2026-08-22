@@ -70,6 +70,7 @@ extern Adafruit_SSD1306 display;
 #define WIFI_DEVICE_NAME "ArduinoBootstrapper"
 #endif
 const char *const DEVICE_NAME = WIFI_DEVICE_NAME;
+const int DEVICE_NAME_MAX_LEN = 64;
 
 // Port for the OTA firmware uplaod
 #ifndef MICROCONTROLLER_OTA_PORT
