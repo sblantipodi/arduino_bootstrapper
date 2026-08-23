@@ -357,7 +357,7 @@ void WifiManager::setupAP(void) {
     }
   }
   Serial.println("");
-  htmlString = "<table id='wifi'><tr><th>SSID</th><th>RSSI</th><th>Enctipted</th></tr>";
+  htmlString = "<table id='wifi'><tr><th>SSID</th><th>RSSI</th><th>Encrypted</th></tr>";
   for (int i = 0; i < n; ++i) {
     htmlString += "<tr>";
     htmlString += "<td>";
@@ -896,7 +896,12 @@ void WifiManager::handleImprovPacket() {
 
 void WifiManager::startImprovWifiScan() {
   if (improvWifiScanRunning) return;
+#if defined(ARDUINO_ARCH_ESP32)
+  WiFi.setScanTimeout(25000);
+  WiFi.scanNetworks(true, true, false, 80, 0);
+#else
   WiFi.scanNetworks(true);
+#endif
   improvWifiScanRunning = true;
 }
 
