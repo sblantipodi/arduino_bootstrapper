@@ -143,6 +143,7 @@ void EthManager::initSpiEthernet(int8_t deviceNumber, int8_t mosi, int8_t miso, 
     mosi = ethernetDevicesSpi[deviceNumber].mosi_pin;
   }
   SPI.begin(sclk, miso, mosi);
+  ETH.setPollPeriod(2);
   ETH.begin(ETH_PHY_W5500, -1, cs, -1, -1, SPI);
 }
 
