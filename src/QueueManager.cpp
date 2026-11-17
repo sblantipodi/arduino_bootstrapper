@@ -31,6 +31,11 @@ void QueueManager::setupMQTTQueue(void (*callback)(char *, byte *, unsigned int)
   mqttClient.setCallback(callback);
   mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
   mqttClient.setKeepAlive(MQTT_KEEP_ALIVE);
+#if defined(ARDUINO_ARCH_ESP32)
+  // Both TCP connection and MQTT response waits must fit within the task watchdog.
+  espClient.setConnectionTimeout(1000); // milliseconds
+  mqttClient.setSocketTimeout(1); // seconds
+#endif
 }
 
 /********************************** SET LAST WILL PARAMETERS **********************************/
@@ -73,6 +78,10 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
     Serial.println(mqttWillRetain);
     Serial.print("clean session: ");
     Serial.println(mqttCleanSession);
+#if defined(ARDUINO_ARCH_ESP32)
+    esp_task_wdt_reset();
+#endif
+    unsigned long connectStarted = millis();
     if (mqttuser.isEmpty() || mqttpass.isEmpty()) {
       mqttSuccess = mqttClient.connect(deviceName.c_str(), mqttWillTopic.c_str(),
                                        mqttWillQOS, mqttWillRetain, mqttWillPayload.c_str());
@@ -81,6 +90,9 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
                                        mqttpass.c_str(), mqttWillTopic.c_str(), mqttWillQOS,
                                        mqttWillRetain, mqttWillPayload.c_str(), mqttCleanSession);
     }
+#if defined(ARDUINO_ARCH_ESP32)
+    esp_task_wdt_reset();
+#endif
     if (mqttSuccess) {
       Helpers::smartPrintln(F(""));
       Helpers::smartPrintln(F("MQTT CONNECTED"));
@@ -95,11 +107,11 @@ void QueueManager::mqttReconnect(void (*manageDisconnections)(), void (*manageQu
       // reset the lastMQTTConnection to off, will be initialized by next time update
       lastMQTTConnection = OFF_CMD;
     } else {
+      Serial.printf("MQTT connection failed: state=%d, elapsed=%lu ms\n",
+                    mqttClient.state(), millis() - connectStarted);
       Helpers::smartPrintln(F("MQTT attempts="));
 #if defined(ESP8266)
       ESP.wdtFeed();
-#else
-      esp_task_wdt_reset();
 #endif
       Helpers::smartPrintln(mqttReconnectAttemp);
       helper.smartDisplay();

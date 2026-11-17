@@ -182,6 +182,10 @@ public:
     [[maybe_unused]] static void safeRestartGuard();
 
     [[maybe_unused]] static void safeRestart();
+
+    static void prepareRestart();
+
+    static void restart();
 };
 
 #endif

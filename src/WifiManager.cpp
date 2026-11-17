@@ -237,6 +237,7 @@ void WifiManager::setupOTAUpload() {
   });
   ArduinoOTA.onEnd([]() {
       Serial.println(F("End"));
+      Helpers::prepareRestart();
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
 #if defined(ARDUINO_ARCH_ESP32)
@@ -749,11 +750,7 @@ void WifiManager::parseWiFiCommand(char *rpcData) {
   Serial.flush();
 #endif
   delay(200);
-#if defined(ARDUINO_ARCH_ESP32)
-  ESP.restart();
-#elif defined(ESP8266)
-  EspClass::restart();
-#endif
+  Helpers::restart();
   }
 
 //blocking function to parse an Improv Serial packet
@@ -876,11 +873,7 @@ void WifiManager::handleImprovPacket() {
               Serial.flush();
 #endif
               delay(200);
-#if defined(ARDUINO_ARCH_ESP32)
-              ESP.restart();
-#elif defined(ESP8266)
-              EspClass::restart();
-#endif
+              Helpers::restart();
             }
           }
         } else if (packetByte > 9) { //RPC data

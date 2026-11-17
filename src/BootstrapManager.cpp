@@ -156,8 +156,9 @@ void BootstrapManager::initMqttOta(void (*callback)(char *, byte *, unsigned int
 bool rcpResponseSent = false;
 void BootstrapManager::bootstrapLoop(void (*manageDisconnections)(), void (*manageQueueSubscription)(), void (*manageHardwareButton)()) {
 #if defined(ARDUINO_ARCH_ESP32)
-  if (millis() - lastMillisForWdt >= 3000) {
-    lastMillisForWdt = millis();
+  unsigned long watchdogMillis = millis();
+  if (watchdogMillis - lastMillisForWdt >= DELAY_500) {
+    lastMillisForWdt = watchdogMillis;
     esp_task_wdt_reset();
   }
 #endif

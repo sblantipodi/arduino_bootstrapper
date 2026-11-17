@@ -18,6 +18,7 @@
 */
 
 #include "Helpers.h"
+#include "QueueManager.h"
 
 unsigned long currentMillisMainLoop = 0;
 
@@ -189,17 +190,33 @@ long Helpers::versionNumberToNumber(const String &latestReleaseStr) {
 
 void Helpers::safeRestartGuard() {
   if (restartRequested && currentMillisMainLoop - restartAt > DELAY_1000) {
-#if defined(ARDUINO_ARCH_ESP32)
-    ESP.restart();
-#elif defined(ESP8266)
-    EspClass::restart();
-#endif
+    restart();
   }
 }
 
 void Helpers::safeRestart() {
   restartRequested = true;
   restartAt = millis();
+}
+
+void Helpers::prepareRestart() {
+  PubSubClient &mqttClient = QueueManager::getMqttClient();
+  if (mqttClient.connected()) {
+    mqttClient.disconnect();
+    // Allow the MQTT DISCONNECT and TCP close to reach the broker before reset.
+    delay(DELAY_50);
+  }
+  espClient.stop();
+  mqttConnected = false;
+}
+
+void Helpers::restart() {
+  prepareRestart();
+#if defined(ARDUINO_ARCH_ESP32)
+  ESP.restart();
+#elif defined(ESP8266)
+  EspClass::restart();
+#endif
 }
 
 
